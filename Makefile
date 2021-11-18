@@ -7,8 +7,10 @@ rebuild:
 
 build:
 	@echo "Building project..."
+	@rm -f 42sh
 	@meson setup builddir
 	@ninja -C builddir
+	@cp builddir/42sh .
 	@echo "Done."
 
 check: build
@@ -16,5 +18,5 @@ check: build
 
 clean:
 	@echo "Cleaning up..."
-	@rm -rf builddir
+	@rm -rf builddir 42sh
 	@echo "Done."

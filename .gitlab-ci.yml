@@ -1,6 +1,7 @@
 build-job:
   stage: build
   script:
+    - apk add make && apk add meson && apk add ninja
     - make
 
 test-parser:
