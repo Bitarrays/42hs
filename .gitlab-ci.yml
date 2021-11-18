@@ -2,7 +2,7 @@ cache:
   paths:
     - 42sh
 
-build-job:
+build_job:
   stage: build
   script:
     - apk add build-base && apk add make && apk add meson && apk add ninja
@@ -10,5 +10,6 @@ build-job:
 
 test-parser:
   stage: test
+  needs: [build_job]
   script:
     - ./tests/parser.sh
