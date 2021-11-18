@@ -1,22 +1,14 @@
+cache:
+  paths:
+    - 42sh
+
 build-job:
   stage: build
   script:
     - apk add build-base && apk add make && apk add meson && apk add ninja
     - make build
-  cache:
-    - key:
-      files:
-        - 42sh
-      paths:
-        - builddir/
 
 test-parser:
   stage: test
   script:
     - ./tests/parser.sh
-  cache:
-    - key:
-      files:
-        - 42sh
-      paths:
-        - builddir/
