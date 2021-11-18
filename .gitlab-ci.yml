@@ -8,3 +8,8 @@ test-parser:
   stage: test
   script:
     - ./tests/parser.sh
+
+cache:
+  paths:
+    - 42sh
+    - builddir/
