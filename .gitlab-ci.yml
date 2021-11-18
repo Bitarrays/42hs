@@ -10,6 +10,7 @@ test-parser:
     - ./tests/parser.sh
 
 cache:
-  paths:
+  files:
     - 42sh
+  paths:
     - builddir/
