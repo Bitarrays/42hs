@@ -1,2 +1,2 @@
-# 42-sh Bitarrays
+# 42hs
 
