@@ -12,4 +12,6 @@ test-parser:
   stage: test
   needs: [build_job]
   script:
+    - apk add build-base && apk add make && apk add meson && apk add ninja
+    - make build
     - ./tests/parser.sh
