@@ -1,3 +1,5 @@
 .DS_Store
 *.o
 tmp/
+42sh
+doc/

@@ -2,16 +2,16 @@ cache:
   paths:
     - 42sh
 
-build_job:
-  stage: build
-  script:
-    - apk add build-base && apk add make && apk add meson && apk add ninja
-    - make build
+# build_job:
+#   stage: build
+#   script:
+#     - apk add build-base && apk add make && apk add meson && apk add ninja
+#     - make build
 
-test-parser:
+echo_builtin:
   stage: test
-  needs: [build_job]
+  # needs: [build_job]
   script:
     - apk add build-base && apk add make && apk add meson && apk add ninja
     - make build
-    - ./tests/parser.sh
+    - ./tests/echo_builtin.sh
