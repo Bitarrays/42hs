@@ -1,12 +1,17 @@
 #ifndef LEXER_H
 #define LEXER_H
 
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 enum token_type
 {
     TOKEN_EOF
 };
 
-struct lexer_token 
+struct lexer_token
 {
     enum token_type type;
     char *value;
@@ -16,7 +21,7 @@ struct lexer_token
 /**
  *  @var lexer::input
  *  Member 'input' contains the input string.
- *  @var lexer::tokens 
+ *  @var lexer::tokens
  *  Member 'tokens' contains the head of the list of tokens.
  *  @var lexer::tail
  *  Member 'tail' contains the last token of the list.
