@@ -25,6 +25,7 @@ struct ast
     struct ast *condition;
 };
 
+<<<<<<< HEAD
 /**
  ** \brief Allocate a new ast with the given type
  */
@@ -36,3 +37,6 @@ struct ast *ast_new(enum ast_type type);
 void ast_free(struct ast *ast);
 
 #endif /* !AST_H */
+=======
+#endif /* !AST_H */
+>>>>>>> cd1d22fd7cf3f1eaca085d9d07675fa2a3576022

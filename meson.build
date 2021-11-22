@@ -15,11 +15,13 @@ add_project_arguments(cflags, language: 'c')
 incdirs = [
   include_directories('src/lexer'),
   include_directories('src/parser'),
+  include_directories('src/shell_input'),
 ]
 
 common = [
   'src/lexer/lexer.c',
   'src/parser/parser.c',
+  'src/shell_input/shell_input.c',
 ]
 
 token_printer = executable(
