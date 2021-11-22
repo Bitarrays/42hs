@@ -162,14 +162,22 @@ static void word_lexer(struct lexer *lexer, char *input)
     free(input);
 }
 
+static char *get_token_string(enum token_type type)
+{
+    char *token_string[] = { "ERROR", "IF",        "ELIF",    "ELSE", "FI",
+                             "THEN",  "SEMICOLON", "NEWLINE", "WORD", "EOF" };
+    return token_string[type];
+}
+
 void lexer_print(struct lexer *lexer)
 {
     struct lexer_token *token = lexer->tokens;
     while (token)
     {
-        printf("%d\n", token->type);
+        printf("%s ", get_token_string(token->type));
         token = token->next;
     }
+    printf("\n");
 }
 
 void lexer_build(struct lexer *lexer)

@@ -31,8 +31,7 @@ void afterBackslash(char *toCheck, int *index)
         putchar('\\');
 }
 
-
-//Pour l'instant je ne retourne pas d'erreur donc je passe echo en void
+// Pour l'instant je ne retourne pas d'erreur donc je passe echo en void
 void echo(char *toPrint, enum flags_echo flag)
 {
     if (flag == E_OPTIONS)
