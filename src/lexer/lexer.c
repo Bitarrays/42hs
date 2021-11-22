@@ -1,5 +1,12 @@
 #include "lexer.h"
 
+struct lexer_token *lexer_token_free(struct lexer_token *token)
+{
+    free(token->value);
+    free(token);
+    return NULL;
+}
+
 static char **split_in_words(char *input)
 {
     // strdup or use input and &input in strtok_r
@@ -64,8 +71,7 @@ void lexer_free(struct lexer *lexer)
     while (token)
     {
         struct lexer_token *next = token->next;
-        free(token->value);
-        free(token);
+        lexer_token_free(token);
         token = next;
     }
     free(lexer->input);
@@ -102,9 +108,9 @@ static bool is_separator(char c)
 static enum token_type get_separator(char c)
 {
     if (c == ';')
-        return TOKEN_SEPARATOR;
+        return TOKEN_SEMICOLON;
     if (c == '\n')
-        return TOKEN_EOF;
+        return TOKEN_NEWLINE;
     return TOKEN_ERROR;
 }
 
@@ -120,7 +126,8 @@ static void word_lexer(struct lexer *lexer, char *input)
             if (word)
             {
                 word[word_pos] = 0;
-                struct lexer_token *token = calloc(1, sizeof(struct lexer_token));
+                struct lexer_token *token =
+                    calloc(1, sizeof(struct lexer_token));
                 token->type = is_keyword(word) ? get_keyword(word) : TOKEN_WORD;
                 token->value = word;
                 word = NULL;
@@ -169,6 +176,9 @@ void lexer_build(struct lexer *lexer)
     {
         word_lexer(lexer, words[i]);
     }
+    struct lexer_token *token = calloc(1, sizeof(struct lexer_token));
+    token->type = TOKEN_EOF;
+    lexer_append(lexer, token);
     lexer_print(lexer);
     free(words);
 }
