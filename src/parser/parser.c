@@ -1,11 +1,12 @@
 #include "parser.h"
-#include "../lexer/lexer.h"
 
 #include <err.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdio.h>
 
-static enum parser_status handle_parser_error(enum parser_status status, struct ast **res)
+static enum parser_status handle_parser_error(enum parser_status status,
+                                              struct ast **res)
 {
     warnx("Parser: unexpected token");
     ast_free(*res);
@@ -23,11 +24,22 @@ enum parser_status parse_input(char *input)
     // Try compound_list EOF
     if (parse_compound_list(&ast, lex) == PARSER_OK)
     {
-        if (lexer_peek(lex) == TOKEN_EOF)
+        if (lexer_peek(lex)->type == TOKEN_EOF)
         {
-            lexer_free(lex);
+            // lexer_free(lex);
 
             // TODO: call evaluation function with ast
+
+            // printf("ast type: %d\n", ast->type);
+            // if (ast->right_child)
+            //     printf("right child: %d\n", ast->right_child->type);
+            // if (ast->left_child)
+            // {
+            //     printf("left child: %d\n", ast->left_child->type);
+            //     if (ast->left_child->right_child)
+            //         printf("left->right child: %d\n",
+            //         ast->left_child->right_child->type);
+            // }
 
             ast_free(ast);
             return PARSER_OK;
@@ -35,7 +47,7 @@ enum parser_status parse_input(char *input)
     }
 
     // Try EOF
-    if (lexer_peek(lex) == TOKEN_EOF)
+    if (lexer_peek(lex)->type == TOKEN_EOF)
     {
         lexer_free(lex);
 
@@ -46,13 +58,14 @@ enum parser_status parse_input(char *input)
     }
 
     lexer_free(lex);
-    return handle_parser_error(PARSER_ERROR, ast);
+    return handle_parser_error(PARSER_ERROR, &ast);
 }
 
 enum parser_status parse_compound_list(struct ast **ast, struct lexer *lexer)
 {
     // Try and_or
-    enum parser_status status_and_or = parse_and_or(&(*ast)->right_child, lexer);
+    enum parser_status status_and_or =
+        parse_and_or(&(*ast)->right_child, lexer);
     if (status_and_or == PARSER_ERROR)
         return handle_parser_error(status_and_or, ast);
 
@@ -92,14 +105,16 @@ enum parser_status parse_simple_command(struct ast **ast, struct lexer *lexer)
     // Try WORD*
     while (tok->type == TOKEN_WORD)
     {
-        if (first)
+        if (!first)
         {
-            first = false;
             value_len++;
             value = realloc(value, (value_len + 1) * sizeof(char));
             value[value_len - 1] = ' ';
             value[value_len] = '\0';
         }
+        else
+            first = false;
+
         value_len += strlen(tok->value);
         value = realloc(value, (value_len + 1) * sizeof(char));
         value = strcat(value, tok->value);
@@ -111,6 +126,7 @@ enum parser_status parse_simple_command(struct ast **ast, struct lexer *lexer)
 
     *ast = ast_new(AST_COMMAND);
     (*ast)->value = value;
+    printf("Command: %s\n", value);
 
     return PARSER_OK;
 }
@@ -126,18 +142,20 @@ enum parser_status parse_command(struct ast **ast, struct lexer *lexer)
     enum parser_status status;
 
     // Try simple_command
-    if ((status = parse_simple_command(&ast_simple_command, lexer)) == PARSER_OK)
+    if ((status = parse_simple_command(&ast_simple_command, lexer))
+        == PARSER_OK)
     {
-        ast = &ast_simple_command;
+        *ast = ast_simple_command;
         return status;
     }
     ast_free(ast_simple_command);
 
     // Try shell_command
     // struct ast *ast_shell_command;
-    // if ((status = parse_shell_command(&ast_shell_command, lexer)) == PARSER_OK)
+    // if ((status = parse_shell_command(&ast_shell_command, lexer)) ==
+    // PARSER_OK)
     // {
-    //     ast = &ast_shell_command;
+    //     *ast = ast_shell_command;
     //     return status;
     // }
     // ast_free(ast_shell_command);
