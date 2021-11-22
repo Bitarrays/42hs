@@ -27,6 +27,7 @@ struct lexer *lexer_create(char *input)
     lexer->input = input;
     lexer->tail = NULL;
     lexer->tokens = NULL;
+    return lexer;
 }
 
 struct lexer_token *lexer_peek(struct lexer *lexer)
