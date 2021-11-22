@@ -1,7 +1,7 @@
 #ifndef AST_H
 #define AST_H
 
-enum AST_NODE
+enum ast_type
 {
     AST_COMMAND = 0,
     AST_LIST, // < ('\n')* and_or ((';'|'\n') ('\n')* and_or)* [(';'|'\n') ('\n')*]
@@ -18,11 +18,21 @@ enum AST_NODE
 
 struct ast
 {
-    enum AST_NODE type;
+    enum ast_type type;
     char *value;
     struct ast *left_child;
     struct ast *right_child;
     struct ast *condition;
 };
+
+/**
+ ** \brief Allocate a new ast with the given type
+ */
+struct ast *ast_new(enum ast_type type);
+
+/**
+ ** \brief Recursively free the given ast
+ */
+void ast_free(struct ast *ast);
 
 #endif /* !AST_H */
