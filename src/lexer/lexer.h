@@ -71,4 +71,11 @@ struct lexer_token *lexer_pop(struct lexer *lexer);
 */
 void append(struct lexer *lexer, struct lexer_token *token);
 
+/**
+** \brief Free a lexer, all the tokens and tokens values.
+**
+** \param lexer the lexer.
+*/
+void lexer_free(struct lexer *lexer);
+
 #endif // !LEXER_H

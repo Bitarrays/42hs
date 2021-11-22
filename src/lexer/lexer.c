@@ -20,3 +20,51 @@
     free(new);
     return words;
 }
+
+struct lexer *lexer_create(char *input)
+{
+    struct lexer *lexer = calloc(1, sizeof(struct lexer));
+    lexer->input = input;
+    lexer->tail = NULL;
+    lexer->tokens = NULL;
+}
+
+struct lexer_token *lexer_peek(struct lexer *lexer)
+{
+    return lexer->tokens;
+}
+
+struct lexer_token *lexer_pop(struct lexer *lexer)
+{
+    struct lexer_token *token = lexer->tokens;
+    lexer->tokens = lexer->tokens->next;
+    return token;
+}
+
+void append(struct lexer *lexer, struct lexer_token *token)
+{
+    token->next = NULL;
+    if (lexer->tail)
+    {
+        lexer->tail->next = token;
+        lexer->tail = token;
+    }
+    else
+    {
+        lexer->tokens = token;
+        lexer->tail = token;
+    }
+}
+
+void lexer_free(struct lexer *lexer)
+{
+    struct lexer_token *token = lexer->tokens;
+    while (token)
+    {
+        struct lexer_token *next = token->next;
+        free(token->value);
+        free(token);
+        token = next;
+    }
+    free(lexer);
+}
