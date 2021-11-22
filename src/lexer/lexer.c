@@ -1,9 +1,10 @@
 #include "lexer.h"
 
-/*static */char **split_in_words(char *input)
+static char **split_in_words(char *input)
 {
     // strdup or use input and &input in strtok_r
     char *new = strdup(input);
+    char *save = new;
     char **words = NULL;
     int words_nb = 0;
     char spaces[3] = " \t";
@@ -17,7 +18,7 @@
         words_nb++;
     }
     words[words_nb] = NULL;
-    free(new);
+    free(save);
     return words;
 }
 
@@ -42,7 +43,7 @@ struct lexer_token *lexer_pop(struct lexer *lexer)
     return token;
 }
 
-void append(struct lexer *lexer, struct lexer_token *token)
+void lexer_append(struct lexer *lexer, struct lexer_token *token)
 {
     token->next = NULL;
     if (lexer->tail)
@@ -67,5 +68,107 @@ void lexer_free(struct lexer *lexer)
         free(token);
         token = next;
     }
+    free(lexer->input);
     free(lexer);
+}
+
+static bool is_keyword(char *word)
+{
+    return (!strcmp(word, "if") || !strcmp(word, "else")
+            || !strcmp(word, "elif") || !strcmp(word, "fi")
+            || !strcmp(word, "then"));
+}
+
+static enum token_type get_keyword(char *word)
+{
+    if (!strcmp(word, "if"))
+        return TOKEN_IF;
+    if (!strcmp(word, "else"))
+        return TOKEN_ELSE;
+    if (!strcmp(word, "elif"))
+        return TOKEN_ELIF;
+    if (!strcmp(word, "fi"))
+        return TOKEN_FI;
+    if (!strcmp(word, "then"))
+        return TOKEN_THEN;
+    return TOKEN_ERROR;
+}
+
+static bool is_separator(char c)
+{
+    return (c == ';' || c == '\n');
+}
+
+static enum token_type get_separator(char c)
+{
+    if (c == ';')
+        return TOKEN_SEPARATOR;
+    if (c == '\n')
+        return TOKEN_EOF;
+    return TOKEN_ERROR;
+}
+
+static void word_lexer(struct lexer *lexer, char *input)
+{
+    int j = 0;
+    char *word = NULL;
+    int word_pos = 0;
+    while (input[j])
+    {
+        if (is_separator(input[j]))
+        {
+            if (word)
+            {
+                word[word_pos] = 0;
+                struct lexer_token *token = calloc(1, sizeof(struct lexer_token));
+                token->type = is_keyword(word) ? get_keyword(word) : TOKEN_WORD;
+                token->value = word;
+                word = NULL;
+                word_pos = 0;
+                lexer_append(lexer, token);
+            }
+            struct lexer_token *token = calloc(1, sizeof(struct lexer_token));
+            token->type = get_separator(input[j]);
+            token->value = NULL;
+            lexer_append(lexer, token);
+        }
+        else
+        {
+            word = realloc(word, (word_pos + 2) * sizeof(char));
+            word[word_pos++] = input[j];
+        }
+        j++;
+    }
+    if (word)
+    {
+        word[word_pos] = 0;
+        struct lexer_token *token = calloc(1, sizeof(struct lexer_token));
+        token->type = is_keyword(word) ? get_keyword(word) : TOKEN_WORD;
+        token->value = word;
+        word = NULL;
+        word_pos = 0;
+        lexer_append(lexer, token);
+    }
+    free(input);
+}
+
+void lexer_print(struct lexer *lexer)
+{
+    struct lexer_token *token = lexer->tokens;
+    while (token)
+    {
+        printf("%d\n", token->type);
+        token = token->next;
+    }
+}
+
+void lexer_build(struct lexer *lexer)
+{
+    char **words = split_in_words(lexer->input);
+    for (int i = 0; words[i]; i++)
+    {
+        word_lexer(lexer, words[i]);
+    }
+    lexer_print(lexer);
+    free(words);
 }

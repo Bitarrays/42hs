@@ -1,6 +1,7 @@
 #ifndef LEXER_H
 #define LEXER_H
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,6 +9,14 @@
 
 enum token_type
 {
+    TOKEN_ERROR,
+    TOKEN_IF,
+    TOKEN_ELSE,
+    TOKEN_ELIF,
+    TOKEN_FI,
+    TOKEN_THEN,
+    TOKEN_SEPARATOR,
+    TOKEN_WORD,
     TOKEN_EOF
 };
 
@@ -69,7 +78,7 @@ struct lexer_token *lexer_pop(struct lexer *lexer);
 ** \param lexer the lexer.
 ** \param token the token to append.
 */
-void append(struct lexer *lexer, struct lexer_token *token);
+void lexer_append(struct lexer *lexer, struct lexer_token *token);
 
 /**
 ** \brief Free a lexer, all the tokens and tokens values.
