@@ -48,6 +48,7 @@ struct lexer
     char *input;
     struct lexer_token *tokens;
     struct lexer_token *tail;
+    struct lexer_token *head;
 };
 
 /**
@@ -94,5 +95,20 @@ void lexer_append(struct lexer *lexer, struct lexer_token *token);
 ** @param lexer the lexer.
 */
 void lexer_free(struct lexer *lexer);
+
+/**
+ * @brief Set token as head of the token_list.
+ *
+ * @param lexer the lexer.
+ * @param token the new head of the token_list.
+ */
+void lexer_go_back(struct lexer *lexer, struct lexer_token *token);
+
+/**
+ * @brief Print each token in the token_list.
+ * 
+ * @param lexer a lexer.
+ */
+void lexer_print(struct lexer *lexer);
 
 #endif // !LEXER_H

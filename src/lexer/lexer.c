@@ -34,19 +34,20 @@ struct lexer *lexer_create(char *input)
     struct lexer *lexer = calloc(1, sizeof(struct lexer));
     lexer->input = input;
     lexer->tail = NULL;
+    lexer->head = NULL;
     lexer->tokens = NULL;
     return lexer;
 }
 
 struct lexer_token *lexer_peek(struct lexer *lexer)
 {
-    return lexer->tokens;
+    return lexer->head;
 }
 
 struct lexer_token *lexer_pop(struct lexer *lexer)
 {
-    struct lexer_token *token = lexer->tokens;
-    lexer->tokens = lexer->tokens->next;
+    struct lexer_token *token = lexer->head;
+    lexer->head = lexer->head->next;
     return token;
 }
 
@@ -74,6 +75,8 @@ void lexer_free(struct lexer *lexer)
         lexer_token_free(token);
         token = next;
     }
+    lexer->head = NULL;
+    lexer->tail = NULL;
     free(lexer->input);
     free(lexer);
 }
@@ -159,14 +162,22 @@ static void word_lexer(struct lexer *lexer, char *input)
     free(input);
 }
 
+static char *get_token_string(enum token_type type)
+{
+    char *token_string[] = { "ERROR", "IF",        "ELIF",    "ELSE", "FI",
+                             "THEN",  "SEMICOLON", "NEWLINE", "WORD", "EOF" };
+    return token_string[type];
+}
+
 void lexer_print(struct lexer *lexer)
 {
     struct lexer_token *token = lexer->tokens;
     while (token)
     {
-        printf("%d\n", token->type);
+        printf("%s ", get_token_string(token->type));
         token = token->next;
     }
+    printf("\n");
 }
 
 void lexer_build(struct lexer *lexer)
@@ -181,4 +192,9 @@ void lexer_build(struct lexer *lexer)
     lexer_append(lexer, token);
     lexer_print(lexer);
     free(words);
+}
+
+void lexer_go_back(struct lexer *lexer, struct lexer_token *token)
+{
+    lexer->head = token;
 }

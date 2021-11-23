@@ -31,11 +31,10 @@ void afterBackslash(char *toCheck, int *index)
         putchar('\\');
 }
 
-
-//Pour l'instant je ne retourne pas d'erreur donc je passe echo en void
+// Pour l'instant je ne retourne pas d'erreur donc je passe echo en void
 void echo(char *toPrint, enum flags_echo flag)
 {
-    if (flag == E_OPTIONS)
+    if (flag == E_OPTION)
     {
         for (int i = 0; toPrint[i] != '\0'; i++)
         {
@@ -51,8 +50,12 @@ void echo(char *toPrint, enum flags_echo flag)
             putchar(toPrint[i]);
     }
 
-    if (flag == N_OPTIONS || flag == N_E_OPTIONS)
-        printf("%s", toPrint);
-    else
-        printf("%s\n", toPrint);
+    if (flag != N_OPTION && flag != N_E_OPTIONS)
+        printf("\n");
+}
+
+int main(int argc, char **argv)
+{
+    enum flags_echo flags = E_OPTION;
+    echo(argv[1], flags);
 }

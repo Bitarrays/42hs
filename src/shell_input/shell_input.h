@@ -11,10 +11,10 @@
 
 /**
  * @brief Get the input for the shell and send it to the lexer
- * 
+ *
  * @param argc number of arguments
  * @param argv list of arguments
- * @return int 
+ * @return int
  */
 int get_input(int argc, char **argv);
 
