@@ -192,6 +192,7 @@ void lexer_build(struct lexer *lexer)
     lexer_append(lexer, token);
     lexer_print(lexer);
     free(words);
+    lexer->head = lexer->tokens;
 }
 
 void lexer_go_back(struct lexer *lexer, struct lexer_token *token)
