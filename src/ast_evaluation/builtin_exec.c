@@ -24,6 +24,7 @@ int call_echo(char *cmd)
         i++;
     }
     echo(cmd + i, flag);
+    return 0;
 }
 
 int call_builtin(char *cmd)
