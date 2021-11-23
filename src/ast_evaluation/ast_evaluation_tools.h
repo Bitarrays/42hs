@@ -3,4 +3,6 @@
 
 // include builtin
 
+int call_builtin(char *cmd);
+
 #endif /* !AST_EVALUATION_TOOLS_H */
