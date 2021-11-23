@@ -3,9 +3,9 @@
 
 enum flags_echo
 {
-    NO_OPTIONS = 0,
-    E_OPTIONS,
-    N_OPTIONS,
+    NO_OPTION = 0,
+    E_OPTION,
+    N_OPTION,
     N_E_OPTIONS,
 };
 
