@@ -3,7 +3,7 @@
 
 #include "../parser/ast.h" // refaire plus propre
 #include "ast_evaluation_tools.h"
-// include builtin
-int evaluate_ast(struct lexer *ast);
+
+int evaluate_ast(struct ast *ast);
 
 #endif /* !AST_EVALUATION_H */
