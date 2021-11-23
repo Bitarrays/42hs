@@ -15,7 +15,8 @@ enum token_type
     TOKEN_ELIF,
     TOKEN_FI,
     TOKEN_THEN,
-    TOKEN_SEPARATOR,
+    TOKEN_SEMICOLON,
+    TOKEN_NEWLINE,
     TOKEN_WORD,
     TOKEN_EOF
 };
@@ -26,6 +27,13 @@ struct lexer_token
     char *value;
     struct lexer_token *next;
 };
+
+/**
+ * @brief free an allocated token.
+ *
+ * @param token the token to free.
+ */
+struct lexer_token *lexer_token_free(struct lexer_token *token);
 
 /**
  *  @var lexer::input
@@ -40,51 +48,67 @@ struct lexer
     char *input;
     struct lexer_token *tokens;
     struct lexer_token *tail;
+    struct lexer_token *head;
 };
 
 /**
-** \brief Allocate and init a new lexer.
-** \param input the string to use as input stream.
+** @brief Allocate and init a new lexer.
+** @param input the string to use as input stream.
 */
 struct lexer *lexer_create(char *input);
 
 /**
-** \brief Fill the token list by creating all the tokens from
+** @brief Fill the token list by creating all the tokens from
 ** the given string.
 **
-** \param lexer an empty lexer.
+** @param lexer an empty lexer.
 */
 void lexer_build(struct lexer *lexer);
 
 /**
-** \brief Return the next token without consume it.
+** @brief Return the next token without consume it.
 **
 ** \return the next token from the input stream
-** \param lexer the lexer to lex from
+** @param lexer the lexer to lex from
 */
 struct lexer_token *lexer_peek(struct lexer *lexer);
 
 /**
-** \brief Return and consume the next token from the input stream.
+** @brief Return and consume the next token from the input stream.
 **
 ** \return the next token from the input stream
-** \param lexer the lexer to lex from
+** @param lexer the lexer to lex from
 */
 struct lexer_token *lexer_pop(struct lexer *lexer);
 
 /**
-** \brief Append a new token to the token_list of the lexer.
+** @brief Append a new token to the token_list of the lexer.
 **
-** \param lexer the lexer.
-** \param token the token to append.
+** @param lexer the lexer.
+** @param token the token to append.
 */
 void lexer_append(struct lexer *lexer, struct lexer_token *token);
 
 /**
-** \brief Free a lexer, all the tokens and tokens values.
+** @brief Free a lexer, all the tokens and tokens values.
 **
-** \param lexer the lexer.
+** @param lexer the lexer.
 */
 void lexer_free(struct lexer *lexer);
+
+/**
+ * @brief Set token as head of the token_list.
+ *
+ * @param lexer the lexer.
+ * @param token the new head of the token_list.
+ */
+void lexer_go_back(struct lexer *lexer, struct lexer_token *token);
+
+/**
+ * @brief Print each token in the token_list.
+ * 
+ * @param lexer a lexer.
+ */
+void lexer_print(struct lexer *lexer);
 
 #endif // !LEXER_H
