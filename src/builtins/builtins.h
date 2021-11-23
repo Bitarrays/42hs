@@ -9,6 +9,28 @@ enum flags_echo
     N_E_OPTIONS,
 };
 
+enum flags_cd
+{
+    NO_OPTION = 0,
+    L_OPTION,
+    P_OPTION,
+    L_P_OPTIONS,
+};
+
+enum flags_export
+{
+    NO_OPTION = 0,
+    P_OPTION,
+};
+
+enum flags_unset
+{
+    NO_OPTION = 0,
+    V_OPTION,
+    F_OPTION,
+    V_F_OPTIONS,
+};
+
 // Pour l'instant echo ne retourne aucune erreurs car tout les cas
 // semble se gérer seul pour le moment. A voir ce brice m'envoie.
 /**

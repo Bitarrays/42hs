@@ -53,9 +53,3 @@ void echo(char *toPrint, enum flags_echo flag)
     if (flag != N_OPTION && flag != N_E_OPTIONS)
         printf("\n");
 }
-
-int main(int argc, char **argv)
-{
-    enum flags_echo flags = E_OPTION;
-    echo(argv[1], flags);
-}
