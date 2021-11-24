@@ -5,6 +5,8 @@
 #include <stddef.h>
 #include <stdio.h>
 
+void pretty_print(struct ast *ast);
+
 static enum parser_status handle_parser_error(enum parser_status status,
                                               struct ast **res)
 {
@@ -38,22 +40,23 @@ enum parser_status parse_input(char *input)
             // lexer_free(lex);
 
             // TODO: call evaluation function with ast
+            pretty_print(ast);
 
-            printf("ast type: %d\n", ast->type);
-            if (ast->right_child)
-            {
-                printf("right child: %d\n", ast->right_child->type);
-                // printf("right->left child: %d\n",ast->right_child->left_child->type);
-                // printf("right->left->right child: %s\n",ast->right_child->left_child->right_child->value);
-                // printf("right->condition child: %s\n",ast->right_child->condition->right_child->value);
-            }
-            if (ast->left_child)
-            {
-                printf("left child: %d\n", ast->left_child->type);
-                if (ast->left_child->right_child)
-                    printf("left->right child: %d\n",
-                    ast->left_child->right_child->type);
-            }
+            // printf("ast type: %d\n", ast->type);
+            // if (ast->right_child)
+            // {
+            //     printf("right child: %d\n", ast->right_child->type);
+            //     // printf("right->left child: %d\n",ast->right_child->left_child->type);
+            //     // printf("right->left->right child: %s\n",ast->right_child->left_child->right_child->value);
+            //     // printf("right->condition child: %s\n",ast->right_child->condition->right_child->value);
+            // }
+            // if (ast->left_child)
+            // {
+            //     printf("left child: %d\n", ast->left_child->type);
+            //     if (ast->left_child->right_child)
+            //         printf("left->right child: %d\n",
+            //         ast->left_child->right_child->type);
+            // }
 
             ast_free(ast);
             return PARSER_OK;
