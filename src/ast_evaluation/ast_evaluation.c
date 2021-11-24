@@ -56,8 +56,10 @@ int evaluate_ast(struct ast *ast)
     }
     else if (ast->type == AST_LIST)
     {
-        evaluate_ast(ast->right_child);
-        return evaluate_ast(ast->left_child);
+        int r = evaluate_ast(ast->right_child);
+        if (ast->left_child && ast->left_child->type != AST_EOF)
+            return evaluate_ast(ast->left_child);
+        return r;
     }
     else
     {
