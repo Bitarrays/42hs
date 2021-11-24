@@ -178,6 +178,7 @@ static char *get_token_string(enum token_type type)
 
 void lexer_print(struct lexer *lexer)
 {
+    printf("lexer output: ");
     struct lexer_token *token = lexer->tokens;
     while (token)
     {
