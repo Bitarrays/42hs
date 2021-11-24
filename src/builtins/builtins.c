@@ -97,7 +97,7 @@ int find_command(char **toExecute)
         return 1;
 }
 
-int main()
+/*int main()
 {
     char **toExecute = malloc(sizeof(char *) * 10);
     toExecute[0] = "echo";
@@ -111,4 +111,4 @@ int main()
     free(toExecute);
 
     return 0;
-}
+}*/
