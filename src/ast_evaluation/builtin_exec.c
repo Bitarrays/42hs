@@ -7,13 +7,19 @@
  * The main objectif of this source code is to call the builtin implemented
  * inside of the 42sh project
  */
-#include <stdio.h>
 
-int call_echo(char *cmd)
+int is_builtin(char *cmd)
+{
+    if (!strcmp(cmd, "echo"))
+        return 1;
+    return 0;
+}
+
+/*int call_echo(char *cmd)
 {
     int i = 0;
     // int flag = 0;
-    /*while (cmd[i] != '\0')
+    while (cmd[i] != '\0')
     {
         while (!(cmd[i] > ' '))
             i++;
@@ -25,14 +31,14 @@ int call_echo(char *cmd)
                 flag += 2;
         if (!strcmp(cmd, "-ne", i))
             flag = 3;
-    }*/
+    }
 
     printf("%s\n", cmd);
     echo(cmd + i, 1);
     return 0;
-}
+}*/
 
-int call_builtin(char *cmd)
+/*int call_builtin(char **cmd)
 {
     int i = 0;
     while (cmd[i] != ' ')
@@ -42,4 +48,4 @@ int call_builtin(char *cmd)
         return call_echo(cmd + i);
     }
     return 0;
-}
+}*/

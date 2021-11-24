@@ -3,6 +3,8 @@
 
 // include builtin
 
-int call_builtin(char *cmd);
+// int call_builtin(char *cmd);
+int is_builtin(char *);
+int call_exec(char **cmd);
 
 #endif /* !AST_EVALUATION_TOOLS_H */

@@ -49,7 +49,7 @@ void pretty_print(struct ast *ast)
             pretty_print(ast->right_child);
             printf("}");
         }
-        else if (ast->type == AST_AND)
+        else if (ast->type == AST_OR)
         {
             printf("{ ");
             pretty_print(ast->left_child);
