@@ -117,7 +117,36 @@ static enum token_type get_separator(char c)
     return TOKEN_ERROR;
 }
 
-static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd)
+static bool is_quote(char c)
+{
+    return (c == '\'' || c == '\"');
+}
+
+static enum token_type get_quote(char c)
+{
+    if (c == '\'')
+        return TOKEN_WORD_SINGLE_QUOTE;
+    if (c == '\"')
+        return TOKEN_WORD_DOUBLE_QUOTE;
+    return TOKEN_ERROR;
+}
+
+static void create_token_and_append(char *word, int word_pos, bool *in_cmd, struct lexer *lexer, enum token_type *word_type)
+{
+    word[word_pos] = 0;
+    struct lexer_token *token =
+        calloc(1, sizeof(struct lexer_token));
+    token->type = is_keyword(word) && !(*in_cmd) ? get_keyword(word)
+                                                    : *word_type;
+    if (token->type < TOKEN_WORD)
+        *in_cmd = true;
+    token->value = word;
+    word = NULL;
+    word_pos = 0;
+    lexer_append(lexer, token);
+}
+
+static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd, enum token_type *word_type)
 {
     int j = 0;
     char *word = NULL;
@@ -128,23 +157,22 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd)
         {
             if (word)
             {
-                word[word_pos] = 0;
-                struct lexer_token *token =
-                    calloc(1, sizeof(struct lexer_token));
-                token->type = is_keyword(word) && !(*in_cmd) ? get_keyword(word)
-                                                             : TOKEN_WORD;
-                if (token->type != TOKEN_WORD)
-                    *in_cmd = true;
-                token->value = word;
+                create_token_and_append(word, word_pos, in_cmd, lexer, word_type);
                 word = NULL;
                 word_pos = 0;
-                lexer_append(lexer, token);
             }
             struct lexer_token *token = calloc(1, sizeof(struct lexer_token));
             token->type = get_separator(input[j]);
             token->value = NULL;
             lexer_append(lexer, token);
             *in_cmd = false;
+        }
+        else if (is_quote(input[j]))
+        {
+            if (*word_type == TOKEN_WORD)
+                *word_type = get_quote(input[j]);
+            else if (get_quote(input[j]) == *word_type)
+                *word_type = TOKEN_WORD;
         }
         else
         {
@@ -155,16 +183,9 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd)
     }
     if (word)
     {
-        word[word_pos] = 0;
-        struct lexer_token *token = calloc(1, sizeof(struct lexer_token));
-        token->type =
-            is_keyword(word) && !(*in_cmd) ? get_keyword(word) : TOKEN_WORD;
-        if (token->type != TOKEN_WORD)
-            *in_cmd = true;
-        token->value = word;
+        create_token_and_append(word, word_pos, in_cmd, lexer, word_type);
         word = NULL;
         word_pos = 0;
-        lexer_append(lexer, token);
     }
     free(input);
 }
@@ -192,9 +213,10 @@ void lexer_build(struct lexer *lexer)
 {
     bool in_cmd = false;
     char **words = split_in_words(lexer->input);
+    enum token_type word_type = TOKEN_WORD;
     for (int i = 0; words[i]; i++)
     {
-        word_lexer(lexer, words[i], &in_cmd);
+        word_lexer(lexer, words[i], &in_cmd, &word_type);
     }
     struct lexer_token *token = calloc(1, sizeof(struct lexer_token));
     token->type = TOKEN_EOF;
