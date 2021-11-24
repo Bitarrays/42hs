@@ -9,7 +9,7 @@ static int shell_prompt(void)
     int input_len = 0;
     while (true)
     {
-        printf("42sh$ ");
+        printf("\033[1m\033[32m➜  \033[1m\033[36m42sh$ \033[0;37m");
         fflush(stdout);
         while (read(STDIN_FILENO, &c, 1) > 0)
         {
