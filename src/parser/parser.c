@@ -29,7 +29,9 @@ static enum parser_status add_eof_node(struct ast **ast)
 {
     struct ast *cur = *ast;
     while (cur && cur->left_child && cur->type == AST_LIST)
-    {}
+    {
+        cur = cur->left_child;
+    }
     if (!cur || cur->type != AST_LIST)
         return PARSER_ERROR;
 
@@ -41,7 +43,6 @@ enum parser_status parse_input(char *input)
 {
     struct lexer *lex = lexer_create(input);
     lexer_build(lex);
-    printf("Parser starting\n");
 
     struct ast *ast = ast_new(AST_LIST);
 
@@ -53,13 +54,12 @@ enum parser_status parse_input(char *input)
             if (add_eof_node(&ast) == PARSER_ERROR)
                 return display_parser_error(PARSER_ERROR, &ast);
 
-            // lexer_free(lex);
-
             pretty_print(ast);
             printf("\n");
             evaluate_ast(ast);
 
             ast_free(ast);
+            lexer_free(lex);
             return PARSER_OK;
         }
     }
@@ -67,12 +67,11 @@ enum parser_status parse_input(char *input)
     // Try EOF
     if (lexer_peek(lex)->type == TOKEN_EOF)
     {
-        // lexer_free(lex);
         ast_free(ast);
+        lexer_free(lex);
         return PARSER_OK;
     }
 
-    // lexer_free(lex);
     return display_parser_error(PARSER_ERROR, &ast);
 }
 
