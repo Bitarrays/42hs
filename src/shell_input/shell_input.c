@@ -7,9 +7,13 @@ static int shell_prompt(void)
     int c = '\n';
     char *input = NULL;
     int input_len = 0;
+    int err = 0;
     while (true)
     {
-        printf("\033[1m\033[32m➜  \033[1m\033[36m42sh$ \033[0;37m");
+        if (err)
+            printf("\033[1m\033[31m➜  \033[1m\033[36m42sh$ \033[0;37m");
+        else
+            printf("\033[1m\033[32m➜  \033[1m\033[36m42sh$ \033[0;37m");
         fflush(stdout);
         while (read(STDIN_FILENO, &c, 1) > 0)
         {
@@ -23,7 +27,7 @@ static int shell_prompt(void)
         if (!input)
             continue;
         input[input_len] = 0;
-        parse_input(input);
+        err = parse_input(input);
         free(input);
         input = NULL;
         input_len = 0;
