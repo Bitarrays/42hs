@@ -1,8 +1,8 @@
+#include "builtins.h"
+
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdbool.h>
-
-#include "builtins.h"
 
 void afterBackslash(char *toCheck, int *index)
 {
@@ -62,7 +62,6 @@ void echo(char **toExecute)
             if (toExecute[start_print + 1] != NULL)
                 putchar(' ');
         }
-        
     }
     else
     {
@@ -70,7 +69,7 @@ void echo(char **toExecute)
         {
             for (int i = 0; toExecute[start_print][i] != '\0'; i++)
                 putchar(toExecute[start_print][i]);
-            
+
             if (toExecute[start_print + 1] != NULL)
                 putchar(' ');
         }
@@ -89,5 +88,4 @@ int find_command(char **toExecute)
     }
     else
         return 1;
-
 }
