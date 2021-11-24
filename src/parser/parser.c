@@ -96,6 +96,7 @@ enum parser_status parse_compound_list(struct ast **ast, struct lexer *lexer)
         enum parser_status status = parse_and_or(&new_list->right_child, lexer);
         if (status == PARSER_ERROR)
         {
+            ast_free(new_list);
             lexer_go_back(lexer, save_tok);
             break;
         }
