@@ -72,6 +72,8 @@ enum parser_status parse_input(char *input)
         return PARSER_OK;
     }
 
+    ast_free(ast);
+    lexer_free(lex);
     return display_parser_error(PARSER_ERROR, &ast);
 }
 
