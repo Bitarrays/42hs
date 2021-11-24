@@ -36,7 +36,5 @@ int call_exec(char **cmd)
         return 1;
     }
 
-    printf("%d\n", WEXITSTATUS(cstatus));
-
     return WEXITSTATUS(cstatus);
 }
