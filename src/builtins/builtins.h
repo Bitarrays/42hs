@@ -1,44 +1,15 @@
 #ifndef BUILTINS_H
 #define BUILTINS_H
 
-enum flags_echo
-{
-    NO_OPTION = 0,
-    E_OPTION,
-    N_OPTION,
-    N_E_OPTIONS,
-};
-/*
-enum flags_cd
-{
-    NO_OPTION = 0,
-    L_OPTION,
-    P_OPTION,
-    L_P_OPTIONS,
-};
+#include "../lexer/lexer.h"
 
-enum flags_export
-{
-    NO_OPTION = 0,
-    P_OPTION,
-};
-
-enum flags_unset
-{
-    NO_OPTION = 0,
-    V_OPTION,
-    F_OPTION,
-    V_F_OPTIONS,
-};*/
-
-// Pour l'instant echo ne retourne aucune erreurs car tout les cas
-// semble se gérer seul pour le moment. A voir ce brice m'envoie.
 /**
- * @brief echo builtin with -e and -n options.
- *
- * @param toPrint : message that will be printed.
- * @param flags : option echo was called with.
+ * @brief : Check which builtin command is received and execute it.
+ * 
+ * @param toExecute : Builtin command starting from the bultin to the end
+ *                      of it's argument.
+ * @return int : 0 on success, 1 on failure.
  */
-void echo(char *toPrint, enum flags_echo flags);
+int find_command(char **toExecute);
 
 #endif
