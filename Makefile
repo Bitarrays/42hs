@@ -5,7 +5,7 @@ rebuild:
 	@cp builddir/42sh .
 	@echo "Done."
 
-build:
+build: clean
 	@echo "Building project..."
 	@rm -f 42sh
 	@meson setup builddir

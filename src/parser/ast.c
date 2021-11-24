@@ -14,6 +14,12 @@ void ast_free(struct ast *ast)
     if (ast == NULL)
         return;
 
+    if (ast->type == AST_COMMAND)
+    {
+        free(ast->value);
+        free(ast->enclosure);
+    }
+
     ast_free(ast->left_child);
     ast->left_child = NULL;
 

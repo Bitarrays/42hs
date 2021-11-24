@@ -29,9 +29,7 @@ static enum parser_status add_eof_node(struct ast **ast)
 {
     struct ast *cur = *ast;
     while (cur && cur->left_child && cur->type == AST_LIST)
-    {
-
-    }
+    {}
     if (!cur || cur->type != AST_LIST)
         return PARSER_ERROR;
 
@@ -120,10 +118,12 @@ enum parser_status parse_simple_command(struct ast **ast, struct lexer *lexer)
     struct lexer_token *tok = lexer_peek(lexer);
     bool first = true;
     char **args_exec = NULL;
+    enum quotes *enclosure = NULL;
     size_t value_len = 0;
 
     // Try WORD+
-    while (tok->type == TOKEN_WORD)
+    while (tok->type == TOKEN_WORD || tok->type == TOKEN_WORD_SINGLE_QUOTE
+           || tok->type == TOKEN_WORD_DOUBLE_QUOTE)
     {
         if (first)
             first = false;
@@ -133,6 +133,14 @@ enum parser_status parse_simple_command(struct ast **ast, struct lexer *lexer)
         args_exec[value_len] = NULL;
         args_exec[value_len - 1] = tok->value;
 
+        enclosure = realloc(enclosure, value_len * sizeof(enum quotes));
+        if (tok->type == TOKEN_WORD)
+            enclosure[value_len - 1] = Q_NONE;
+        else if (tok->type == TOKEN_WORD_SINGLE_QUOTE)
+            enclosure[value_len - 1] = Q_SINGLE;
+        else if (tok->type == TOKEN_WORD_DOUBLE_QUOTE)
+            enclosure[value_len - 1] = Q_DOUBLE;
+
         lexer_pop(lexer);
         tok = lexer_peek(lexer);
     }
@@ -141,6 +149,7 @@ enum parser_status parse_simple_command(struct ast **ast, struct lexer *lexer)
     {
         *ast = ast_new(AST_COMMAND);
         (*ast)->value = args_exec;
+        (*ast)->enclosure = enclosure;
     }
 
     return first ? PARSER_ERROR : PARSER_OK;

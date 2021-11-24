@@ -2,8 +2,8 @@
 
 #include <stdbool.h>
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 void afterBackslash(char *toCheck, int *index)
 {
@@ -44,7 +44,8 @@ void echo(char **toExecute)
             n_option = true;
         else if (!strcmp(toExecute[start_print], "-e") && !e_option)
             e_option = true;
-        else if (!strcmp(toExecute[start_print], "-ne") && !e_option && !n_option)
+        else if (!strcmp(toExecute[start_print], "-ne") && !e_option
+                 && !n_option)
         {
             e_option = true;
             n_option = true;

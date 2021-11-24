@@ -1,8 +1,9 @@
 #include "ast_evaluation.h"
-#include "../builtins/builtins.h"
 
 #include <stdio.h>
 #include <string.h>
+
+#include "../builtins/builtins.h"
 
 int evaluate_ast(struct ast *ast)
 {

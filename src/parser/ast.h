@@ -18,10 +18,19 @@ enum ast_type
     AST_EOF
 };
 
+enum quotes
+{
+    Q_NONE = 0,
+    Q_DOUBLE,
+    Q_SINGLE,
+    Q_BACKTICK
+};
+
 struct ast
 {
     enum ast_type type;
     char **value;
+    enum quotes *enclosure;
     struct ast *left_child;
     struct ast *right_child;
     struct ast *condition;
