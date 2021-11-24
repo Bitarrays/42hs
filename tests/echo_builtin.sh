@@ -13,7 +13,7 @@ success=0
 tests() {
     tests=$(($tests + 1))
     mkdir -p tmp
-    echo "$@" > tmp/test.sh
+    echo -n "$@" > tmp/test.sh
     cat tmp/test.sh | ./42sh 1>tmp/out.log 2>tmp/err_out.log
     out_res=$?
     cat tmp/test.sh | dash 1>tmp/ref.log 2>tmp/err_ref.log

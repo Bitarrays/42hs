@@ -4,7 +4,7 @@
 
 static int shell_prompt(void)
 {
-    int c;
+    int c = '\n';
     char *input = NULL;
     int input_len = 0;
     while (true)
