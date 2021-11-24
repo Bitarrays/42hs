@@ -77,7 +77,6 @@ void lexer_free(struct lexer *lexer)
     }
     lexer->head = NULL;
     lexer->tail = NULL;
-    free(lexer->input);
     free(lexer);
 }
 

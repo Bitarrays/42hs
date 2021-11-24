@@ -20,6 +20,8 @@ static int shell_prompt(void)
             input = realloc(input, (input_len + 2) * sizeof(char));
             input[input_len++] = c;
         }
+        if (!input)
+            continue;
         input[input_len] = 0;
         parse_input(input);
         free(input);
