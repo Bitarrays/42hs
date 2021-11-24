@@ -77,7 +77,6 @@ void lexer_free(struct lexer *lexer)
     }
     lexer->head = NULL;
     lexer->tail = NULL;
-    free(lexer->input);
     free(lexer);
 }
 
@@ -203,8 +202,8 @@ static char *get_token_string(enum token_type type)
 {
     char *token_string[] = { "ERROR",
                              "IF",
-                             "ELIF",
                              "ELSE",
+                             "ELIF",
                              "FI",
                              "THEN",
                              "SEMICOLON",
