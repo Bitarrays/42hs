@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 void afterBackslash(char *toCheck, int *index)
 {
@@ -35,14 +36,20 @@ void echo(char **toExecute)
 {
     bool n_option = false;
     bool e_option = false;
-    int start_print = 0;
+    int start_print = 1;
 
     for (; toExecute[start_print] != NULL; start_print++)
     {
-        if (!strcmp(toExecute[start_print], "-n"))
+        if (!strcmp(toExecute[start_print], "-n") && !n_option)
             n_option = true;
-        else if (!strcmp(toExecute[start_print], "-e"))
+        else if (!strcmp(toExecute[start_print], "-e") && !e_option)
             e_option = true;
+        else if (!strcmp(toExecute[start_print], "-ne") && !e_option && !n_option)
+        {
+            e_option = true;
+            n_option = true;
+            break;
+        }
         else
             break;
     }
@@ -88,4 +95,20 @@ int find_command(char **toExecute)
     }
     else
         return 1;
+}
+
+int main()
+{
+    char **toExecute = malloc(sizeof(char *) * 10);
+    toExecute[0] = "echo";
+    toExecute[1] = "-e";
+    toExecute[2] = "-n";
+    toExecute[3] = "test\n";
+    toExecute[4] = NULL;
+
+    find_command(toExecute);
+
+    free(toExecute);
+
+    return 0;
 }
