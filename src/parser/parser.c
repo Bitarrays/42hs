@@ -54,8 +54,8 @@ enum parser_status parse_input(char *input)
             if (add_eof_node(&ast) == PARSER_ERROR)
                 return display_parser_error(PARSER_ERROR, &ast);
 
-            pretty_print(ast);
-            printf("\n");
+            // pretty_print(ast);
+            // printf("\n");
             evaluate_ast(ast);
 
             ast_free(ast);
