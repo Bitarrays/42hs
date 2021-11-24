@@ -4,7 +4,7 @@
 
 static int shell_prompt(void)
 {
-    char c;
+    int c;
     char *input = NULL;
     int input_len = 0;
     while (true)
@@ -53,7 +53,7 @@ int get_input(int argc, char **argv)
     size_t input_len = 0;
     if (argc < 2)
     {
-        char c;
+        int c;
         if (!isatty(STDIN_FILENO))
         {
             while (read(STDIN_FILENO, &c, 1) > 0)

@@ -45,25 +45,6 @@ enum parser_status parse_input(char *input)
             printf("\n");
             evaluate_ast(ast);
 
-            // printf("ast type: %d\n", ast->type);
-            // if (ast->right_child)
-            // {
-            //     printf("right child: %d\n", ast->right_child->type);
-            //     // printf("right->left child:
-            //     %d\n",ast->right_child->left_child->type);
-            //     // printf("right->left->right child:
-            //     %s\n",ast->right_child->left_child->right_child->value);
-            //     // printf("right->condition child:
-            //     %s\n",ast->right_child->condition->right_child->value);
-            // }
-            // if (ast->left_child)
-            // {
-            //     printf("left child: %d\n", ast->left_child->type);
-            //     if (ast->left_child->right_child)
-            //         printf("left->right child: %d\n",
-            //         ast->left_child->right_child->type);
-            // }
-
             ast_free(ast);
             return PARSER_OK;
         }
@@ -125,26 +106,19 @@ enum parser_status parse_simple_command(struct ast **ast, struct lexer *lexer)
 {
     struct lexer_token *tok = lexer_peek(lexer);
     bool first = true;
-    char *value = calloc(1, sizeof(char));
+    char **args_exec = NULL;
     size_t value_len = 0;
 
-    // Try WORD*
+    // Try WORD+
     while (tok->type == TOKEN_WORD)
     {
-        if (!first)
-        {
-            value_len++;
-            value = realloc(value, (value_len + 1) * sizeof(char));
-            value[value_len - 1] = ' ';
-            value[value_len] = '\0';
-        }
-        else
+        if (first)
             first = false;
 
-        value_len += strlen(tok->value);
-        value = realloc(value, (value_len + 1) * sizeof(char));
-        value = strcat(value, tok->value);
-        value[value_len] = '\0';
+        value_len++;
+        args_exec = realloc(args_exec, (value_len + 1) * sizeof(char *));
+        args_exec[value_len] = NULL;
+        args_exec[value_len - 1] = tok->value;
 
         lexer_pop(lexer);
         tok = lexer_peek(lexer);
@@ -153,8 +127,7 @@ enum parser_status parse_simple_command(struct ast **ast, struct lexer *lexer)
     if (!first)
     {
         *ast = ast_new(AST_COMMAND);
-        (*ast)->value = value;
-        printf("Command: %s\n", value);
+        (*ast)->value = args_exec;
     }
 
     return first ? PARSER_ERROR : PARSER_OK;

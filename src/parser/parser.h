@@ -32,7 +32,7 @@ enum parser_status parse_compound_list(struct ast **ast, struct lexer *l);
 
 /**
  ** @brief Check if simple_command grammar rule is respected
- ** >> simple_command: WORD*
+ ** >> simple_command: WORD+
  **
  ** @param ast the general ast to update
  ** @param lexer the lexer to read tokens from

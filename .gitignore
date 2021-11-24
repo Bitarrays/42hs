@@ -3,3 +3,5 @@
 tmp/
 42sh
 doc/
+.vscode/
+builddir/

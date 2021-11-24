@@ -20,7 +20,7 @@ enum ast_type
 struct ast
 {
     enum ast_type type;
-    char *value;
+    char **value;
     struct ast *left_child;
     struct ast *right_child;
     struct ast *condition;
