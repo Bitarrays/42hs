@@ -67,8 +67,12 @@ void pretty_print(struct ast *ast)
         }*/
         else if (ast->type == AST_COMMAND)
         {
-            for (size_t i = 0; ast->value[i] != NULL; i++)
-                printf("%s", ast->value[i]);
+            if (ast->value[0])
+            {
+                printf("%s", ast->value[0]);
+                for (size_t i = 1; ast->value[i] != NULL; i++)
+                    printf(" %s", ast->value[i]);
+            }
         }
         else if (ast->type == AST_LIST)
         {
