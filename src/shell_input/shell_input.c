@@ -15,17 +15,25 @@ static int shell_prompt(void)
         else
             printf("\033[1m\033[32m➜  \033[1m\033[36m42sh$ \033[0;37m");
         fflush(stdout);
+        int line = 0;
         while (read(STDIN_FILENO, &c, 1) > 0)
         {
             if (c == EOF)
                 return 0;
             if (c == '\n')
+            {
+                line = 1;
                 break;
+            }
             input = realloc(input, (input_len + 2) * sizeof(char));
             input[input_len++] = c;
         }
         if (!input)
+        {
+            if (!line)
+                printf("\n");
             continue;
+        }
         input[input_len] = 0;
         err = parse_input(input);
         free(input);

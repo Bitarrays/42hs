@@ -244,7 +244,7 @@ void lexer_build(struct lexer *lexer)
     struct lexer_token *token = calloc(1, sizeof(struct lexer_token));
     token->type = TOKEN_EOF;
     lexer_append(lexer, token);
-    lexer_print(lexer);
+    // lexer_print(lexer);
     free(words);
     lexer->head = lexer->tokens;
 }
