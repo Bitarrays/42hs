@@ -117,7 +117,7 @@ static enum token_type get_separator(char c)
     return TOKEN_ERROR;
 }
 
-static void word_lexer(struct lexer *lexer, char *input)
+static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd)
 {
     int j = 0;
     char *word = NULL;
@@ -131,7 +131,9 @@ static void word_lexer(struct lexer *lexer, char *input)
                 word[word_pos] = 0;
                 struct lexer_token *token =
                     calloc(1, sizeof(struct lexer_token));
-                token->type = is_keyword(word) ? get_keyword(word) : TOKEN_WORD;
+                token->type = is_keyword(word) && !*in_cmd ? get_keyword(word) : TOKEN_WORD;
+                if (token->type != TOKEN_WORD)
+                    *in_cmd = true;
                 token->value = word;
                 word = NULL;
                 word_pos = 0;
@@ -141,6 +143,7 @@ static void word_lexer(struct lexer *lexer, char *input)
             token->type = get_separator(input[j]);
             token->value = NULL;
             lexer_append(lexer, token);
+            *in_cmd = false;
         }
         else
         {
@@ -153,7 +156,7 @@ static void word_lexer(struct lexer *lexer, char *input)
     {
         word[word_pos] = 0;
         struct lexer_token *token = calloc(1, sizeof(struct lexer_token));
-        token->type = is_keyword(word) ? get_keyword(word) : TOKEN_WORD;
+        token->type = is_keyword(word) && !*in_cmd ? get_keyword(word) : TOKEN_WORD;
         token->value = word;
         word = NULL;
         word_pos = 0;
@@ -182,16 +185,18 @@ void lexer_print(struct lexer *lexer)
 
 void lexer_build(struct lexer *lexer)
 {
+    bool in_cmd = false;
     char **words = split_in_words(lexer->input);
     for (int i = 0; words[i]; i++)
     {
-        word_lexer(lexer, words[i]);
+        word_lexer(lexer, words[i], &in_cmd);
     }
     struct lexer_token *token = calloc(1, sizeof(struct lexer_token));
     token->type = TOKEN_EOF;
     lexer_append(lexer, token);
     lexer_print(lexer);
     free(words);
+    lexer->head = lexer->tokens;
 }
 
 void lexer_go_back(struct lexer *lexer, struct lexer_token *token)
