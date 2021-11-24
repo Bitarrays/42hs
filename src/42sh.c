@@ -5,7 +5,7 @@
 
 int main(void)
 {
-    // return get_input(argc, argv);
+    return get_input(argc, argv);
     char *input = calloc(49, sizeof(char));
     strcpy(input, "if test then 42sh.c\n then echo '42sh.c exists'\n fi");
     struct lexer *lexer = lexer_create(input);
