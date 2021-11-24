@@ -24,8 +24,6 @@ void afterBackslash(char *toCheck, int *index)
             putchar(toCheck[*index]);
             break;
         }
-
-        *index += 1;
     }
     else
         putchar('\\');

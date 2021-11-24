@@ -8,7 +8,7 @@
  * The main objectif of this source code is to call some programe of the
  * computer using fork and exec
  */
-
+/*
 int call_exec(char *name)
 {
     pid_t cpid = fork();
@@ -36,4 +36,4 @@ int call_exec(char *name)
     }
 
     return 0;
-}
+}*/

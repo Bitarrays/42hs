@@ -1,4 +1,4 @@
-#infndef AST_EVALUATION_H
+#ifndef AST_EVALUATION_H
 #define AST_EVALUATION_H
 
 #include "../parser/ast.h" // refaire plus propre

@@ -8,9 +8,9 @@ int evaluate_ast(struct ast *ast)
     if (!ast)
         return 0;
 
-    if (ast->type == AST_COMMAND)
+    if (ast->type == AST_LIST)
     {
-        call_builtin(ast->value); // check return value
+        call_builtin(ast->right_child->value); // check return value
     }
     else
     {

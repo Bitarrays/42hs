@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 void pretty_print(struct ast *ast);
+int evaluate_ast(struct ast *ast);
 
 static enum parser_status handle_parser_error(enum parser_status status,
                                               struct ast **res)
@@ -42,6 +43,7 @@ enum parser_status parse_input(char *input)
             // TODO: call evaluation function with ast
             pretty_print(ast);
             printf("\n");
+            evaluate_ast(ast);
 
             // printf("ast type: %d\n", ast->type);
             // if (ast->right_child)

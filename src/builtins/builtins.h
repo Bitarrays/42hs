@@ -8,7 +8,7 @@ enum flags_echo
     N_OPTION,
     N_E_OPTIONS,
 };
-
+/*
 enum flags_cd
 {
     NO_OPTION = 0,
@@ -29,7 +29,7 @@ enum flags_unset
     V_OPTION,
     F_OPTION,
     V_F_OPTIONS,
-};
+};*/
 
 // Pour l'instant echo ne retourne aucune erreurs car tout les cas
 // semble se gérer seul pour le moment. A voir ce brice m'envoie.

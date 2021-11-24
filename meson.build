@@ -16,6 +16,8 @@ incdirs = [
   include_directories('src/lexer'),
   include_directories('src/parser'),
   include_directories('src/shell_input'),
+  include_directories('src/ast_evaluation'),
+  include_directories('src/builtins'),
 ]
 
 common = [
@@ -23,7 +25,12 @@ common = [
   'src/parser/parser.c',
   'src/parser/ast.c',
   'src/ast_evaluation/pretty_print.c',
+  'src/ast_evaluation/ast_evaluation.c',
+  'src/ast_evaluation/builtin_exec.c',
+  'src/ast_evaluation/inner_exec.c',
+  'src/ast_evaluation/prog_exec.c',
   'src/shell_input/shell_input.c',
+  'src/builtins/echo.c',
 ]
 
 token_printer = executable(
