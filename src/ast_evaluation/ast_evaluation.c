@@ -1,4 +1,5 @@
 #include "ast_evaluation.h"
+#include "../builtins/builtins.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -48,8 +49,7 @@ int evaluate_ast(struct ast *ast)
     else if (ast->type == AST_COMMAND)
     {
         if (is_builtin(*(ast->value)))
-            return 0;
-        return find_command(ast->value);
+            return find_command(ast->value);
         else
             return call_exec(ast->value);
     }
