@@ -19,7 +19,7 @@ int evaluate_ast(struct ast *ast)
     }
     else if (ast->type == AST_FOR)
     {
-        if (!astc->condition->left_child
+        if (!ast->condition->left_child
             && is_in(ast->condition->right_child->value))
             return 0; // add expend var
 

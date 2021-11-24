@@ -4,10 +4,11 @@
 
 int is_in(char **condition)
 {
-    while (condition[0] != '\0')
+    while ((*condition)[0] != '\0')
     {
-        if (!strcmp(condition++, "in"))
+        if (!strcmp(*condition, "in"))
             return 1;
+        condition++;
     }
     return 0;
 }
