@@ -49,7 +49,7 @@ int evaluate_ast(struct ast *ast)
     {
         if (is_builtin(*(ast->value)))
             return 0;
-        // return call_builtin(ast->value);
+        return find_command(ast->value);
         else
             return call_exec(ast->value);
     }
