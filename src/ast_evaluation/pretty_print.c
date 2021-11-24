@@ -76,5 +76,7 @@ void pretty_print(struct ast *ast)
             printf("; ");
             pretty_print(ast->left_child);
         }
+        else if (ast->type == AST_EOF)
+            printf("EOF\n");
     }
 }

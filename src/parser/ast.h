@@ -14,7 +14,8 @@ enum ast_type
     AST_OR,
     AST_AND,
     AST_REDIR,
-    AST_FUNC
+    AST_FUNC,
+    AST_EOF
 };
 
 struct ast

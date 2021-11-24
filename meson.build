@@ -30,7 +30,7 @@ common = [
   'src/ast_evaluation/inner_exec.c',
   'src/ast_evaluation/prog_exec.c',
   'src/shell_input/shell_input.c',
-  'src/builtins/echo.c',
+  'src/builtins/builtins.c',
 ]
 
 token_printer = executable(
