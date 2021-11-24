@@ -13,10 +13,11 @@ success=0
 tests() {
     tests=$(($tests + 1))
     mkdir -p tmp
-    echo -n "$@" > tmp/test.sh
-    cat tmp/test.sh | ./42sh 1>tmp/out.log 2>tmp/err_out.log
+    echo -n "$1" > tmp/test1.sh
+    echo -n "$2" > tmp/test2.sh
+    cat tmp/test1.sh | ./42sh 1>tmp/out.log 2>tmp/err_out.log
     out_res=$?
-    cat tmp/test.sh | dash 1>tmp/ref.log 2>tmp/err_ref.log
+    cat tmp/test2.sh | dash 1>tmp/ref.log 2>tmp/err_ref.log
     ref_res=$?
     diff -u tmp/out.log tmp/ref.log > tmp/diff_output.log
     diff_output=$?
@@ -43,11 +44,11 @@ tests() {
         success=$((success + 1))
     fi
 
-    rm -f tmp/ref.log tmp/out.log tmp/err_out.log tmp/err_ref.log tmp/diff_output.log tmp/test.sh
+    rm -f tmp/ref.log tmp/out.log tmp/err_out.log tmp/err_ref.log tmp/diff_output.log tmp/test1.sh tmp/test2.sh
 }
 
-tests echo -n \"salut\"
-tests echo -e \"\\nsalut\"
+tests "echo -n \"salut\"" "echo -n \"salut\""
+tests "echo -e \"\\nsalut\"" "echo \"\\nsalut\""
 
 errors=$(($tests - $success))
 printf "${L_CYAN}---------${NC}\n"
