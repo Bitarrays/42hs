@@ -17,19 +17,21 @@ int evaluate_ast(struct ast *ast)
         else
             return evaluate_ast(ast->right_child);
     }
-    /*    else if (ast->type == AST_FOR)
-        {
+    else if (ast->type == AST_FOR)
+    {
+        if (!astc->condition->left_child
+            && is_in(ast->condition->right_child->value))
+            return 0; // add expend var
 
-            evaluate_ast(ast->condition);
-
+        while (!evaluate_ast(ast->condition))
             evaluate_ast(ast->left_child);
-
-        }*/
+        return evaluate_ast(ast->right_child);
+    }
     else if (ast->type == AST_WHILE)
     {
         while (!evaluate_ast(ast->condition))
             evaluate_ast(ast->left_child);
-        return evaluate_ast(ast->left_child);
+        return evaluate_ast(ast->right_child);
     }
     else if (ast->type == AST_AND)
     {

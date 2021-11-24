@@ -1,4 +1,13 @@
+#include <string.h>
+
 #include "ast_evaluation_tools.h"
 
-// This source code can be deleted later, depending on where this is done (Fish
-// or Brice)
+int is_in(char **condition)
+{
+    while (condition[0] != '\0')
+    {
+        if (!strcmp(condition++, "in"))
+            return 1;
+    }
+    return 0;
+}
