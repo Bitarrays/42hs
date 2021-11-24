@@ -131,7 +131,8 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd)
                 word[word_pos] = 0;
                 struct lexer_token *token =
                     calloc(1, sizeof(struct lexer_token));
-                token->type = is_keyword(word) && !*in_cmd ? get_keyword(word) : TOKEN_WORD;
+                token->type = is_keyword(word) && !(*in_cmd) ? get_keyword(word)
+                                                             : TOKEN_WORD;
                 if (token->type != TOKEN_WORD)
                     *in_cmd = true;
                 token->value = word;
@@ -156,7 +157,10 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd)
     {
         word[word_pos] = 0;
         struct lexer_token *token = calloc(1, sizeof(struct lexer_token));
-        token->type = is_keyword(word) && !*in_cmd ? get_keyword(word) : TOKEN_WORD;
+        token->type =
+            is_keyword(word) && !(*in_cmd) ? get_keyword(word) : TOKEN_WORD;
+        if (token->type != TOKEN_WORD)
+            *in_cmd = true;
         token->value = word;
         word = NULL;
         word_pos = 0;

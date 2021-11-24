@@ -1,13 +1,13 @@
+#include "ast_evaluation.h"
+
 #include <stdio.h>
 #include <string.h>
-
-#include "ast_evaluation.h"
 
 int evaluate_ast(struct ast *ast)
 {
     if (!ast)
         return 0;
-    
+
     if (ast->type == AST_COMMAND)
     {
         call_builtin(ast->value); // check return value
@@ -17,7 +17,7 @@ int evaluate_ast(struct ast *ast)
         printf("Not implemented yet\n");
     }
 
-    (void) ast;
+    (void)ast;
 
     return 0;
 }

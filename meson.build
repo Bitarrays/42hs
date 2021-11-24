@@ -21,6 +21,8 @@ incdirs = [
 common = [
   'src/lexer/lexer.c',
   'src/parser/parser.c',
+  'src/parser/ast.c',
+  'src/ast_evaluation/pretty_print.c',
   'src/shell_input/shell_input.c',
 ]
 

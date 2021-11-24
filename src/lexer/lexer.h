@@ -106,7 +106,7 @@ void lexer_go_back(struct lexer *lexer, struct lexer_token *token);
 
 /**
  * @brief Print each token in the token_list.
- * 
+ *
  * @param lexer a lexer.
  */
 void lexer_print(struct lexer *lexer);

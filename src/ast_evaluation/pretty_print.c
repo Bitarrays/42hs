@@ -1,13 +1,14 @@
-#include "ast_evaluation_tools.h"
-#include "../parser/ast.h"
-
 #include <stdio.h>
+
+#include "../parser/ast.h"
+#include "ast_evaluation_tools.h"
 
 void pretty_print(struct ast *ast)
 {
     if (ast)
     {
-        if (ast->type == AST_IF || ast->type == AST_FOR || ast->type == AST_WHILE)
+        if (ast->type == AST_IF || ast->type == AST_FOR
+            || ast->type == AST_WHILE)
         {
             if (ast->type == AST_IF)
             {

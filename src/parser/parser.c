@@ -16,7 +16,7 @@ static enum parser_status handle_parser_error(enum parser_status status,
 }
 
 static enum parser_status display_parser_error(enum parser_status status,
-                                              struct ast **res)
+                                               struct ast **res)
 {
     warnx("Parser: unexpected token\n");
     ast_free(*res);
@@ -46,9 +46,12 @@ enum parser_status parse_input(char *input)
             // if (ast->right_child)
             // {
             //     printf("right child: %d\n", ast->right_child->type);
-            //     // printf("right->left child: %d\n",ast->right_child->left_child->type);
-            //     // printf("right->left->right child: %s\n",ast->right_child->left_child->right_child->value);
-            //     // printf("right->condition child: %s\n",ast->right_child->condition->right_child->value);
+            //     // printf("right->left child:
+            //     %d\n",ast->right_child->left_child->type);
+            //     // printf("right->left->right child:
+            //     %s\n",ast->right_child->left_child->right_child->value);
+            //     // printf("right->condition child:
+            //     %s\n",ast->right_child->condition->right_child->value);
             // }
             // if (ast->left_child)
             // {
@@ -185,8 +188,7 @@ enum parser_status parse_command(struct ast **ast, struct lexer *lexer)
 
     // Try shell_command
     struct ast *ast_shell_command = NULL;
-    if ((status = parse_shell_command(&ast_shell_command, lexer)) ==
-        PARSER_OK)
+    if ((status = parse_shell_command(&ast_shell_command, lexer)) == PARSER_OK)
     {
         *ast = ast_shell_command;
         return status;
@@ -228,7 +230,8 @@ enum parser_status parse_rule_if(struct ast **ast, struct lexer *lexer)
 
     // Check compound_list (condition)
     struct ast *ast_condition = ast_new(AST_LIST);
-    enum parser_status status_compound_list = parse_compound_list(&ast_condition, lexer);
+    enum parser_status status_compound_list =
+        parse_compound_list(&ast_condition, lexer);
     // If status is ERROR, assignment is still legal to free everything
     (*ast)->condition = ast_condition;
     if (status_compound_list == PARSER_ERROR)
@@ -270,7 +273,8 @@ enum parser_status parse_rule_if(struct ast **ast, struct lexer *lexer)
 
 enum parser_status parse_else_clause(struct ast **ast, struct lexer *lexer)
 {
-    // Double check First(else_clause), should always be correct but safety first
+    // Double check First(else_clause), should always be correct but safety
+    // first
     struct lexer_token *tok = lexer_peek(lexer);
     enum parser_status status = PARSER_OK;
     if (tok->type == TOKEN_ELSE)
