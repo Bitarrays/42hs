@@ -3,7 +3,7 @@
 #include "lexer/lexer.h"
 #include "shell_input/shell_input.h"
 
-int main(void)
+int main(int argc, char **argv)
 {
     return get_input(argc, argv);
     char *input = calloc(49, sizeof(char));

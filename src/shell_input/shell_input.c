@@ -1,5 +1,7 @@
 #include "shell_input.h"
 
+#include "../parser/parser.h"
+
 static int shell_prompt(void)
 {
     char c;
@@ -19,6 +21,7 @@ static int shell_prompt(void)
             input[input_len++] = c;
         }
         input[input_len] = 0;
+        parse_input(input);
         free(input);
         input = NULL;
         input_len = 0;
@@ -78,7 +81,7 @@ int get_input(int argc, char **argv)
     if (input)
     {
         input[input_len] = '\0';
-        printf("%s\n", input);
+        parse_input(input);
         free(input);
     }
     return 0;

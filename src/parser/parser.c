@@ -41,6 +41,7 @@ enum parser_status parse_input(char *input)
 
             // TODO: call evaluation function with ast
             pretty_print(ast);
+            printf("\n");
 
             // printf("ast type: %d\n", ast->type);
             // if (ast->right_child)
