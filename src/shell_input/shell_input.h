@@ -9,6 +9,10 @@
 #include <sys/uio.h>
 #include <unistd.h>
 
+#include "../42sh.h"
+
+extern struct shell *shell;
+
 /**
  * @brief Get the input for the shell and send it to the lexer
  *
