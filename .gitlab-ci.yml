@@ -2,7 +2,7 @@ echo_builtin:
   stage: test
   # needs: [build_job]
   script:
-    - apk add build-base && apk add make && apk add meson && apk add ninja && apk add py3-pip
+    - apk add build-base && apk add make && apk add meson && apk add ninja && apk add py3-pip && apk add dash
     - make build
     - pip3 install pyyaml
     - python3 tests/moulinette.py --binary 42sh --tests tests/echo.yml
