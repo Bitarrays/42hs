@@ -16,13 +16,12 @@ static enum parser_status handle_parser_error(enum parser_status status,
     return status;
 }
 
-static enum parser_status display_parser_error(enum parser_status status,
-                                               struct ast **res)
+static int display_parser_error(struct ast **res)
 {
     warnx("Parser: unexpected token\n");
     ast_free(*res);
     *res = NULL;
-    return status;
+    return 2;
 }
 
 static enum parser_status add_eof_node(struct ast **ast)
@@ -39,7 +38,7 @@ static enum parser_status add_eof_node(struct ast **ast)
     return PARSER_OK;
 }
 
-enum parser_status parse_input(char *input)
+int parse_input(char *input)
 {
     struct lexer *lex = lexer_create(input);
     lexer_build(lex);
@@ -52,15 +51,15 @@ enum parser_status parse_input(char *input)
         if (lexer_peek(lex)->type == TOKEN_EOF)
         {
             if (add_eof_node(&ast) == PARSER_ERROR)
-                return display_parser_error(PARSER_ERROR, &ast);
+                return display_parser_error(&ast);
 
             if (shell->pretty_print)
                 pretty_print(ast);
-            evaluate_ast(ast);
+            int res_eval = evaluate_ast(ast);
 
             ast_free(ast);
             lexer_free(lex);
-            return PARSER_OK;
+            return res_eval;
         }
     }
 
@@ -69,11 +68,11 @@ enum parser_status parse_input(char *input)
     {
         ast_free(ast);
         lexer_free(lex);
-        return PARSER_OK;
+        return 0;
     }
 
     lexer_free(lex);
-    return display_parser_error(PARSER_ERROR, &ast);
+    return display_parser_error(&ast);
 }
 
 enum parser_status parse_compound_list(struct ast **ast, struct lexer *lexer)

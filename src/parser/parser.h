@@ -21,7 +21,7 @@ extern struct shell *shell;
  ** @param lexer the lexer to read tokens from
  ** @return enum parser_status - current parser status
  **/
-enum parser_status parse_input(char *input);
+int parse_input(char *input);
 
 /**
  ** @brief Check if compound_list grammar rule is respected
