@@ -11,6 +11,8 @@ enum parser_status
     PARSER_ERROR
 };
 
+extern struct shell *shell;
+
 /**
  ** @brief Check if input grammar rule is respected
  ** >> input: compound_list EOF | EOF;
@@ -19,7 +21,7 @@ enum parser_status
  ** @param lexer the lexer to read tokens from
  ** @return enum parser_status - current parser status
  **/
-enum parser_status parse_input(char *input, struct shell *shell);
+enum parser_status parse_input(char *input);
 
 /**
  ** @brief Check if compound_list grammar rule is respected

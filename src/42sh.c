@@ -6,15 +6,17 @@
 #include "lexer/lexer.h"
 #include "shell_input/shell_input.h"
 
+struct shell *shell;
+
 int main(int argc, char **argv)
 {
-    struct shell *shell = calloc(1, sizeof(struct shell));
+    shell = calloc(1, sizeof(struct shell));
     shell->pretty_print = argc > 1 ? !strcmp(argv[1], "--pretty_print") : false;
     int res;
     if (shell->pretty_print)
-        res = get_input(argc - 1, argv + 1, shell);
+        res = get_input(argc - 1, argv + 1);
     else
-        res = get_input(argc, argv, shell);
+        res = get_input(argc, argv);
     free(shell);
     return res;
     char *input = calloc(49, sizeof(char));

@@ -39,7 +39,7 @@ static enum parser_status add_eof_node(struct ast **ast)
     return PARSER_OK;
 }
 
-enum parser_status parse_input(char *input, struct shell *shell)
+enum parser_status parse_input(char *input)
 {
     struct lexer *lex = lexer_create(input);
     lexer_build(lex);

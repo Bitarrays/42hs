@@ -2,7 +2,7 @@
 
 #include "../parser/parser.h"
 
-static int shell_prompt(struct shell *shell)
+static int shell_prompt(void)
 {
     int c = '\n';
     char *input = NULL;
@@ -37,7 +37,7 @@ static int shell_prompt(struct shell *shell)
             continue;
         }
         input[input_len] = 0;
-        err = parse_input(input, shell);
+        err = parse_input(input);
         free(input);
         input = NULL;
         input_len = 0;
@@ -63,7 +63,7 @@ static char *get_file_content(char *filename)
     return content;
 }
 
-int get_input(int argc, char **argv, struct shell *shell)
+int get_input(int argc, char **argv)
 {
     char *input = NULL;
     size_t input_len = 0;
@@ -81,7 +81,7 @@ int get_input(int argc, char **argv, struct shell *shell)
             }
         }
         else
-            return shell_prompt(shell);
+            return shell_prompt();
     }
     else
     {
@@ -97,7 +97,7 @@ int get_input(int argc, char **argv, struct shell *shell)
     if (input)
     {
         input[input_len] = '\0';
-        parse_input(input, shell);
+        parse_input(input);
         free(input);
     }
     return 0;
