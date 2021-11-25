@@ -23,4 +23,3 @@ command_list:
   stage: test
   script:
     - python3 tests/moulinette.py --binary 42sh --tests tests/command_list.yml
-
