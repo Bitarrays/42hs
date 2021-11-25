@@ -134,6 +134,8 @@ static void create_token_and_append(char *word, int word_pos, bool *in_cmd,
                                     struct lexer *lexer,
                                     enum token_type *word_type)
 {
+    if (!word)
+        return;
     word[word_pos] = 0;
     struct lexer_token *token = calloc(1, sizeof(struct lexer_token));
     token->type =

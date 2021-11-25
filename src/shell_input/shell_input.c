@@ -2,7 +2,7 @@
 
 #include "../parser/parser.h"
 
-static int shell_prompt(void)
+static int shell_prompt(struct shell *shell)
 {
     int c = '\n';
     char *input = NULL;
@@ -11,9 +11,11 @@ static int shell_prompt(void)
     while (true)
     {
         if (err)
-            printf("\033[1m\033[31m➜  \033[1m\033[36m42sh$ \033[0;37m");
+            printf("\033[1m\033[31m➜  \033[1m\033[36m42sh \033[1m\033[33m✗ "
+                   "\033[0;37m");
         else
-            printf("\033[1m\033[32m➜  \033[1m\033[36m42sh$ \033[0;37m");
+            printf("\033[1m\033[32m➜  \033[1m\033[36m42sh \033[1m\033[33m✗ "
+                   "\033[0;37m");
         fflush(stdout);
         int line = 0;
         while (read(STDIN_FILENO, &c, 1) > 0)
@@ -35,7 +37,7 @@ static int shell_prompt(void)
             continue;
         }
         input[input_len] = 0;
-        err = parse_input(input);
+        err = parse_input(input, shell);
         free(input);
         input = NULL;
         input_len = 0;
@@ -61,7 +63,7 @@ static char *get_file_content(char *filename)
     return content;
 }
 
-int get_input(int argc, char **argv)
+int get_input(int argc, char **argv, struct shell *shell)
 {
     char *input = NULL;
     size_t input_len = 0;
@@ -79,7 +81,7 @@ int get_input(int argc, char **argv)
             }
         }
         else
-            return shell_prompt();
+            return shell_prompt(shell);
     }
     else
     {
@@ -95,7 +97,7 @@ int get_input(int argc, char **argv)
     if (input)
     {
         input[input_len] = '\0';
-        parse_input(input);
+        parse_input(input, shell);
         free(input);
     }
     return 0;
