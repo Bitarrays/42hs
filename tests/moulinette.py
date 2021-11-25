@@ -23,7 +23,7 @@ def run_shell(shell: str, stdin: str) -> sp.CompletedProcess:
 def perform_check(expected: sp.CompletedProcess, actual: sp.CompletedProcess):
     assert expected.returncode == actual.returncode, f"EXIT_CODE_ERR: expected {expected.returncode}, got {actual.returncode}"
     assert expected.stdout == actual.stdout, f"STDOUT_ERR\n{diff(expected.stdout, actual.stdout)}"
-    assert expected.stderr == actual.stderr, f"STDERR_EMPTY\n{diff(expected.stderr, actual.stderr)}"
+    assert len(expected.stderr) == len(actual.stderr) or (len(expected.stderr) != 0 and len(actual.stderr) != 0), f"STDERR_EMPTY"
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser("42shTestSuite")

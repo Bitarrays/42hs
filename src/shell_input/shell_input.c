@@ -49,7 +49,7 @@ static int shell_prompt(void)
         input = NULL;
         input_len = 0;
     }
-    return 0;
+    return err;
 }
 
 static char *get_file_content(char *filename)
@@ -101,11 +101,12 @@ int get_input(int argc, char **argv)
             return 1;
         input_len = strlen(input);
     }
+    int res = 2;
     if (input)
     {
         input[input_len] = '\0';
-        parse_input(input);
+        res = parse_input(input);
         free(input);
     }
-    return 0;
+    return res;
 }
