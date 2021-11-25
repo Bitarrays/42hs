@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/types.h>
 
 struct shell
 {
@@ -19,13 +20,13 @@ struct shell
 
 /**
  * @brief Print the shell structure.
- * 
+ *
  */
 void print_shell(void);
 
 /**
  * @brief Free the shell structure.
- * 
+ *
  */
 void free_shell(void);
 
