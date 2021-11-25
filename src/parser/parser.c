@@ -49,7 +49,8 @@ enum parser_status parse_input(char *input)
     // Try compound_list EOF
     if (parse_compound_list(&ast, lex) == PARSER_OK)
     {
-        if (lexer_peek(lex)->type == TOKEN_EOF)
+        struct lexer_token *next = lexer_peek(lex);
+        if (next->type == TOKEN_EOF || next->type == TOKEN_NEWLINE)
         {
             if (add_eof_node(&ast) == PARSER_ERROR)
                 return display_parser_error(PARSER_ERROR, &ast);
@@ -65,7 +66,8 @@ enum parser_status parse_input(char *input)
     }
 
     // Try EOF
-    if (lexer_peek(lex)->type == TOKEN_EOF)
+    struct lexer_token *end = lexer_peek(lex);
+    if (end->type == TOKEN_EOF || end->type == TOKEN_NEWLINE)
     {
         ast_free(ast);
         lexer_free(lex);
@@ -114,46 +116,134 @@ enum parser_status parse_compound_list(struct ast **ast, struct lexer *lexer)
     return PARSER_OK;
 }
 
+static enum parser_status parse_redirection(struct ast **ast, struct lexer *lexer)
+{
+    return PARSER_OK;
+}
+
+static enum parser_status parse_prefix(struct ast **ast, struct lexer *lexer)
+{
+    // Try redirection
+    enum parser_status status_redir = parse_redirection(ast, lexer);
+    if (status_redir == PARSER_ERROR)
+        return handle_parser_error(status_redir, ast);
+
+    return PARSER_OK;
+}
+
+static enum parser_status parse_element(struct ast **ast, struct lexer *lexer)
+{
+    // Try WORD
+    struct lexer_token *tok = lexer_peek(lexer);
+    if (tok->type == TOKEN_WORD || tok->type == TOKEN_WORD_DOUBLE_QUOTE || tok->type == TOKEN_WORD_DOUBLE_QUOTE)
+    {
+        // TODO: handle word save
+        lexer_pop(lexer);
+        return PARSER_OK;
+    }
+
+    // Try redirection
+    enum parser_status status_redir = parse_redirection(ast, lexer);
+    if (status_redir == PARSER_ERROR)
+        return handle_parser_error(status_redir, ast);
+
+    return PARSER_OK;
+}
+
 enum parser_status parse_simple_command(struct ast **ast, struct lexer *lexer)
 {
     struct lexer_token *tok = lexer_peek(lexer);
-    bool first = true;
+    bool first_prefix = true;
     char **args_exec = NULL;
     enum quotes *enclosure = NULL;
     size_t value_len = 0;
 
-    // Try WORD+
-    while (tok->type == TOKEN_WORD || tok->type == TOKEN_WORD_SINGLE_QUOTE
-           || tok->type == TOKEN_WORD_DOUBLE_QUOTE)
+    // Try (prefix)*
+    struct ast *cur_prefix = NULL;
+    while (true)
     {
-        if (first)
-            first = false;
+        struct ast *ast_prefix;
 
-        value_len++;
-        args_exec = realloc(args_exec, (value_len + 1) * sizeof(char *));
-        args_exec[value_len] = NULL;
-        args_exec[value_len - 1] = tok->value;
+        // Try prefix
+        enum parser_status status_prefix = parse_prefix(&ast_prefix, lexer);
+        if (status_prefix == PARSER_ERROR)
+        {
+            ast_free(ast_prefix);
+            break;
+        }
 
-        enclosure = realloc(enclosure, value_len * sizeof(enum quotes));
-        if (tok->type == TOKEN_WORD)
-            enclosure[value_len - 1] = Q_NONE;
-        else if (tok->type == TOKEN_WORD_SINGLE_QUOTE)
-            enclosure[value_len - 1] = Q_SINGLE;
-        else if (tok->type == TOKEN_WORD_DOUBLE_QUOTE)
-            enclosure[value_len - 1] = Q_DOUBLE;
-
-        lexer_pop(lexer);
-        tok = lexer_peek(lexer);
+        if (first_prefix)
+        {
+            *ast = ast_prefix;
+            first_prefix = false;
+        }
+        else
+        {
+            ast_prefix->left_child = cur_prefix->right_child;
+            cur_prefix->right_child = ast_prefix;
+        }
+        cur_prefix = ast_prefix;
     }
 
-    if (!first)
+    // Try (element)+
+    bool first_element = true;
+    bool first_is_command = false;
+    while (true)
     {
-        *ast = ast_new(AST_COMMAND);
-        (*ast)->value = args_exec;
-        (*ast)->enclosure = enclosure;
+        struct ast *ast_element = NULL;
+        enum parser_status status_element = parse_element(&ast_element, lexer);
+        if (status_element == PARSER_ERROR)
+        {
+            ast_free(ast_element);
+            break;
+        }
+
+        // Test if element is WORD and parse it as argument of the previous command
+        if (ast_element->type == AST_COMMAND)
+        {
+            struct ast *last_command = NULL;
+            if (first_element && first_prefix)
+            {
+                first_is_command = true;
+                if (cur_prefix == NULL)
+                {
+                    cur_prefix = ast_element;
+                    continue;
+                }
+                last_command = cur_prefix;
+            }
+            else
+                last_command = cur_prefix->right_child;
+
+            // TODO: merge char **value and enum quotes *enclosure
+        }
+        else
+        {
+            if (first_prefix && first_element)
+            {
+                *ast = ast_element;
+                if (first_is_command)
+                    (*ast)->left_child = cur_prefix;
+            }
+            else
+            {
+                ast_element->left_child = cur_prefix->right_child;
+                cur_prefix->right_child = ast_element;
+            }
+            cur_prefix = ast_element;
+            first_element = false;
+        }
+
     }
 
-    return first ? PARSER_ERROR : PARSER_OK;
+    if (first_prefix)
+    {
+        //? first_element needs to be false, we are in (prefix)* (element)+
+        if (first_element)
+            return handle_parser_error(PARSER_ERROR, ast);
+    }
+
+    return PARSER_OK;
 }
 
 enum parser_status parse_shell_command(struct ast **ast, struct lexer *lexer)
@@ -192,6 +282,14 @@ enum parser_status parse_command(struct ast **ast, struct lexer *lexer)
         *ast = ast_shell_command;
         return status;
     }
+
+    // Try (redirection)*
+    while (true)
+    {
+        // TODO
+        break;
+    }
+
     ast_free(ast_shell_command);
 
     return PARSER_ERROR;
@@ -199,10 +297,71 @@ enum parser_status parse_command(struct ast **ast, struct lexer *lexer)
 
 enum parser_status parse_pipeline(struct ast **ast, struct lexer *lexer)
 {
+    struct lexer_token *tok = lexer_peek(lexer);
+    // Try not
+    bool not = false;
+    if (tok->type == TOKEN_NOT)
+    {
+        not = true;
+        *ast = ast_new(AST_NOT);
+        lexer_pop(lexer);
+    }
+
     // Try command
-    enum parser_status status_command = parse_command(ast, lexer);
+    struct ast *last_command;
+    enum parser_status status_command = parse_command(last_command, lexer);
     if (status_command == PARSER_ERROR)
-        return handle_parser_error(status_command, ast);
+    {
+        ast_free(*ast);
+        return handle_parser_error(status_command, last_command);
+    }
+
+    // Try ('|' ('\n')* command)*
+    struct ast *cur_pipe;
+    bool first = true;
+    while (true)
+    {
+        // Try |
+        tok = lexer_peek(lexer);
+        if (tok->type != TOKEN_PIPE)
+            break;
+        lexer_pop(lexer); // token |
+
+        // Try ('\n')*
+        while ((tok = lexer_peek(lexer))->type == TOKEN_NEWLINE)
+            lexer_pop(lexer); // token \n
+
+        // Try command
+        struct ast *new_command;
+        status_command = parse_command(&new_command, lexer);
+        if (status_command == PARSER_ERROR)
+        {
+            ast_free(new_command);
+            ast_free(last_command);
+            return handle_parser_error(status_command, ast);
+        }
+
+        struct ast *ast_pipe = ast_new(AST_PIPE);
+        //* Create new pipe and add command found before while loop in left child
+        if (first)
+        {
+            first = false;
+            ast_pipe->left_child = last_command;
+            if (not)
+                (*ast)->left_child = ast_pipe;
+            else
+                *ast = ast_pipe;
+        }
+        else
+        {
+            cur_pipe->right_child = ast_pipe;
+            ast_pipe->left_child = last_command;
+        }
+        cur_pipe = ast_pipe;
+        last_command = new_command;
+    }
+    if (cur_pipe)
+        cur_pipe->right_child = last_command;
 
     return PARSER_OK;
 }
