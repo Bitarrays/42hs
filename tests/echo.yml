@@ -1,0 +1,2 @@
+- name: Basic words
+  input: echo "Cut, Copy and Paste!"

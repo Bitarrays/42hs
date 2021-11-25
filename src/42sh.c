@@ -58,7 +58,7 @@ int main(int argc, char **argv)
         fprintf(stderr, "42sh: error during initialization.\n");
         return 1;
     }
-    print_shell();
+    //print_shell();
     int res;
     if (shell->pretty_print)
         res = get_input(argc - 1, argv + 1);

@@ -1,17 +1,7 @@
-cache:
-  paths:
-    - 42sh
-
-# build_job:
-#   stage: build
-#   script:
-#     - apk add build-base && apk add make && apk add meson && apk add ninja
-#     - make build
-
 echo_builtin:
   stage: test
   # needs: [build_job]
   script:
     - apk add build-base && apk add make && apk add meson && apk add ninja && apk add valgrind
     - make build
-    - ./tests/echo_builtin.sh
+    - python3 tests/moulinette.py --binary 42sh --tests tests/echo.yml
