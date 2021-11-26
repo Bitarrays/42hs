@@ -148,6 +148,11 @@ static void create_token_and_append(char *word, int word_pos, bool *in_cmd,
     lexer_append(lexer, token);
 }
 
+static bool is_pipe(char c)
+{
+    return (c == '|');
+}
+
 static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
                        enum token_type *word_type)
 {
@@ -156,7 +161,8 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
     int word_pos = 0;
     while (input[j])
     {
-        if (*word_type != TOKEN_WORD_SINGLE_QUOTE && is_separator(input[j]))
+        if ((*word_type != TOKEN_WORD_SINGLE_QUOTE && is_separator(input[j]))
+            || (is_pipe(input[j]) && *word_type == TOKEN_WORD))
         {
             if (word)
             {
@@ -166,7 +172,8 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
                 word_pos = 0;
             }
             struct lexer_token *token = calloc(1, sizeof(struct lexer_token));
-            token->type = get_separator(input[j]);
+            token->type =
+                is_separator(input[j]) ? get_separator(input[j]) : TOKEN_PIPE;
             token->value = NULL;
             lexer_append(lexer, token);
             *in_cmd = false;
@@ -210,6 +217,7 @@ static char *get_token_string(enum token_type type)
                              "THEN",
                              "SEMICOLON",
                              "NEWLINE",
+                             "PIPE",
                              "WORD",
                              "WORD_SINGLE_QUOTE",
                              "WORD_DOUBLE_QUOTE",

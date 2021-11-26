@@ -45,6 +45,12 @@ int parse_input(char *input)
 
     struct ast *ast = ast_new(AST_LIST);
 
+    if (lexer_peek(lex)->type == TOKEN_EOF)
+    {
+        ast_free(ast);
+        lexer_free(lex);
+        return 0;
+    }
     // Try compound_list EOF
     if (parse_compound_list(&ast, lex) == PARSER_OK)
     {
@@ -61,14 +67,6 @@ int parse_input(char *input)
             lexer_free(lex);
             return res_eval;
         }
-    }
-
-    // Try EOF
-    if (lexer_peek(lex)->type == TOKEN_EOF)
-    {
-        ast_free(ast);
-        lexer_free(lex);
-        return 0;
     }
 
     lexer_free(lex);
