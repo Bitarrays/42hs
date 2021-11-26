@@ -5,6 +5,12 @@
 #include <stddef.h>
 #include <stdio.h>
 
+struct string_array_with_quotes
+{
+    char **value;
+    enum quotes *q;
+};
+
 void pretty_print(struct ast *ast);
 int evaluate_ast(struct ast *ast);
 
@@ -23,6 +29,29 @@ static enum parser_status display_parser_error(enum parser_status status,
     ast_free(*res);
     *res = NULL;
     return status;
+}
+
+static struct string_array_with_quotes merge_values(char **values_1, char **values_2, enum quotes *q_1, enum quotes *q_2)
+{
+    int length_1 = 0;
+    while (values_1[length_1] != NULL)
+        length_1++;
+
+    int length_2 = 0;
+    while (values_2[length_2] != NULL)
+        length_2++;
+
+    values_1 = realloc(values_1, (length_1 + 1 + length_2) * sizeof(char *));
+    q_1 = realloc(q_1, (length_1 + length_2) * sizeof(enum quotes));
+    for (int i = length_1; i < length_2 + length_1; i++)
+    {
+        values_1[i] = values_2[i - length_1];
+        q_1[i] = q_2[i - length_1];
+    }
+    values_1[length_1 + length_2] = NULL;
+
+    struct string_array_with_quotes res = { values_1, q_1 };
+    return res;
 }
 
 static enum parser_status add_eof_node(struct ast **ast)
@@ -215,7 +244,11 @@ enum parser_status parse_simple_command(struct ast **ast, struct lexer *lexer)
             else
                 last_command = cur_prefix->right_child;
 
-            // TODO: merge char **value and enum quotes *enclosure
+            //? Merge char **value and enum quotes *enclosure from last_command and ast_element
+            struct string_array_with_quotes res = merge_values(last_command->value, ast_element->value, last_command->enclosure, ast_element->enclosure);
+            last_command->value = res.value;
+            last_command->enclosure = res.q;
+            ast_free(ast_element);
         }
         else
         {
