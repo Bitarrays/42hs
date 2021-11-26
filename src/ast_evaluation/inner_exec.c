@@ -33,10 +33,22 @@ int expand_s(char **elt, char *s, enum quotes type)
         }
         new[i_new] = '\0';
     }
-    /*else if (type == Q_DOUBLE)
+    else if (type == Q_DOUBLE)
     {
-       return ;
-    }*/
+        int i = 0;
+        int i_new = 0;
+        while (s[i] != '\0')
+        {
+            if (s[i] == '\\')
+            {
+                i++;
+                if (s[i++] == 'n')
+                    new[i_new++] = '\n';
+            }
+            new[i_new++] = s[i++];
+        }
+        new[i_new] = '\0';
+    }
     *elt = new;
     return 1;
 }
