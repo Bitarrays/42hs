@@ -42,8 +42,22 @@ int expand_s(char **elt, char *s, enum quotes type)
             if (s[i] == '\\')
             {
                 i++;
-                if (s[i++] == 'n')
+                if (s[i] == 'n')
+                {
+                    i++;
                     new[i_new++] = '\n';
+                }
+                else if (s[i] == '\"')
+                {
+                    i++;
+                    new[i_new++] = '\"';
+                }
+                else if (s[i] == '\'')
+                {
+                    printf("->%d\n", s[i]);
+                    i++;
+                    new[i_new++] = '\'';
+                }
             }
             new[i_new++] = s[i++];
         }
