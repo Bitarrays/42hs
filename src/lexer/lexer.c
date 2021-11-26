@@ -161,6 +161,16 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
     int word_pos = 0;
     while (input[j])
     {
+        if (input[j] == '\\')
+        {
+            word = realloc(word, (word_pos + 3) * sizeof(char));
+            word[word_pos++] = input[j++];
+            if (input[j] == 0)
+                break;
+            word[word_pos++] = input[j++];
+            if (input[j] == 0)
+                break;
+        }
         if ((*word_type != TOKEN_WORD_SINGLE_QUOTE && is_separator(input[j]))
             || (is_pipe(input[j]) && *word_type == TOKEN_WORD))
         {
