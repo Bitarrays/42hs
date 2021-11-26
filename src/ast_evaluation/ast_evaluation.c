@@ -51,10 +51,13 @@ int evaluate_ast(struct ast *ast)
     }*/
     else if (ast->type == AST_COMMAND)
     {
-        if (is_builtin(*(ast->value)))
-            return find_command(ast->value);
+        char **val= expand(ast);
+        if (!val)
+            return 1;
+        if (is_builtin(*(val)))
+            return find_command(val);
         else
-            return call_exec(ast->value);
+            return call_exec(val);
     }
     else if (ast->type == AST_LIST)
     {

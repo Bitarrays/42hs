@@ -78,7 +78,7 @@ void echo(char **toExecute)
             for (int i = 0; toExecute[start_print][i] != '\0'; i++)
                 putchar(toExecute[start_print][i]);
 
-            if (toExecute[start_print + 1] != NULL)
+            if (toExecute[start_print] != NULL && toExecute[start_print + 1] != NULL)
                 putchar(' ');
         }
     }
