@@ -1,6 +1,6 @@
-#include <string.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "ast_evaluation_tools.h"
 
@@ -35,7 +35,7 @@ int expand_s(char **elt, char *s, enum quotes type)
     }
     /*else if (type == Q_DOUBLE)
     {
-       return ; 
+       return ;
     }*/
     *elt = new;
     return 1;

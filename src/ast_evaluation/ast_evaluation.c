@@ -51,7 +51,7 @@ int evaluate_ast(struct ast *ast)
     }*/
     else if (ast->type == AST_COMMAND)
     {
-        char **val= expand(ast);
+        char **val = expand(ast);
         if (!val)
             return 1;
         if (is_builtin(*(val)))
