@@ -21,3 +21,6 @@
 
 - name: Many semicolons with 2 commands
   input: echo salut;;;;; pwd;
+
+- name: Wrong commands and multiple semicolons
+  input: a;a;a;a;;a;a;;;;a;;a;a;a;;a;

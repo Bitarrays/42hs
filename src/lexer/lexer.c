@@ -140,7 +140,7 @@ static void create_token_and_append(char *word, int word_pos, bool *in_cmd,
     struct lexer_token *token = calloc(1, sizeof(struct lexer_token));
     token->type =
         is_keyword(word) && !(*in_cmd) ? get_keyword(word) : *word_type;
-    if (token->type < TOKEN_WORD)
+    if (token->type >= TOKEN_WORD)
         *in_cmd = true;
     token->value = word;
     word = NULL;
