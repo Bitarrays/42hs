@@ -1,17 +1,30 @@
-cache:
-  paths:
-    - 42sh
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache"
 
-# build_job:
-#   stage: build
-#   script:
-#     - apk add build-base && apk add make && apk add meson && apk add ninja
-#     - make build
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - .cache/
+  - venv/
+  - 42sh
+  - builddir/
+
+before_script:
+  - apk add build-base && apk add make && apk add meson && apk add ninja && apk add py3-pip && apk add dash
+  - make build
+  - pip3 install pyyaml
 
 echo_builtin:
   stage: test
-  # needs: [build_job]
   script:
-    - apk add build-base && apk add make && apk add meson && apk add ninja && apk add valgrind
-    - make build
-    - ./tests/echo_builtin.sh
+    - python3 tests/moulinette.py --binary 42sh --tests tests/echo.yml
+
+command_list:
+  stage: test
+  script:
+    - python3 tests/moulinette.py --binary 42sh --tests tests/command_list.yml
+
+reserved_words:
+  stage: test
+  script:
+    - python3 tests/moulinette.py --binary 42sh --tests tests/reserved_words.yml

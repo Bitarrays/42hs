@@ -29,9 +29,10 @@ int evaluate_ast(struct ast *ast)
     }
     else if (ast->type == AST_WHILE)
     {
+        int ret = 0;
         while (!evaluate_ast(ast->condition))
-            evaluate_ast(ast->left_child);
-        return evaluate_ast(ast->right_child);
+            ret = evaluate_ast(ast->left_child);
+        return ret;
     }
     else if (ast->type == AST_AND)
     {
@@ -51,10 +52,13 @@ int evaluate_ast(struct ast *ast)
     }*/
     else if (ast->type == AST_COMMAND)
     {
-        if (is_builtin(*(ast->value)))
-            return find_command(ast->value);
+        char **val = expand(ast);
+        if (!val)
+            return 1;
+        if (is_builtin(*(val)))
+            return find_command(val);
         else
-            return call_exec(ast->value);
+            return call_exec(val);
     }
     else if (ast->type == AST_LIST)
     {

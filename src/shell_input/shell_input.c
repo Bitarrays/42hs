@@ -8,12 +8,14 @@ static int shell_prompt(void)
     char *input = NULL;
     int input_len = 0;
     int err = 0;
-    while (true)
+    while (!shell->exit)
     {
         if (err)
-            printf("\033[1m\033[31m➜  \033[1m\033[36m42sh$ \033[0;37m");
+            printf("\033[1m\033[31m➜  \033[1m\033[36m42sh \033[1m\033[33m✗ "
+                   "\033[0;37m");
         else
-            printf("\033[1m\033[32m➜  \033[1m\033[36m42sh$ \033[0;37m");
+            printf("\033[1m\033[32m➜  \033[1m\033[36m42sh \033[1m\033[33m✗ "
+                   "\033[0;37m");
         fflush(stdout);
         int line = 0;
         while (read(STDIN_FILENO, &c, 1) > 0)
@@ -35,12 +37,19 @@ static int shell_prompt(void)
             continue;
         }
         input[input_len] = 0;
+        if (!strcmp(input, "exit"))
+        {
+            shell->exit = 1;
+            free(input);
+            continue;
+        }
         err = parse_input(input);
+        shell->return_code = err;
         free(input);
         input = NULL;
         input_len = 0;
     }
-    return 0;
+    return err;
 }
 
 static char *get_file_content(char *filename)
@@ -92,11 +101,12 @@ int get_input(int argc, char **argv)
             return 1;
         input_len = strlen(input);
     }
+    int res = 2;
     if (input)
     {
         input[input_len] = '\0';
-        parse_input(input);
+        res = parse_input(input);
         free(input);
     }
-    return 0;
+    return res;
 }

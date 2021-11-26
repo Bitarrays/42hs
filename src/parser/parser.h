@@ -1,6 +1,7 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+#include "../42sh.h"
 #include "../lexer/lexer.h"
 #include "ast.h"
 
@@ -10,6 +11,8 @@ enum parser_status
     PARSER_ERROR
 };
 
+extern struct shell *shell;
+
 /**
  ** @brief Check if input grammar rule is respected
  ** >> input: compound_list EOF | compound_list 'newline' | 'newline' | EOF;
@@ -18,7 +21,7 @@ enum parser_status
  ** @param lexer the lexer to read tokens from
  ** @return enum parser_status - current parser status
  **/
-enum parser_status parse_input(char *input);
+int parse_input(char *input);
 
 /**
  ** @brief Check if compound_list grammar rule is respected
