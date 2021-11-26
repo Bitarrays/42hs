@@ -29,9 +29,10 @@ int evaluate_ast(struct ast *ast)
     }
     else if (ast->type == AST_WHILE)
     {
+        int ret = 0;
         while (!evaluate_ast(ast->condition))
-            evaluate_ast(ast->left_child);
-        return evaluate_ast(ast->right_child);
+            ret = evaluate_ast(ast->left_child);
+        return ret;
     }
     else if (ast->type == AST_AND)
     {
