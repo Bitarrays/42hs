@@ -13,6 +13,7 @@ enum ast_type
     AST_PIPE,
     AST_OR,
     AST_AND,
+    AST_NOT,
     AST_REDIR,
     AST_FUNC,
     AST_EOF

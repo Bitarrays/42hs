@@ -15,7 +15,7 @@ extern struct shell *shell;
 
 /**
  ** @brief Check if input grammar rule is respected
- ** >> input: compound_list EOF | EOF;
+ ** >> input: compound_list EOF | compound_list 'newline' | 'newline' | EOF;
  **
  ** @param ast the general ast to update
  ** @param lexer the lexer to read tokens from
@@ -65,7 +65,7 @@ enum parser_status parse_command(struct ast **ast, struct lexer *l);
 
 /**
  ** @brief Check if pipeline grammar rule is respected
- ** >> pipeline: command
+ ** >> pipeline: command ('|' ('newline')* command)*
  **
  ** @param ast the general ast to update
  ** @param lexer the lexer to read tokens from

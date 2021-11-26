@@ -21,7 +21,9 @@ enum token_type
     TOKEN_WORD,
     TOKEN_WORD_SINGLE_QUOTE,
     TOKEN_WORD_DOUBLE_QUOTE,
-    TOKEN_EOF
+    TOKEN_EOF,
+    TOKEN_PIPE,
+    TOKEN_NOT
 };
 
 struct lexer_token
