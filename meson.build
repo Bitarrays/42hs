@@ -22,6 +22,10 @@ incdirs = [
 
 common = [
   'src/lexer/lexer.c',
+  'src/lexer/lexer_print.c',
+  'src/lexer/ionumbers.c',
+  'src/lexer/create_token.c',
+  'src/lexer/split_input.c',
   'src/parser/parser.c',
   'src/parser/ast.c',
   'src/ast_evaluation/pretty_print.c',
