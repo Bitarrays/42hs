@@ -1,5 +1,9 @@
 #include "lexer.h"
 
+#include "../42sh.h"
+
+extern struct shell *shell;
+
 struct lexer_token *lexer_token_free(struct lexer_token *token)
 {
     free(token->value);
@@ -332,7 +336,8 @@ void lexer_build(struct lexer *lexer)
     struct lexer_token *token = calloc(1, sizeof(struct lexer_token));
     token->type = TOKEN_EOF;
     lexer_append(lexer, token);
-    // lexer_print(lexer);
+    if (shell->verbose)
+        lexer_print(lexer);
     free(words);
     lexer->head = lexer->tokens;
 }

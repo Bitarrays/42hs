@@ -11,7 +11,16 @@ struct shell *shell;
 static void init_shell(int argc, char **argv)
 {
     shell = calloc(1, sizeof(struct shell));
-    shell->pretty_print = argc > 1 ? !strcmp(argv[1], "--pretty_print") : false;
+    shell->pretty_print = argc > 1 ? !strcmp(argv[1], "--pretty-print") : false;
+    if (shell->pretty_print)
+    {
+        printf("Pretty print enabled\n");
+        argc--;
+        argv++;
+    }
+    shell->verbose = argc > 1 ? !strcmp(argv[1], "--verbose") : false;
+    if (shell->verbose)
+        printf("Verbose mode enabled\n");
     shell->oldpwd = calloc(2048, sizeof(char));
     if (getcwd(shell->oldpwd, 2048) == NULL)
         shell->exit = true;
@@ -60,7 +69,9 @@ int main(int argc, char **argv)
     }
     // print_shell();
     int res;
-    if (shell->pretty_print)
+    if (shell->pretty_print && shell->verbose)
+        res = get_input(argc - 2, argv + 2);
+    else if (shell->pretty_print || shell->verbose)
         res = get_input(argc - 1, argv + 1);
     else
         res = get_input(argc, argv);
