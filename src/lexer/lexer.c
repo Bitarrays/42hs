@@ -153,6 +153,29 @@ static bool is_pipe(char c)
     return (c == '|');
 }
 
+static bool is_redir(char c1)
+{
+    return (c1 == '<' || c1 == '>');    
+}
+
+static char *get_redir(char c1, char c2)
+{
+    char *res = calloc(3, sizeof(char));
+    if (c1 == '<')
+    {
+        res[0] = '<';
+        if (c2 == '&' || c2 == '>')
+            res[1] = c2;
+    }
+    if (c1 == '>')
+    {
+        res[0] = '>';
+        if (c2 == '&' || c2 == '>' || c2 == '|')
+            res[1] = c2;
+    }
+    return res;
+}
+
 static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
                        enum token_type *word_type)
 {
@@ -188,8 +211,31 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
             lexer_append(lexer, token);
             *in_cmd = false;
         }
+        else if (*word_type == TOKEN_WORD && is_redir(input[j]))
+        {
+            if (word)
+            {
+                create_token_and_append(word, word_pos, in_cmd, lexer,
+                                        word_type);
+                word = NULL;
+                word_pos = 0;
+            }
+            struct lexer_token *token = calloc(1, sizeof(struct lexer_token));
+            token->type = TOKEN_REDIR;
+            token->value = get_redir(input[j], input[j + 1]);
+            lexer_append(lexer, token);
+            if (input[++j])
+                j++;
+        }
         else if (is_quote(input[j]))
         {
+            if (word)
+            {
+                create_token_and_append(word, word_pos, in_cmd, lexer,
+                                        word_type);
+                word = NULL;
+                word_pos = 0;
+            }
             if (*word_type == TOKEN_WORD)
                 *word_type = get_quote(input[j]);
             else if (get_quote(input[j]) == *word_type)
@@ -227,7 +273,10 @@ static char *get_token_string(enum token_type type)
                              "THEN",
                              "SEMICOLON",
                              "NEWLINE",
+                             "REDIR",
+                             "IONUMBER",
                              "PIPE",
+                             "NOT",
                              "WORD",
                              "WORD_SINGLE_QUOTE",
                              "WORD_DOUBLE_QUOTE",
@@ -241,10 +290,28 @@ void lexer_print(struct lexer *lexer)
     struct lexer_token *token = lexer->tokens;
     while (token)
     {
-        printf("%s ", get_token_string(token->type));
+        if (token->type != TOKEN_REDIR)
+            printf("%s ", get_token_string(token->type));
+        else
+            printf("%s ", token->value);
         token = token->next;
     }
     printf("\n");
+}
+
+static void words_to_ionumber(struct lexer *lexer)
+{
+    struct lexer_token *token = lexer->tokens;
+    struct lexer_token *prev = lexer->tokens;
+    while (token)
+    {
+        if (token->type == TOKEN_REDIR && prev && prev->type == TOKEN_WORD)
+        {
+            prev->type = TOKEN_IONUMBER;
+        }
+        prev = token;
+        token = token->next;
+    }
 }
 
 void lexer_build(struct lexer *lexer)
@@ -261,6 +328,7 @@ void lexer_build(struct lexer *lexer)
         fprintf(stderr, "Error: quote <%c> is not terminated.\n",
                 word_type == TOKEN_WORD_SINGLE_QUOTE ? '\'' : '\"');
     }
+    words_to_ionumber(lexer);
     struct lexer_token *token = calloc(1, sizeof(struct lexer_token));
     token->type = TOKEN_EOF;
     lexer_append(lexer, token);
