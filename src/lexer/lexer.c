@@ -13,19 +13,25 @@ struct lexer_token *lexer_token_free(struct lexer_token *token)
 
 static char **split_in_words(char *input)
 {
-    // strdup or use input and &input in strtok_r
     char *new = strdup(input);
     char *save = new;
     char **words = NULL;
     int words_nb = 0;
-    // char spaces[3] = " \t";
     char *word = NULL;
 
     int i = 0;
     int word_len = 0;
+    char quote = 0;
     while (input[i])
     {
-        if (input[i] == ' ' || input[i] == '\t')
+        if (input[i] == '\'' || input[i] == '"')
+        {
+            if (quote == input[i])
+                quote = 0;
+            else if (!quote)
+                quote = input[i];
+        }
+        if ((input[i] == ' ' || input[i] == '\t' || input[i] == '\n') && !quote)
         {
             if (word_len > 0)
             {
@@ -46,17 +52,11 @@ static char **split_in_words(char *input)
     }
     if (word_len > 0)
     {
+        word[word_len] = 0;
         words = realloc(words, sizeof(char *) * (words_nb + 2));
         words[words_nb] = word;
         words_nb++;
     }
-    // while ((word = strtok_r(new, spaces, &new)))
-    // {
-    //     words = realloc(words, sizeof(char *) * (words_nb + 2));
-    //     words[words_nb] = calloc(strlen(word) + 2, sizeof(char));
-    //     strcpy(words[words_nb], word);
-    //     words_nb++;
-    // }
     words[words_nb] = NULL;
     free(save);
     return words;
@@ -117,7 +117,7 @@ static bool is_keyword(char *word)
 {
     return (!strcmp(word, "if") || !strcmp(word, "else")
             || !strcmp(word, "elif") || !strcmp(word, "fi")
-            || !strcmp(word, "then"));
+            || !strcmp(word, "then") || !strcmp(word, "!"));
 }
 
 static enum token_type get_keyword(char *word)
@@ -132,6 +132,8 @@ static enum token_type get_keyword(char *word)
         return TOKEN_FI;
     if (!strcmp(word, "then"))
         return TOKEN_THEN;
+    if (!strcmp(word, "!"))
+        return TOKEN_NOT;
     return TOKEN_ERROR;
 }
 

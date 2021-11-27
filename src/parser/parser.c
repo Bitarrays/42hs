@@ -322,7 +322,7 @@ enum parser_status parse_simple_command(struct ast **ast, struct lexer *lexer)
                 last_command = cur_prefix->right_child;
 
             //? Merge char **value and enum quotes *enclosure from last_command
-            //and ast_element
+            // and ast_element
             struct string_array_with_quotes res =
                 merge_values(last_command->value, ast_element->value,
                              last_command->enclosure, ast_element->enclosure);
@@ -458,7 +458,7 @@ enum parser_status parse_pipeline(struct ast **ast, struct lexer *lexer)
 
         struct ast *ast_pipe = ast_new(AST_PIPE);
         //* Create new pipe and add command found before while loop in left
-        //child
+        // child
         if (first)
         {
             first = false;
