@@ -19,6 +19,12 @@ void ast_free(struct ast *ast)
         free(ast->value);
         free(ast->enclosure);
     }
+    else if (ast->type == AST_REDIR)
+    {
+        free(ast->value[0]);
+        free(ast->value);
+        free(ast->enclosure);
+    }
 
     ast_free(ast->left_child);
     ast->left_child = NULL;

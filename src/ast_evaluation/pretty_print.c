@@ -57,14 +57,12 @@ void pretty_print(struct ast *ast)
             pretty_print(ast->right_child);
             printf("}");
         }
-        /*else if (ast->type == AST_REDIR)
+        else if (ast->type == AST_REDIR)
         {
-            printf("redir \"");
-            pretty_print(ast->right_child); // talk about that with Fisch
-            printf("%s", ast->value);
-            printf(" ");
             pretty_print(ast->left_child);
-        }*/
+            printf(" %s ", ast->value[0]);
+            pretty_print(ast->right_child);
+        }
         else if (ast->type == AST_COMMAND)
         {
             if (ast->value[0])
