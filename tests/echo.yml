@@ -60,3 +60,12 @@
 
 - name: Echo wrong option preceded by real one
   input: echo -a -n
+
+- name: Option in quote with word
+  input: echo "-n salut"
+
+- name: Option in quote with no other word inside quote
+  input: echo "-n" "salut"
+
+- name: Option in quote with space inside
+  input: echo "-n " "salut"
