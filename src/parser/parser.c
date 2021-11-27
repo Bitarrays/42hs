@@ -175,7 +175,11 @@ static enum parser_status parse_redirection(struct ast **ast,
     }
 
     len += strlen(tok->value);
-    type = realloc(type, len + 1);
+    if (!type)
+        type = calloc(len + 1, sizeof(char));
+    else
+        type = realloc(type, len + 1);
+    type[len] = '\0';
     type = strcat(type, tok->value);
     *ast = ast_new(AST_REDIR);
     char **redir_value = calloc(2, sizeof(char *));

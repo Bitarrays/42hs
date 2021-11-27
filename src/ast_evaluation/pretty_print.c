@@ -63,6 +63,12 @@ void pretty_print(struct ast *ast)
             printf(" %s ", ast->value[0]);
             pretty_print(ast->right_child);
         }
+        else if (ast->type == AST_PIPE)
+        {
+            pretty_print(ast->left_child);
+            printf(" | ");
+            pretty_print(ast->right_child);
+        }
         else if (ast->type == AST_COMMAND)
         {
             if (ast->value[0])
