@@ -206,7 +206,7 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
             }
             create_and_append_token(lexer, TOKEN_REDIR,
                                     get_redir(input[j], input[j + 1]));
-            if (input[++j])
+            if (input[j + 1] != 0)
                 j++;
         }
         else if (is_quote(input[j]))
