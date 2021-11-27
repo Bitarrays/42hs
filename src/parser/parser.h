@@ -11,7 +11,21 @@ enum parser_status
     PARSER_ERROR
 };
 
+struct string_array_with_quotes
+{
+    char **value;
+    enum quotes *q;
+};
+
 extern struct shell *shell;
+
+enum parser_status handle_parser_error(enum parser_status status,
+                                              struct ast **res);
+
+struct string_array_with_quotes merge_values(char **values_1,
+                                                    char **values_2,
+                                                    enum quotes *q_1,
+                                                    enum quotes *q_2);
 
 /**
  ** @brief Check if input grammar rule is respected
@@ -96,12 +110,27 @@ enum parser_status parse_rule_if(struct ast **ast, struct lexer *l);
 /**
  ** @brief Check if else_clause grammar rule is respected
  ** >> else_clause: Else compound_list | Elif compound_list Then compound_list
- *[else_clause]
  **
  ** @param ast the general ast to update
  ** @param lexer the lexer to read tokens from
  ** @return enum parser_status - current parser status
  **/
 enum parser_status parse_else_clause(struct ast **ast, struct lexer *l);
+
+/**
+ ** @brief Check if redirection grammar rule is respected
+ ** >> redirection: [IONUMBER] '>' WORD
+ **       |   [IONUMBER] '<' WORD
+ **       |   [IONUMBER] '>&' WORD
+ **       |   [IONUMBER] '<&' WORD
+ **       |   [IONUMBER] '>>' WORD
+ **       |   [IONUMBER] '<>' WORD
+ **       |   [IONUMBER] '>|' WORD
+ **
+ ** @param ast the general ast to update
+ ** @param lexer the lexer to read tokens from
+ ** @return enum parser_status - current parser status
+ **/
+enum parser_status parse_redirection(struct ast **ast, struct lexer *lexer);
 
 #endif // !PARSER_H
