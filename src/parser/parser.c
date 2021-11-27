@@ -75,7 +75,6 @@ int parse_input(char *input)
 {
     struct lexer *lex = lexer_create(input);
     lexer_build(lex);
-    lexer_print(lex);
 
     struct ast *ast = ast_new(AST_LIST);
 
@@ -97,7 +96,6 @@ int parse_input(char *input)
             if (add_eof_node(&ast) == PARSER_ERROR)
                 return display_parser_error(&ast);
 
-            pretty_print(ast);
             if (shell->pretty_print)
                 pretty_print(ast);
             int res_eval = evaluate_ast(ast);
