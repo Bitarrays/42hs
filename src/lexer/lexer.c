@@ -31,7 +31,7 @@ static char **split_in_words(char *input)
             else if (!quote)
                 quote = input[i];
         }
-        if ((input[i] == ' ' || input[i] == '\t') && !quote)
+        if ((input[i] == ' ' || input[i] == '\t' || input[i] == '\n') && !quote)
         {
             if (word_len > 0)
             {
@@ -117,7 +117,7 @@ static bool is_keyword(char *word)
 {
     return (!strcmp(word, "if") || !strcmp(word, "else")
             || !strcmp(word, "elif") || !strcmp(word, "fi")
-            || !strcmp(word, "then"));
+            || !strcmp(word, "then") || !strcmp(word, "!"));
 }
 
 static enum token_type get_keyword(char *word)
@@ -132,6 +132,8 @@ static enum token_type get_keyword(char *word)
         return TOKEN_FI;
     if (!strcmp(word, "then"))
         return TOKEN_THEN;
+    if (!strcmp(word, "!"))
+        return TOKEN_NOT;
     return TOKEN_ERROR;
 }
 
