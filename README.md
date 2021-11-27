@@ -22,3 +22,12 @@ A test is formatted like this in a yaml file:
 - name: a name
   input: an input (for example -> echo "Foo!")
 ```
+
+## Options
+
+In order to debug the program, there are 2 options.
+
+- ```--petty-print``` print the AST before each execution
+- ```--verbose``` print some functions output during execution. For now, there is only the lexer output.
+
+:warning: **The order is important**: ```--petty-print``` has to be before ```--verbose```
