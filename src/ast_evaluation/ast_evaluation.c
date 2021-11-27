@@ -59,7 +59,7 @@ int evaluate_ast(struct ast *ast)
         if (is_builtin(*(val)))
             res = find_command(val);
         else
-            res =  call_exec(val);
+            res = call_exec(val);
         char *tmp = val[0];
         int pos = 0;
         while (tmp)

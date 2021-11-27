@@ -18,7 +18,7 @@ static char **split_in_words(char *input)
     char *save = new;
     char **words = NULL;
     int words_nb = 0;
-    //char spaces[3] = " \t";
+    // char spaces[3] = " \t";
     char *word = NULL;
 
     int i = 0;
@@ -188,7 +188,7 @@ static bool is_pipe(char c)
 
 static bool is_redir(char c1)
 {
-    return (c1 == '<' || c1 == '>');    
+    return (c1 == '<' || c1 == '>');
 }
 
 static char *get_redir(char c1, char c2)
@@ -344,7 +344,8 @@ static void words_to_ionumber(struct lexer *lexer)
     struct lexer_token *prev = lexer->tokens;
     while (token)
     {
-        if (token->type == TOKEN_REDIR && prev && prev->type == TOKEN_WORD && is_int(prev->value))
+        if (token->type == TOKEN_REDIR && prev && prev->type == TOKEN_WORD
+            && is_int(prev->value))
         {
             prev->type = TOKEN_IONUMBER;
         }

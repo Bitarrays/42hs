@@ -30,7 +30,10 @@ static int display_parser_error(struct ast **res)
     return 2;
 }
 
-static struct string_array_with_quotes merge_values(char **values_1, char **values_2, enum quotes *q_1, enum quotes *q_2)
+static struct string_array_with_quotes merge_values(char **values_1,
+                                                    char **values_2,
+                                                    enum quotes *q_1,
+                                                    enum quotes *q_2)
 {
     int length_1 = 0;
     while (values_1[length_1] != NULL)
@@ -144,7 +147,8 @@ enum parser_status parse_compound_list(struct ast **ast, struct lexer *lexer)
     return PARSER_OK;
 }
 
-static enum parser_status parse_redirection(struct ast **ast, struct lexer *lexer)
+static enum parser_status parse_redirection(struct ast **ast,
+                                            struct lexer *lexer)
 {
     if (!ast || !lexer)
         return PARSER_ERROR;
@@ -165,7 +169,8 @@ static enum parser_status parse_element(struct ast **ast, struct lexer *lexer)
 {
     // Try WORD
     struct lexer_token *tok = lexer_peek(lexer);
-    if (tok->type == TOKEN_WORD || tok->type == TOKEN_WORD_DOUBLE_QUOTE || tok->type == TOKEN_WORD_SINGLE_QUOTE)
+    if (tok->type == TOKEN_WORD || tok->type == TOKEN_WORD_DOUBLE_QUOTE
+        || tok->type == TOKEN_WORD_SINGLE_QUOTE)
     {
         *ast = ast_new(AST_COMMAND);
         char **value = calloc(2, sizeof(char *));
@@ -190,7 +195,7 @@ static enum parser_status parse_element(struct ast **ast, struct lexer *lexer)
     enum parser_status status_redir = parse_redirection(ast, lexer);
     if (status_redir == PARSER_ERROR)
         return handle_parser_error(status_redir, ast);
-    
+
     return PARSER_OK;
 }
 
@@ -238,7 +243,8 @@ enum parser_status parse_simple_command(struct ast **ast, struct lexer *lexer)
             break;
         }
 
-        // Test if element is WORD and parse it as argument of the previous command
+        // Test if element is WORD and parse it as argument of the previous
+        // command
         if (ast_element->type == AST_COMMAND)
         {
             struct ast *last_command = NULL;
@@ -256,8 +262,11 @@ enum parser_status parse_simple_command(struct ast **ast, struct lexer *lexer)
             else
                 last_command = cur_prefix->right_child;
 
-            //? Merge char **value and enum quotes *enclosure from last_command and ast_element
-            struct string_array_with_quotes res = merge_values(last_command->value, ast_element->value, last_command->enclosure, ast_element->enclosure);
+            //? Merge char **value and enum quotes *enclosure from last_command
+            //and ast_element
+            struct string_array_with_quotes res =
+                merge_values(last_command->value, ast_element->value,
+                             last_command->enclosure, ast_element->enclosure);
             last_command->value = res.value;
             last_command->enclosure = res.q;
             ast_free(ast_element);
@@ -389,12 +398,13 @@ enum parser_status parse_pipeline(struct ast **ast, struct lexer *lexer)
         }
 
         struct ast *ast_pipe = ast_new(AST_PIPE);
-        //* Create new pipe and add command found before while loop in left child
+        //* Create new pipe and add command found before while loop in left
+        //child
         if (first)
         {
             first = false;
             ast_pipe->left_child = last_command;
-            if (not)
+            if (not )
                 (*ast)->left_child = ast_pipe;
             else
                 *ast = ast_pipe;
