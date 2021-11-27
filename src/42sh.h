@@ -16,6 +16,7 @@ struct shell
     char *ifs;
     uid_t uid;
     int return_code;
+    bool verbose;
 };
 
 /**

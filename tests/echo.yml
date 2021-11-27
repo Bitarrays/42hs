@@ -64,6 +64,9 @@
 - name: Option in quote with word
   input: echo "-n salut"
 
+- name: Option in quote with word and mutliple spaces
+  input: echo "-n   salut"
+
 - name: Option in quote with no other word inside quote
   input: echo "-n" "salut"
 

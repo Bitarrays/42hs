@@ -55,10 +55,20 @@ int evaluate_ast(struct ast *ast)
         char **val = expand(ast);
         if (!val)
             return 1;
+        int res;
         if (is_builtin(*(val)))
-            return find_command(val);
+            res = find_command(val);
         else
-            return call_exec(val);
+            res = call_exec(val);
+        char *tmp = val[0];
+        int pos = 0;
+        while (tmp)
+        {
+            free(tmp);
+            tmp = val[++pos];
+        }
+        free(val);
+        return res;
     }
     else if (ast->type == AST_LIST)
     {
