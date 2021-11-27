@@ -49,9 +49,6 @@
 - name: Echo real backlash n
   input: echo "\n"
 
-- name: Echo backslah n between single quote
-  input: echo '\n'
-
 - name: Echo wrong option
   input: echo -a
 
