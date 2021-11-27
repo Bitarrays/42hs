@@ -1,6 +1,7 @@
 #include "lexer.h"
 
 #include "../42sh.h"
+#include "lexer_tools.h"
 
 extern struct shell *shell;
 
@@ -9,57 +10,6 @@ struct lexer_token *lexer_token_free(struct lexer_token *token)
     free(token->value);
     free(token);
     return NULL;
-}
-
-static char **split_in_words(char *input)
-{
-    char *new = strdup(input);
-    char *save = new;
-    char **words = NULL;
-    int words_nb = 0;
-    char *word = NULL;
-
-    int i = 0;
-    int word_len = 0;
-    char quote = 0;
-    while (input[i])
-    {
-        if (input[i] == '\'' || input[i] == '"')
-        {
-            if (quote == input[i])
-                quote = 0;
-            else if (!quote)
-                quote = input[i];
-        }
-        if ((input[i] == ' ' || input[i] == '\t' || input[i] == '\n') && !quote)
-        {
-            if (word_len > 0)
-            {
-                word[word_len] = 0;
-                words = realloc(words, sizeof(char *) * (words_nb + 2));
-                words[words_nb] = word;
-                words_nb++;
-                word = NULL;
-                word_len = 0;
-            }
-            i++;
-        }
-        else
-        {
-            word = realloc(word, sizeof(char) * (word_len + 2));
-            word[word_len++] = input[i++];
-        }
-    }
-    if (word_len > 0)
-    {
-        word[word_len] = 0;
-        words = realloc(words, sizeof(char *) * (words_nb + 2));
-        words[words_nb] = word;
-        words_nb++;
-    }
-    words[words_nb] = NULL;
-    free(save);
-    return words;
 }
 
 struct lexer *lexer_create(char *input)
@@ -165,9 +115,9 @@ static enum token_type get_quote(char c)
     return TOKEN_ERROR;
 }
 
-static void create_token_and_append(char *word, int word_pos, bool *in_cmd,
-                                    struct lexer *lexer,
-                                    enum token_type *word_type)
+static void create_word_and_append(char *word, int word_pos, bool *in_cmd,
+                                   struct lexer *lexer,
+                                   enum token_type *word_type)
 {
     if (!word)
         return;
@@ -234,31 +184,28 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
         {
             if (word)
             {
-                create_token_and_append(word, word_pos, in_cmd, lexer,
-                                        word_type);
+                create_word_and_append(word, word_pos, in_cmd, lexer,
+                                       word_type);
                 word = NULL;
                 word_pos = 0;
             }
-            struct lexer_token *token = calloc(1, sizeof(struct lexer_token));
-            token->type =
-                is_separator(input[j]) ? get_separator(input[j]) : TOKEN_PIPE;
-            token->value = NULL;
-            lexer_append(lexer, token);
+            create_and_append_token(
+                lexer,
+                is_separator(input[j]) ? get_separator(input[j]) : TOKEN_PIPE,
+                NULL);
             *in_cmd = false;
         }
         else if (*word_type == TOKEN_WORD && is_redir(input[j]))
         {
             if (word)
             {
-                create_token_and_append(word, word_pos, in_cmd, lexer,
-                                        word_type);
+                create_word_and_append(word, word_pos, in_cmd, lexer,
+                                       word_type);
                 word = NULL;
                 word_pos = 0;
             }
-            struct lexer_token *token = calloc(1, sizeof(struct lexer_token));
-            token->type = TOKEN_REDIR;
-            token->value = get_redir(input[j], input[j + 1]);
-            lexer_append(lexer, token);
+            create_and_append_token(lexer, TOKEN_REDIR,
+                                    get_redir(input[j], input[j + 1]));
             if (input[++j])
                 j++;
         }
@@ -269,8 +216,8 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
                 *word_type = get_quote(input[j]);
             else if (get_quote(input[j]) == *word_type)
             {
-                create_token_and_append(word, word_pos, in_cmd, lexer,
-                                        word_type);
+                create_word_and_append(word, word_pos, in_cmd, lexer,
+                                       word_type);
                 word = NULL;
                 word_pos = 0;
                 *word_type = TOKEN_WORD;
@@ -285,75 +232,11 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
     }
     if (word)
     {
-        create_token_and_append(word, word_pos, in_cmd, lexer, word_type);
+        create_word_and_append(word, word_pos, in_cmd, lexer, word_type);
         word = NULL;
         word_pos = 0;
     }
     free(input);
-}
-
-static char *get_token_string(enum token_type type)
-{
-    char *token_string[] = { "ERROR",
-                             "IF",
-                             "ELSE",
-                             "ELIF",
-                             "FI",
-                             "THEN",
-                             "SEMICOLON",
-                             "NEWLINE",
-                             "REDIR",
-                             "IONUMBER",
-                             "PIPE",
-                             "NOT",
-                             "WORD",
-                             "WORD_SINGLE_QUOTE",
-                             "WORD_DOUBLE_QUOTE",
-                             "EOF" };
-    return token_string[type];
-}
-
-void lexer_print(struct lexer *lexer)
-{
-    printf("lexer output: ");
-    struct lexer_token *token = lexer->tokens;
-    while (token)
-    {
-        if (token->type != TOKEN_REDIR)
-            printf("%s ", get_token_string(token->type));
-        else
-            printf("%s ", token->value);
-        token = token->next;
-    }
-    printf("\n");
-}
-
-static bool is_int(char *input)
-{
-    int i = 0;
-    while (input[i])
-    {
-        if (input[i] < '0' || input[i] > '9')
-            return false;
-        i++;
-    }
-    return true;
-}
-
-static void words_to_ionumber(struct lexer *lexer)
-{
-    struct lexer_token *token = lexer->tokens;
-    struct lexer_token *prev = lexer->tokens;
-    while (token)
-    {
-        if (token->type == TOKEN_REDIR && prev && prev->type == TOKEN_WORD
-            && is_int(prev->value))
-        {
-            prev->type = TOKEN_IONUMBER;
-        }
-        prev = token;
-        token = token->next;
-    }
 }
 
 void lexer_build(struct lexer *lexer)
@@ -371,9 +254,7 @@ void lexer_build(struct lexer *lexer)
                 word_type == TOKEN_WORD_SINGLE_QUOTE ? '\'' : '\"');
     }
     words_to_ionumber(lexer);
-    struct lexer_token *token = calloc(1, sizeof(struct lexer_token));
-    token->type = TOKEN_EOF;
-    lexer_append(lexer, token);
+    create_and_append_token(lexer, TOKEN_EOF, NULL);
     if (shell->verbose)
         lexer_print(lexer);
     free(words);
