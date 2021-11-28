@@ -17,6 +17,7 @@ struct shell
     uid_t uid;
     int return_code;
     bool verbose;
+    bool interupt;
 };
 
 /**

@@ -1,7 +1,6 @@
 #include "parser.h"
 
-enum parser_status parse_redirection(struct ast **ast,
-                                            struct lexer *lexer)
+enum parser_status parse_redirection(struct ast **ast, struct lexer *lexer)
 {
     struct lexer_token *tok = lexer_peek(lexer);
     char *type = NULL;
@@ -38,7 +37,8 @@ enum parser_status parse_redirection(struct ast **ast,
 
     lexer_pop(lexer);
     tok = lexer_peek(lexer);
-    if (tok->type != TOKEN_WORD && tok->type != TOKEN_WORD_SINGLE_QUOTE && tok->type != TOKEN_WORD_DOUBLE_QUOTE)
+    if (tok->type != TOKEN_WORD && tok->type != TOKEN_WORD_SINGLE_QUOTE
+        && tok->type != TOKEN_WORD_DOUBLE_QUOTE)
         return handle_parser_error(PARSER_ERROR, ast);
 
     struct ast *ast_word = ast_new(AST_COMMAND);

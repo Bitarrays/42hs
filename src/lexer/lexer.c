@@ -63,30 +63,6 @@ void lexer_free(struct lexer *lexer)
     free(lexer);
 }
 
-static bool is_keyword(char *word)
-{
-    return (!strcmp(word, "if") || !strcmp(word, "else")
-            || !strcmp(word, "elif") || !strcmp(word, "fi")
-            || !strcmp(word, "then") || !strcmp(word, "!"));
-}
-
-static enum token_type get_keyword(char *word)
-{
-    if (!strcmp(word, "if"))
-        return TOKEN_IF;
-    if (!strcmp(word, "else"))
-        return TOKEN_ELSE;
-    if (!strcmp(word, "elif"))
-        return TOKEN_ELIF;
-    if (!strcmp(word, "fi"))
-        return TOKEN_FI;
-    if (!strcmp(word, "then"))
-        return TOKEN_THEN;
-    if (!strcmp(word, "!"))
-        return TOKEN_NOT;
-    return TOKEN_ERROR;
-}
-
 static bool is_separator(char c)
 {
     return (c == ';' || c == '\n');
@@ -252,6 +228,7 @@ void lexer_build(struct lexer *lexer)
     {
         fprintf(stderr, "Error: quote <%c> is not terminated.\n",
                 word_type == TOKEN_WORD_SINGLE_QUOTE ? '\'' : '\"');
+        shell->exit = true;
     }
     words_to_ionumber(lexer);
     create_and_append_token(lexer, TOKEN_EOF, NULL);
