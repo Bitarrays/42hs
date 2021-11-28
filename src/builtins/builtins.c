@@ -105,6 +105,7 @@ int cd(char **toExecute)
         char *swap = shell->oldpwd;
         shell->oldpwd = shell->pwd;
         shell->pwd = swap;
+        printf("%s\n", shell->pwd);
         return 0;
     }
 

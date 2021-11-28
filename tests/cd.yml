@@ -1,0 +1,20 @@
+- name: Basic folder
+  input: cd src; pwd
+
+- name: Multiple folders
+  input: cd src; cd builtins; cd ..; pwd
+
+- name: Long path
+  input: cd src/../tests/../; pwd
+
+- name: Wrong folder
+  input: cd jenexistepas; pwd
+
+- name: File
+  input: cd Makefile; pwd
+
+- name: Starting with a tiret
+  input: cd -; pwd
+
+- name: Folder then a tiret
+  input: cd src; cd -; pwd
