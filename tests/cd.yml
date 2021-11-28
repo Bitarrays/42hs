@@ -7,6 +7,9 @@
 - name: Long path
   input: cd src/../tests/../; pwd
 
+- name: Long path, doesn't work
+  input: cd src/builtins/Makefile/ ; pwd
+
 - name: Wrong folder
   input: cd jenexistepas; pwd
 
@@ -18,3 +21,36 @@
 
 - name: Folder then a tiret
   input: cd src; cd -; pwd
+
+- name: Root
+  input: cd ./; pwd
+
+- name: Root then folder
+  input: cd ./src; pwd
+
+- name: Root then folder then reroot
+  input: cd ./src; cd ./; pwd
+
+- name: Root after folder
+  input: cd src/./; pwd
+
+- name: Root then tiret
+  input: cd ./; cd -; pwd
+
+- name: Root folder then tiret
+  input: cd ./src/builtins; cd -; pwd
+
+- name: Root folder inexistant
+  input: cd ./jenexistepas; pwd
+
+- name: Root folder is a file
+  input: cd ./Makefile; pwd
+
+- name: Double root
+  input: cd ././; pwd
+
+- name: Multiple tiret
+  input: cd -----; pwd
+
+- name: Chained tiret
+  input: cd -; cd -; cd -; cd -; cd -; pwd
