@@ -24,6 +24,9 @@ static void init_shell(int argc, char **argv)
     shell->oldpwd = calloc(2048, sizeof(char));
     if (getcwd(shell->oldpwd, 2048) == NULL)
         shell->exit = true;
+    shell->pwd = calloc(2048, sizeof(char));
+    if (getcwd(shell->pwd, 2048) == NULL)
+        shell->exit = true;
 
     // TODO: what are the shell parameters?
     shell->args = NULL;
@@ -37,6 +40,7 @@ static void init_shell(int argc, char **argv)
 void free_shell(void)
 {
     free(shell->oldpwd);
+    free(shell->pwd);
     free(shell->ifs);
     free(shell);
 }
@@ -45,6 +49,7 @@ void print_shell(void)
 {
     printf("42sh\n");
     printf("  + oldpwd: %s\n", shell->oldpwd);
+    printf("  + pwd: %s\n", shell->pwd);
     printf("  + args (%d):\n", shell->nb_args);
     for (int i = 0; i < shell->nb_args; i++)
         printf("    %s\n", shell->args[i]);

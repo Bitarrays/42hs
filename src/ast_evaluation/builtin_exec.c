@@ -12,6 +12,8 @@ int is_builtin(char *cmd)
 {
     if (!strcmp(cmd, "echo"))
         return 1;
+    if (!strcmp(cmd, "cd"))
+        return 1;
     return 0;
 }
 

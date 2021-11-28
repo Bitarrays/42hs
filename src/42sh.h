@@ -10,6 +10,7 @@ struct shell
 {
     bool pretty_print;
     char *oldpwd;
+    char *pwd;
     bool exit;
     char **args;
     int nb_args;

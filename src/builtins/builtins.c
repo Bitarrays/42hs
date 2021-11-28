@@ -8,7 +8,9 @@
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include "../42sh.h"
 #define BUFSIZE 400
+extern struct shell *shell;
 
 void afterBackslash(char *toCheck, int *index)
 {
@@ -97,6 +99,15 @@ int cd(char **toExecute)
     if (toExecute[1] == NULL)
         return 0;
     
+    if (!strcmp(toExecute[1], "-"))
+    {
+        chdir(shell->oldpwd);
+        char *swap = shell->oldpwd;
+        shell->oldpwd = shell->pwd;
+        shell->pwd = swap;
+        return 0;
+    }
+
     int error_chdir = chdir(toExecute[1]);
 
     if (error_chdir == -1)
@@ -104,6 +115,13 @@ int cd(char **toExecute)
         fprintf(stderr, "42sh: cd: can't cd to %s\n", toExecute[1]);
         return 1;
     }
+    
+    shell->oldpwd = strcpy(shell->oldpwd, shell->pwd);
+
+    if (shell->pwd[strlen(shell->pwd) - 1] != '/')
+        shell->pwd = strcat(shell->pwd, "/");
+
+    shell->pwd = strcat(shell->pwd, toExecute[1]);
 
     return 0;
 }
@@ -115,8 +133,8 @@ int find_command(char **toExecute)
         echo(toExecute);
         return 0;
     }
-    /*if (!strcmp(toExecute[0], "cd"))
-        return cd(toExecute);*/
+    if (!strcmp(toExecute[0], "cd"))
+        return cd(toExecute);
     else
         return 1;
 }
