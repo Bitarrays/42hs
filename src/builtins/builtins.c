@@ -1,9 +1,14 @@
 #include "builtins.h"
 
+#include <dirent.h>
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
+#include <unistd.h>
+#define BUFSIZE 400
 
 void afterBackslash(char *toCheck, int *index)
 {
@@ -87,6 +92,22 @@ void echo(char **toExecute)
         printf("\n");
 }
 
+int cd(char **toExecute)
+{
+    if (toExecute[1] == NULL)
+        return 0;
+    
+    int error_chdir = chdir(toExecute[1]);
+
+    if (error_chdir == -1)
+    {
+        fprintf(stderr, "42sh: cd: can't cd to %s\n", toExecute[1]);
+        return 1;
+    }
+
+    return 0;
+}
+
 int find_command(char **toExecute)
 {
     if (!strcmp(toExecute[0], "echo"))
@@ -94,6 +115,8 @@ int find_command(char **toExecute)
         echo(toExecute);
         return 0;
     }
+    /*if (!strcmp(toExecute[0], "cd"))
+        return cd(toExecute);*/
     else
         return 1;
 }
