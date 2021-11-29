@@ -164,4 +164,15 @@ enum parser_status parse_rule_until(struct ast **ast, struct lexer *lexer);
  **/
 enum parser_status parse_do_group(struct ast **ast, struct lexer *lexer);
 
+/**
+ ** @brief Check if for grammar rule is respected
+ ** >> for: For WORD ([';']|[('newline')* 'in' (WORD)* (';'|'newline')])
+ *('newline')* do_group
+ **
+ ** @param ast the general ast to update
+ ** @param lexer the lexer to read tokens from
+ ** @return enum parser_status - current parser status
+ **/
+enum parser_status parse_for(struct ast **ast, struct lexer *lexer);
+
 #endif // !PARSER_H
