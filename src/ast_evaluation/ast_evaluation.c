@@ -34,6 +34,13 @@ int evaluate_ast(struct ast *ast)
             ret = evaluate_ast(ast->left_child);
         return ret;
     }
+    else if (ast->type == AST_UNTIL)
+    {
+        int ret = 0;
+        while (evaluate_ast(ast->condition))
+            ret = evaluate_ast(ast->left_child);
+        return ret;
+    }
     else if (ast->type == AST_AND)
     {
         return evaluate_ast(ast->left_child) && evaluate_ast(ast->right_child);
