@@ -38,19 +38,19 @@ void afterBackslash(char *toCheck, int *index)
         putchar('\\');
 }
 
-void echo(char **toExecute)
+void echo(char **args)
 {
     bool n_option = false;
     bool e_option = false;
     int start_print = 1;
 
-    for (; toExecute[start_print] != NULL; start_print++)
+    for (; args[start_print] != NULL; start_print++)
     {
-        if (!strcmp(toExecute[start_print], "-n") && !n_option)
+        if (!strcmp(args[start_print], "-n") && !n_option)
             n_option = true;
-        else if (!strcmp(toExecute[start_print], "-e") && !e_option)
+        else if (!strcmp(args[start_print], "-e") && !e_option)
             e_option = true;
-        else if (!strcmp(toExecute[start_print], "-ne") && !e_option
+        else if (!strcmp(args[start_print], "-ne") && !e_option
                  && !n_option)
         {
             e_option = true;
@@ -63,28 +63,28 @@ void echo(char **toExecute)
 
     if (e_option)
     {
-        for (; toExecute[start_print] != NULL; start_print++)
+        for (; args[start_print] != NULL; start_print++)
         {
-            for (int i = 0; toExecute[start_print][i] != '\0'; i++)
+            for (int i = 0; args[start_print][i] != '\0'; i++)
             {
-                if (toExecute[start_print][i] == '\\')
-                    afterBackslash(toExecute[start_print], &i);
+                if (args[start_print][i] == '\\')
+                    afterBackslash(args[start_print], &i);
                 else
-                    putchar(toExecute[start_print][i]);
+                    putchar(args[start_print][i]);
             }
 
-            if (toExecute[start_print + 1] != NULL)
+            if (args[start_print + 1] != NULL)
                 putchar(' ');
         }
     }
     else
     {
-        for (; toExecute[start_print] != NULL; start_print++)
+        for (; args[start_print] != NULL; start_print++)
         {
-            for (int i = 0; toExecute[start_print][i] != '\0'; i++)
-                putchar(toExecute[start_print][i]);
+            for (int i = 0; args[start_print][i] != '\0'; i++)
+                putchar(args[start_print][i]);
 
-            if (toExecute[start_print + 1] != NULL)
+            if (args[start_print + 1] != NULL)
                 putchar(' ');
         }
     }
@@ -95,14 +95,17 @@ void echo(char **toExecute)
     fflush(stdout);
 }
 
-int cd(char **toExecute)
+int cd(char **args)
 {
-    if (toExecute[1] == NULL)
+    if (!args[1] || !strcmp(args[1], "~"))
     {
+        shell->oldpwd = strcpy(shell->oldpwd, shell->pwd);
+        strcpy(shell->pwd, getenv("HOME"));
+        chdir(shell->pwd);
         return 0;
     }
     
-    if (!strcmp(toExecute[1], "-"))
+    if (!strcmp(args[1], "-"))
     {
         chdir(shell->oldpwd);
         char *swap = shell->oldpwd;
@@ -113,36 +116,30 @@ int cd(char **toExecute)
         return 0;
     }
 
-    int error_chdir = chdir(toExecute[1]);
+    int error_chdir = chdir(args[1]);
 
     if (error_chdir == -1)
     {
-        fprintf(stderr, "42sh: cd: can't cd to %s\n", toExecute[1]);
+        fprintf(stderr, "42sh: cd: can't cd to %s\n", args[1]);
         return 1;
     }
     
     shell->oldpwd = strcpy(shell->oldpwd, shell->pwd);
 
-    if (shell->pwd[strlen(shell->pwd) - 1] != '/')
-        shell->pwd = strcat(shell->pwd, "/");
-
-    if (toExecute[1][0] != '/')
-        shell->pwd = strcat(shell->pwd, toExecute[1]);
-    else
-        shell->pwd = strcpy(shell->pwd, toExecute[1]);
+    getcwd(shell->pwd, 2048);
 
     return 0;
 }
 
-int find_command(char **toExecute)
+int find_command(char **args)
 {
-    if (!strcmp(toExecute[0], "echo"))
+    if (!strcmp(args[0], "echo"))
     {
-        echo(toExecute);
+        echo(args);
         return 0;
     }
-    if (!strcmp(toExecute[0], "cd"))
-        return cd(toExecute);
+    if (!strcmp(args[0], "cd"))
+        return cd(args);
     else
         return 1;
 }

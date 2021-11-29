@@ -16,10 +16,10 @@
 - name: File
   input: cd Makefile; pwd
 
-- name: Starting with a e-FN
+- name: Starting with a dash
   input: cd -; pwd
 
-- name: Folder then a e-FN
+- name: Folder then a dash
   input: cd src; cd -; pwd
 
 - name: Root
@@ -34,10 +34,10 @@
 - name: Root after folder
   input: cd src/./; pwd
 
-- name: Root then e-FN
+- name: Root then dash
   input: cd ./; cd -; pwd
 
-- name: Root folder then e-FN
+- name: Root folder then dash
   input: cd ./src/builtins; cd -; pwd
 
 - name: Root folder inexistant
@@ -49,8 +49,32 @@
 - name: Double root
   input: cd ././; pwd
 
-- name: Multiple e-FN
+- name: Multiple dash
   input: cd -----; pwd
 
-- name: Chained e-FN
+- name: Chained dash
   input: cd /tmp; cd /root; echo start; cd -; pwd; cd -; pwd; cd -; pwd; cd -; pwd; cd -; pwd; cd -; echo end; pwd
+
+- name: Go to home
+  input: cd; pwd
+
+- name: Go to home
+  input: cd ~; pwd
+
+- name: Go to home and go back
+  input: cd /tmp; cd ~; cd -; pwd
+
+- name: Go to tmp then go to home and go back twice
+  input: cd /tmp; cd ~; cd -; cd -; pwd
+
+- name: Go to home then go to tmp and go back twice
+  input: cd ~; cd /tmp; cd -; cd -; pwd
+
+- name: Go back but too far
+  input: cd ../../../../../../../../../../../../../../tmp; pwd; cd /home; cd -; pwd;
+
+- name: Go back (absolute) but too far
+  input: cd /../../../../../../../../../../../../../../tmp; pwd; cd /home; cd -; pwd;
+
+- name: Relative paths
+  input: cd ../tmp; cd ../root; cd ../tmp; cd -; pwd;

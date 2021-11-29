@@ -15,7 +15,7 @@ class TestCase:
 def diff(expected: str, actual: str) -> str:
     expected_lines = expected.splitlines(keepends=True)
     actual_lines = actual.splitlines(keepends=True)
-    return ''.join(unified_diff(expected_lines, actual_lines, fromfile='expected', tofile='actual'))
+    return ''.join(unified_diff(actual_lines, expected_lines, fromfile='actual', tofile='expected'))
 
 def run_shell(shell: str, stdin: str) -> sp.CompletedProcess:
     return sp.run([shell], input=stdin, capture_output=True, text=True)
