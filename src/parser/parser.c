@@ -6,7 +6,6 @@
 #include <stdio.h>
 #include <string.h>
 
-void pretty_print(struct ast *ast);
 int evaluate_ast(struct ast *ast);
 
 enum parser_status handle_parser_error(enum parser_status status,

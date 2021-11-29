@@ -26,6 +26,8 @@ struct string_array_with_quotes merge_values(char **values_1, char **values_2,
                                              enum quotes *q_1,
                                              enum quotes *q_2);
 
+void pretty_print(struct ast *ast);
+
 /**
  ** @brief Check if input grammar rule is respected
  ** >> input: compound_list EOF | compound_list 'newline' | 'newline' | EOF;
@@ -161,6 +163,5 @@ enum parser_status parse_rule_until(struct ast **ast, struct lexer *lexer);
  ** @return enum parser_status - current parser status
  **/
 enum parser_status parse_do_group(struct ast **ast, struct lexer *lexer);
-
 
 #endif // !PARSER_H

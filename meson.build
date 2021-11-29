@@ -31,6 +31,7 @@ common = [
   'src/parser/parser_high_level.c',
   'src/parser/parser_conditions.c',
   'src/parser/parser_commands.c',
+  'src/parser/parser_loops.c',
   'src/parser/ast.c',
   'src/ast_evaluation/pretty_print.c',
   'src/ast_evaluation/ast_evaluation.c',

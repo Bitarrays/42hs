@@ -8,7 +8,7 @@ void pretty_print(struct ast *ast)
     if (ast)
     {
         if (ast->type == AST_IF || ast->type == AST_FOR
-            || ast->type == AST_WHILE)
+            || ast->type == AST_WHILE || ast->type == AST_UNTIL)
         {
             if (ast->type == AST_IF)
             {
@@ -35,6 +35,14 @@ void pretty_print(struct ast *ast)
             else if (ast->type == AST_WHILE)
             {
                 printf("while { ");
+                pretty_print(ast->condition);
+                printf("}; do { ");
+                pretty_print(ast->left_child);
+                printf("}");
+            }
+            else if (ast->type == AST_UNTIL)
+            {
+                printf("until { ");
                 pretty_print(ast->condition);
                 printf("}; do { ");
                 pretty_print(ast->left_child);
