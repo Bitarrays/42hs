@@ -27,7 +27,8 @@ void pretty_print(struct ast *ast)
             else if (ast->type == AST_FOR)
             {
                 printf("for { ");
-                pretty_print(ast->condition);
+                for (int i = 0; ast->value[i]; i++)
+                    printf("%s ", ast->value[i]);
                 printf("}; do { ");
                 pretty_print(ast->left_child);
                 printf("}");

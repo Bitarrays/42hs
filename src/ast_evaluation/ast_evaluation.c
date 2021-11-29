@@ -17,16 +17,18 @@ int evaluate_ast(struct ast *ast)
         else
             return evaluate_ast(ast->right_child);
     }
-    else if (ast->type == AST_FOR)
+    /*else if (ast->type == AST_FOR)
     {
-        if (!ast->condition->left_child
-            && is_in(ast->condition->right_child->value))
-            return 0; // add expend var
+        char **var;
+        if (!ast->value[1] || !ast->value[2])
+            var = shell->args; // add var in array
+        else
+            var = find_elt_list(list, ) // boucle on every var
 
         while (!evaluate_ast(ast->condition))
             evaluate_ast(ast->left_child);
         return evaluate_ast(ast->right_child);
-    }
+    }*/
     else if (ast->type == AST_WHILE)
     {
         int ret = 0;
