@@ -16,10 +16,10 @@
 - name: File
   input: cd Makefile; pwd
 
-- name: Starting with a tiret
+- name: Starting with a e-FN
   input: cd -; pwd
 
-- name: Folder then a tiret
+- name: Folder then a e-FN
   input: cd src; cd -; pwd
 
 - name: Root
@@ -34,10 +34,10 @@
 - name: Root after folder
   input: cd src/./; pwd
 
-- name: Root then tiret
+- name: Root then e-FN
   input: cd ./; cd -; pwd
 
-- name: Root folder then tiret
+- name: Root folder then e-FN
   input: cd ./src/builtins; cd -; pwd
 
 - name: Root folder inexistant
@@ -49,8 +49,8 @@
 - name: Double root
   input: cd ././; pwd
 
-- name: Multiple tiret
+- name: Multiple e-FN
   input: cd -----; pwd
 
-- name: Chained tiret
-  input: cd -; cd -; cd -; cd -; cd -; pwd
+- name: Chained e-FN
+  input: cd /tmp; cd /root; echo start; cd -; pwd; cd -; pwd; cd -; pwd; cd -; pwd; cd -; pwd; cd -; echo end; pwd

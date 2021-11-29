@@ -9,7 +9,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include "../42sh.h"
-#define BUFSIZE 400
 extern struct shell *shell;
 
 void afterBackslash(char *toCheck, int *index)
@@ -92,12 +91,16 @@ void echo(char **toExecute)
 
     if (!n_option)
         printf("\n");
+    
+    fflush(stdout);
 }
 
 int cd(char **toExecute)
 {
     if (toExecute[1] == NULL)
+    {
         return 0;
+    }
     
     if (!strcmp(toExecute[1], "-"))
     {
@@ -106,6 +109,7 @@ int cd(char **toExecute)
         shell->oldpwd = shell->pwd;
         shell->pwd = swap;
         printf("%s\n", shell->pwd);
+        fflush(stdout);
         return 0;
     }
 
@@ -122,7 +126,10 @@ int cd(char **toExecute)
     if (shell->pwd[strlen(shell->pwd) - 1] != '/')
         shell->pwd = strcat(shell->pwd, "/");
 
-    shell->pwd = strcat(shell->pwd, toExecute[1]);
+    if (toExecute[1][0] != '/')
+        shell->pwd = strcat(shell->pwd, toExecute[1]);
+    else
+        shell->pwd = strcpy(shell->pwd, toExecute[1]);
 
     return 0;
 }
