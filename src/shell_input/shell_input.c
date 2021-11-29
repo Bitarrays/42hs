@@ -1,6 +1,6 @@
 #include "shell_input.h"
 
-#include "../parser/parser.h"
+#include "parser.h"
 
 static int shell_prompt(void)
 {
@@ -20,6 +20,8 @@ static int shell_prompt(void)
         int line = 0;
         while (read(STDIN_FILENO, &c, 1) > 0)
         {
+            if (c == 12)
+                system("clear");
             if (c == EOF)
                 return 0;
             if (c == '\n')

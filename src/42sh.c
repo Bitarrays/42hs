@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "lexer/lexer.h"
-#include "shell_input/shell_input.h"
+#include "lexer.h"
+#include "shell_input.h"
 
 struct shell *shell;
 

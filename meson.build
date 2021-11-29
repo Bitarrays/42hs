@@ -13,11 +13,12 @@ cflags = ['-D_GNU_SOURCE', '-D_POSIX_C_SOURCE=200809L']
 add_project_arguments(cflags, language: 'c')
 
 incdirs = [
-  include_directories('src/lexer'),
-  include_directories('src/parser'),
-  include_directories('src/shell_input'),
-  include_directories('src/ast_evaluation'),
-  include_directories('src/builtins'),
+  include_directories('./src/lexer'),
+  include_directories('./src/parser'),
+  include_directories('./src/shell_input'),
+  include_directories('./src/ast_evaluation'),
+  include_directories('./src/builtins'),
+  include_directories('./src/'),
 ]
 
 common = [
@@ -39,6 +40,8 @@ common = [
   'src/ast_evaluation/prog_exec.c',
   'src/shell_input/shell_input.c',
   'src/builtins/builtins.c',
+  'src/builtins/echo.c',
+  'src/builtins/cd.c',
 ]
 
 token_printer = executable(
