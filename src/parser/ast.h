@@ -9,6 +9,7 @@ enum ast_type
     AST_IF,
     AST_FOR,
     AST_WHILE,
+    AST_UNTIL,
     AST_CASE,
     AST_PIPE,
     AST_OR,
@@ -16,7 +17,7 @@ enum ast_type
     AST_NOT,
     AST_REDIR,
     AST_FUNC,
-    AST_EOF
+    AST_EOF,
 };
 
 enum quotes

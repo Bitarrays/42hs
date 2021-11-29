@@ -217,11 +217,30 @@ enum parser_status parse_simple_command(struct ast **ast, struct lexer *lexer)
 
 enum parser_status parse_shell_command(struct ast **ast, struct lexer *lexer)
 {
-    enum parser_status status_command = parse_rule_if(ast, lexer);
-    if (status_command == PARSER_ERROR)
-        return handle_parser_error(status_command, ast);
+    struct lexer_token *save_tok = lexer_peek(lexer);
 
-    return PARSER_OK;
+    // Try rule_while
+    enum parser_status status_command = parse_rule_while(ast, lexer);
+    if (status_command == PARSER_OK)
+        return PARSER_OK;
+
+    lexer_go_back(lexer, save_tok);
+
+    // Try rule_until
+    status_command = parse_rule_until(ast, lexer);
+    if (status_command == PARSER_OK)
+        return PARSER_OK;
+
+    lexer_go_back(lexer, save_tok);
+
+    // Try rule_if
+    status_command = parse_rule_if(ast, lexer);
+    if (status_command == PARSER_OK)
+        return PARSER_OK;
+
+    lexer_go_back(lexer, save_tok);
+
+    return handle_parser_error(PARSER_ERROR, ast);
 }
 
 enum parser_status parse_command(struct ast **ast, struct lexer *lexer)

@@ -26,6 +26,8 @@ struct string_array_with_quotes merge_values(char **values_1, char **values_2,
                                              enum quotes *q_1,
                                              enum quotes *q_2);
 
+void pretty_print(struct ast *ast);
+
 /**
  ** @brief Check if input grammar rule is respected
  ** >> input: compound_list EOF | compound_list 'newline' | 'newline' | EOF;
@@ -131,5 +133,35 @@ enum parser_status parse_else_clause(struct ast **ast, struct lexer *l);
  ** @return enum parser_status - current parser status
  **/
 enum parser_status parse_redirection(struct ast **ast, struct lexer *lexer);
+
+/**
+ ** @brief Check if rule_while grammar rule is respected
+ ** >> rule_while: While compound_list do_group
+ **
+ ** @param ast the general ast to update
+ ** @param lexer the lexer to read tokens from
+ ** @return enum parser_status - current parser status
+ **/
+enum parser_status parse_rule_while(struct ast **ast, struct lexer *lexer);
+
+/**
+ ** @brief Check if rule_until grammar rule is respected
+ ** >> rule_until: Until compound_list do_group
+ **
+ ** @param ast the general ast to update
+ ** @param lexer the lexer to read tokens from
+ ** @return enum parser_status - current parser status
+ **/
+enum parser_status parse_rule_until(struct ast **ast, struct lexer *lexer);
+
+/**
+ ** @brief Check if do_group grammar rule is respected
+ ** >> do_group: Do compound_list Done
+ **
+ ** @param ast the general ast to update
+ ** @param lexer the lexer to read tokens from
+ ** @return enum parser_status - current parser status
+ **/
+enum parser_status parse_do_group(struct ast **ast, struct lexer *lexer);
 
 #endif // !PARSER_H
