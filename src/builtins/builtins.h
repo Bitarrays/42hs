@@ -26,7 +26,7 @@ int find_command(char **toExecute);
 
 /**
  * @brief Execute cd command.
- * 
+ *
  * @param args the list of arguments
  * @return int return code
  */
@@ -34,7 +34,7 @@ int cd(char **args);
 
 /**
  * @brief The echo command.
- * 
+ *
  * @param args the list of arguments
  */
 void echo(char **args);
