@@ -77,6 +77,8 @@ int evaluate_ast(struct ast *ast)
         free(val);
         return res;
     }
+    else if (ast->type == AST_NOT)
+        return !evaluate_ast(ast->left_child);
     else if (ast->type == AST_LIST)
     {
         int r = evaluate_ast(ast->right_child);
