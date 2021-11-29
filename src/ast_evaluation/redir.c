@@ -1,10 +1,10 @@
 #define _GNU_SOURCE
 #include <fcntl.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <stdbool.h>
 
 static char *get_filename_from_redir(char **redir)
 {
@@ -70,9 +70,6 @@ int exec_redirections(char **cmd, char ***redirs)
         return 0;
     else
         fdin = dup(tmpin);
-    
-
-
 
     // pid_t pid = fork();
     // int last_fd = -1;

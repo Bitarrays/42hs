@@ -8,6 +8,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
+
 #include "../42sh.h"
 extern struct shell *shell;
 
@@ -50,8 +51,7 @@ void echo(char **args)
             n_option = true;
         else if (!strcmp(args[start_print], "-e") && !e_option)
             e_option = true;
-        else if (!strcmp(args[start_print], "-ne") && !e_option
-                 && !n_option)
+        else if (!strcmp(args[start_print], "-ne") && !e_option && !n_option)
         {
             e_option = true;
             n_option = true;
@@ -91,7 +91,7 @@ void echo(char **args)
 
     if (!n_option)
         printf("\n");
-    
+
     fflush(stdout);
 }
 
@@ -104,7 +104,7 @@ int cd(char **args)
         chdir(shell->pwd);
         return 0;
     }
-    
+
     if (!strcmp(args[1], "-"))
     {
         chdir(shell->oldpwd);
@@ -123,7 +123,7 @@ int cd(char **args)
         fprintf(stderr, "42sh: cd: can't cd to %s\n", args[1]);
         return 1;
     }
-    
+
     shell->oldpwd = strcpy(shell->oldpwd, shell->pwd);
 
     getcwd(shell->pwd, 2048);
