@@ -20,12 +20,11 @@ struct string_array_with_quotes
 extern struct shell *shell;
 
 enum parser_status handle_parser_error(enum parser_status status,
-                                              struct ast **res);
+                                       struct ast **res);
 
-struct string_array_with_quotes merge_values(char **values_1,
-                                                    char **values_2,
-                                                    enum quotes *q_1,
-                                                    enum quotes *q_2);
+struct string_array_with_quotes merge_values(char **values_1, char **values_2,
+                                             enum quotes *q_1,
+                                             enum quotes *q_2);
 
 /**
  ** @brief Check if input grammar rule is respected

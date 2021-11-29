@@ -25,6 +25,7 @@ common = [
   'src/lexer/lexer_print.c',
   'src/lexer/ionumbers.c',
   'src/lexer/create_token.c',
+  'src/lexer/keywords.c',
   'src/lexer/split_input.c',
   'src/parser/parser.c',
   'src/parser/parser_high_level.c',

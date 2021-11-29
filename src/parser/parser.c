@@ -10,7 +10,7 @@ void pretty_print(struct ast *ast);
 int evaluate_ast(struct ast *ast);
 
 enum parser_status handle_parser_error(enum parser_status status,
-                                              struct ast **res)
+                                       struct ast **res)
 {
     ast_free(*res);
     *res = NULL;
@@ -25,10 +25,8 @@ static int display_parser_error(struct ast **res)
     return 2;
 }
 
-struct string_array_with_quotes merge_values(char **values_1,
-                                                    char **values_2,
-                                                    enum quotes *q_1,
-                                                    enum quotes *q_2)
+struct string_array_with_quotes merge_values(char **values_1, char **values_2,
+                                             enum quotes *q_1, enum quotes *q_2)
 {
     int length_1 = 0;
     while (values_1[length_1] != NULL)
@@ -69,6 +67,13 @@ int parse_input(char *input)
 {
     struct lexer *lex = lexer_create(input);
     lexer_build(lex);
+
+    if (shell->exit)
+    {
+        lexer_free(lex);
+        shell->exit = false;
+        return 2;
+    }
 
     struct ast *ast = ast_new(AST_LIST);
 

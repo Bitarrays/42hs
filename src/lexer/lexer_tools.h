@@ -10,4 +10,8 @@ void create_and_append_token(struct lexer *lexer, enum token_type type,
 
 char **split_in_words(char *input);
 
+enum token_type get_keyword(char *word);
+
+bool is_keyword(char *word);
+
 #endif // !LEXER_TOOLS_H
