@@ -13,7 +13,7 @@ struct var *init_list(void)
     new->next = NULL;
 }
 
-int add_elt_list(struct var *list, char *name, char *value)
+int add_elt_list(struct var *list, char *name, char **value)
 {
     struct var *new = calloc(1, sizeof(struct var));
     if (!new)
@@ -24,19 +24,31 @@ int add_elt_list(struct var *list, char *name, char *value)
         free(new);
         return 1;
     }
-    new->value = calloc(strlen(value) + 1, sizeof(char));
-    if (!new->value)
+    strcpy(new->name, name);
+    int nb_elt = 0;
+    while (value[nb_elt] != NULL)
+        nb_elt++;
+    new->value = calloc(strlen(nb_elt), sizeof(char *));
+    int i = 0;
+    while (value[i] != NULL)
     {
-        free(new->value);
-        free(new);
-        return 1;
+        new->value[i] = calloc(strlen(value[i]) + 1, sizeof(char));
+        if (!new->value)
+        {
+            free(new->name);
+            free(new);
+            return 1;
+        }
+        strcmp(new->value[i], value[i]);
+        i++;
     }
+    value[i] = NULL;
     new->next = list->next;
     list->next = new;
     return 0;
 }
 
-char *find_elt_list(struct var *list, char *name)
+char **find_elt_list(struct var *list, char *name)
 {
     struct var *tmp = list->next;
     while (tmp && strcmp(tmp->name, name))
@@ -53,6 +65,9 @@ void free_list(struct var *list)
         struct var *tmp = list;
         list = list->next;
         free(tmp->name);
+        int i = 0;
+        while (tmp->value[i] != NULL)
+            free(tmp->value[i++]);
         free(tmp->value);
         free(tmp);
     }
