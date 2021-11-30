@@ -236,7 +236,6 @@ void lexer_build(struct lexer *lexer)
                 word_type == TOKEN_WORD_SINGLE_QUOTE ? '\'' : '\"');
         shell->exit = true;
     }
-    // words_to_ionumber(lexer);
     create_and_append_token(lexer, TOKEN_EOF, NULL);
     if (shell->verbose)
         lexer_print(lexer);

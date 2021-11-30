@@ -1,3 +1,5 @@
+all: rebuild
+
 42sh: build
 
 .PHONY: build
