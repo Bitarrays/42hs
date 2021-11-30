@@ -143,6 +143,13 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
     int j = 0;
     char *word = NULL;
     int word_pos = 0;
+    if (*word_type == TOKEN_WORD && !strcmp(input, "in") && !lexer->in_for)
+    {
+        create_and_append_token(lexer, TOKEN_IN, NULL);
+        lexer->in_for = true;
+        free(input);
+        return;
+    }
     while (input[j])
     {
         if (input[j] == '\\')
@@ -169,6 +176,8 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
                 lexer,
                 is_separator(input[j]) ? get_separator(input[j]) : TOKEN_PIPE,
                 NULL);
+            if (is_separator(input[j]))
+                lexer->in_for = true;
             *in_cmd = false;
         }
         else if (*word_type == TOKEN_WORD && is_redir(input[j]))

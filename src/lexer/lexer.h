@@ -61,6 +61,7 @@ struct lexer
     struct lexer_token *tokens;
     struct lexer_token *tail;
     struct lexer_token *head;
+    bool in_for;
 };
 
 /**
