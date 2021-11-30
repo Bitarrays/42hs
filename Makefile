@@ -1,3 +1,12 @@
+42sh: build
+
+.PHONY: build
+
+check: build
+	@echo "Checking..."
+	@python3 tests/moulinette.py --binary 42sh --tests tests/*.yml 
+	@echo "Done."
+
 rebuild:
 	@echo "Rebuilding project..."
 	@rm -f 42sh
@@ -18,9 +27,6 @@ doc:
 	@rm -rf doc
 	@doxygen
 	@echo "Done."
-
-check: build
-	./tests/parser.sh
 
 clean:
 	@echo "Cleaning up..."
