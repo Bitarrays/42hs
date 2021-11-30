@@ -125,5 +125,53 @@ enum parser_status parse_and_or(struct ast **ast, struct lexer *lexer)
     if (status_pipeline == PARSER_ERROR)
         return handle_parser_error(status_pipeline, ast);
 
+    // Try (('&&'|'||') ('\n')* pipeline)*
+    struct lexer_token *tok = lexer_peek(lexer);
+    bool first = true;
+    struct ast *last_op = NULL;
+    while (true)
+    {
+        // Try ('&&'| '||')
+        bool is_and = true;
+        if (tok->type == TOKEN_AND)
+            is_and = true;
+        else if (tok->type == TOKEN_OR)
+            is_and = false;
+        else
+            break;
+        lexer_pop(lexer);
+
+        // Try ('\n')*
+        while ((tok = lexer_peek(lexer))->type == TOKEN_NEWLINE)
+            lexer_pop(lexer); // token '\n'
+
+        // Try pipeline
+        struct ast *new_command = NULL;
+        status_pipeline = parse_pipeline(&new_command, lexer);
+        if (status_pipeline == PARSER_ERROR)
+        {
+            ast_free(new_command);
+            return handle_parser_error(status_pipeline, ast);
+        }
+
+        if (first)
+        {
+            first = false;
+            struct ast *tmp = *ast;
+            *ast = ast_new(is_and ? AST_AND : AST_OR);
+            last_op = *ast;
+            last_op->left_child = tmp;
+            last_op->right_child = new_command;
+        }
+        else
+        {
+            struct ast *tmp_left_cmd = last_op->right_child;
+            last_op->right_child = ast_new(is_and ? AST_AND : AST_OR);
+            last_op = last_op->right_child;
+            last_op->left_child = tmp_left_cmd;
+            last_op->left_child = new_command;
+        }
+    }
+
     return PARSER_OK;
 }

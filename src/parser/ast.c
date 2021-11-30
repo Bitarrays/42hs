@@ -14,7 +14,7 @@ void ast_free(struct ast *ast)
     if (ast == NULL)
         return;
 
-    if (ast->type == AST_COMMAND)
+    if (ast->type == AST_COMMAND || ast->type == AST_FOR)
     {
         free(ast->value);
         free(ast->enclosure);

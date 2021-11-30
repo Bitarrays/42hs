@@ -90,7 +90,7 @@ enum parser_status parse_pipeline(struct ast **ast, struct lexer *l);
 
 /**
  ** @brief Check if and_or grammar rule is respected
- ** >> and_or: pipeline
+ ** >> and_or: pipeline (('&&'|'||') ('newline')* pipeline)*
  **
  ** @param ast the general ast to update
  ** @param lexer the lexer to read tokens from
@@ -167,7 +167,7 @@ enum parser_status parse_do_group(struct ast **ast, struct lexer *lexer);
 /**
  ** @brief Check if for grammar rule is respected
  ** >> for: For WORD ([';']|[('newline')* 'in' (WORD)* (';'|'newline')])
- *('newline')* do_group
+ ** ('newline')* do_group
  **
  ** @param ast the general ast to update
  ** @param lexer the lexer to read tokens from
