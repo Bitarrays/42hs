@@ -6,6 +6,13 @@
 #include <stdlib.h>
 #include <sys/types.h>
 
+struct var
+{
+    char *name;
+    char **value;
+    struct var *next;
+};
+
 struct shell
 {
     bool pretty_print;

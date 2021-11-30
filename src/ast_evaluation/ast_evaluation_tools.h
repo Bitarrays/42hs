@@ -2,6 +2,7 @@
 #define AST_EVALUATION_TOOLS_H
 
 #include "../parser/ast.h"
+#include "../42sh.h"
 
 // include builtin
 
