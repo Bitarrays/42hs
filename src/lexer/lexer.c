@@ -175,8 +175,14 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
         {
             if (word)
             {
-                create_word_and_append(word, word_pos, in_cmd, lexer,
-                                       word_type);
+                word[word_pos] = 0;
+                if (is_int(word))
+                {
+                    create_and_append_token(lexer, TOKEN_IONUMBER, word);
+                }
+                else
+                    create_word_and_append(word, word_pos, in_cmd, lexer,
+                                           word_type);
                 word = NULL;
                 word_pos = 0;
             }
@@ -230,7 +236,7 @@ void lexer_build(struct lexer *lexer)
                 word_type == TOKEN_WORD_SINGLE_QUOTE ? '\'' : '\"');
         shell->exit = true;
     }
-    words_to_ionumber(lexer);
+    // words_to_ionumber(lexer);
     create_and_append_token(lexer, TOKEN_EOF, NULL);
     if (shell->verbose)
         lexer_print(lexer);
