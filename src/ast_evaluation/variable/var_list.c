@@ -4,7 +4,7 @@
 #include "../42sh.h"
 #include "var_list.h"
 
-struct var *init_list(void)
+/*struct var *init_list(void)
 {
     struct var *new = calloc(1, sizeof(struct var));
     if (!new)
@@ -12,9 +12,9 @@ struct var *init_list(void)
     new->name = NULL;
     new->value = NULL;
     new->next = NULL;
-}
+}*/
 
-int add_elt_list(struct var *list, char *name, char **value)
+int add_elt_list(struct shell *sh, char *name, char **value)
 {
     struct var *new = calloc(1, sizeof(struct var));
     if (!new)
@@ -44,8 +44,8 @@ int add_elt_list(struct var *list, char *name, char **value)
         i++;
     }
     value[i] = NULL;
-    new->next = list->next;
-    list->next = new;
+    new->next = sh->var_list;
+    sh->var_list = new;
     return 0;
 }
 
