@@ -26,6 +26,7 @@ struct shell
     int return_code;
     bool verbose;
     bool interupt;
+    struct var *var_list;
 };
 
 /**
