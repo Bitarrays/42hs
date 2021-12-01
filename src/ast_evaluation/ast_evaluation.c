@@ -67,13 +67,13 @@ int evaluate_ast(struct ast *ast)
     }*/
     else if (ast->type == AST_COMMAND)
     {
-        /*char *oo[3] = {"oui", "non", NULL};
+        char *oo = "ouinon";
         add_elt_list(shell, "name", oo);
-        printf("%s %s\n", find_elt_list(shell, "name")[0], find_elt_list(shell, "name")[1]);
-        char *aa[3] = {"oui", "oui", NULL};
+        printf("%s\n", find_elt_list(shell, "name"));
+        char *aa = "ouioui";
         change_elt_list(shell, "name", aa);
-        printf("%s %s\n", find_elt_list(shell, "name")[0], find_elt_list(shell, "name")[1]);
-        free_list(shell);*/
+        printf("%s\n", find_elt_list(shell, "name"));
+        //free_list(shell);
         char **val = expand(ast);
         if (!val)
             return 1;

@@ -15,7 +15,7 @@ int is_in(char **condition)
     return 0;
 }
 
-int expend_var(char *s, char *new, int *size, int *i)
+/*int expend_var(char *s, char *new, int *size, int *i)
 {
     int bracket = s[++(*i)] == '{';
     int size_var = 0;
@@ -29,7 +29,7 @@ int expend_var(char *s, char *new, int *size, int *i)
     *size += size_var;
     char *tmp = realloc(new, (*size + 1) * sizeof(char *));
     strncat(new, )
-}
+}*/
 
 int expand_s(char **elt, char *s, enum quotes type)
 {
@@ -42,6 +42,7 @@ int expand_s(char **elt, char *s, enum quotes type)
     {
         int i = 0;
         int i_new = 0;
+        int escaped = 0;
         while (s[i] != '\0')
         {
             if (escaped)
@@ -52,7 +53,7 @@ int expand_s(char **elt, char *s, enum quotes type)
                 if (bracket)
                     i++;
                 int size_var = 0;
-                while (s[i] != '\0' && s[i] != ' ' && s[i] != '\t' && (!bracket || bracket && s[i] != '}'))
+                while (s[i] != '\0' && s[i] != ' ' && s[i] != '\t' && (!bracket || (bracket && s[i] != '}')))
                 {
                     i++;
                     size_var++;
@@ -60,8 +61,20 @@ int expand_s(char **elt, char *s, enum quotes type)
                 if (bracket)
                     i++;
                 size += size_var;
-                char *tmp = realloc(new, (size + 1) * sizeof(char *));
-                strncat(new, )
+                char *name = calloc(size_var + 1, sizeof(char));
+                strncpy(name, new + i_new + 1, size_var);
+                name[size_var] = '\0';
+                printf("%s\n", name);
+                printf("%s\n", find_elt_list(shell, name));
+                int new_size = strlen(find_elt_list(shell, name));
+                char *tmp = realloc(new, (new_size + 1) * sizeof(char *));
+                if (!tmp)
+                    return 0;
+                new = tmp;
+                strcpy(new + i_new, find_elt_list(shell, name));
+                free(name);
+                if (s[i] == '\0')
+                    break;
             }
             else if (s[i] == '\\')
             {

@@ -57,7 +57,7 @@ int add_elt_list(struct shell *sh, char *name, char *value)
     return 0;
 }
 
-int change_elt_list(struct shell *sh, char *name, char **value)
+int change_elt_list(struct shell *sh, char *name, char *value)
 {
     /*char **new_content = NULL;
     int nb_elt = 0;
@@ -103,7 +103,7 @@ char *find_elt_list(struct shell *sh, char *name)
 {
     struct var *tmp = sh->var_list;
     while (tmp && strcmp(tmp->name, name))
-        tmp->next = tmp;
+        tmp = tmp->next;
     if (tmp)
         return tmp->value;
     return NULL;
@@ -117,9 +117,6 @@ void free_list(struct shell *sh)
         struct var *tmp = list;
         list = list->next;
         free(tmp->name);
-        int i = 0;
-        while (tmp->value[i] != NULL)
-            free(tmp->value[i++]);
         free(tmp->value);
         free(tmp);
     }
