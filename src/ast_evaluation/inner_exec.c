@@ -50,8 +50,12 @@ int expand_s(char **elt, char *s, enum quotes type)
             else if (s[i] == '$')
             {
                 int bracket = s[++i] == '{';
+                int offset = 1;
                 if (bracket)
+                {
+                    offset++;
                     i++;
+                }
                 int size_var = 0;
                 while (s[i] != '\0' && s[i] != ' ' && s[i] != '\t' && (!bracket || (bracket && s[i] != '}')))
                 {
@@ -62,16 +66,18 @@ int expand_s(char **elt, char *s, enum quotes type)
                     i++;
                 size += size_var;
                 char *name = calloc(size_var + 1, sizeof(char));
-                strncpy(name, new + i_new + 1, size_var);
+                strncpy(name, new + i_new + offset, size_var);
                 name[size_var] = '\0';
                 printf("%s\n", name);
-                printf("%s\n", find_elt_list(shell, name));
+                if (!find_elt_list(shell, name))
+                    return 0;
                 int new_size = strlen(find_elt_list(shell, name));
                 char *tmp = realloc(new, (new_size + 1) * sizeof(char *));
                 if (!tmp)
                     return 0;
                 new = tmp;
                 strcpy(new + i_new, find_elt_list(shell, name));
+                i_new += new_size;
                 free(name);
                 if (s[i] == '\0')
                     break;

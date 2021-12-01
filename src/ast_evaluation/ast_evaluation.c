@@ -69,10 +69,10 @@ int evaluate_ast(struct ast *ast)
     {
         char *oo = "ouinon";
         add_elt_list(shell, "name", oo);
-        printf("%s\n", find_elt_list(shell, "name"));
+        //printf("%s\n", find_elt_list(shell, "name"));
         char *aa = "ouioui";
         change_elt_list(shell, "name", aa);
-        printf("%s\n", find_elt_list(shell, "name"));
+        //printf("%s\n", find_elt_list(shell, "name"));
         //free_list(shell);
         char **val = expand(ast);
         if (!val)
