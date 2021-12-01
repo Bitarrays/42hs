@@ -16,9 +16,6 @@
 - name: File
   input: cd Makefile; pwd
 
-- name: Starting with a dash
-  input: cd -; pwd
-
 - name: Folder then a dash
   input: cd src; cd -; pwd
 
@@ -75,6 +72,3 @@
 
 - name: Go back (absolute) but too far
   input: cd /../../../../../../../../../../../../../../tmp; pwd; cd /home; cd -; pwd;
-
-- name: Relative paths
-  input: cd ../tmp; cd ../root; cd ../tmp; cd -; pwd;
