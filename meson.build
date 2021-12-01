@@ -18,6 +18,7 @@ incdirs = [
   include_directories('./src/shell_input'),
   include_directories('./src/ast_evaluation'),
   include_directories('./src/builtins'),
+  include_directories('./src/variable'),
   include_directories('./src/'),
 ]
 
@@ -41,6 +42,7 @@ common = [
   'src/ast_evaluation/prog_exec.c',
   'src/shell_input/shell_input.c',
   'src/builtins/builtins.c',
+  'src/variable/var_list.c',
   'src/builtins/echo.c',
   'src/builtins/cd.c',
 ]

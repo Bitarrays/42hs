@@ -61,8 +61,19 @@ int evaluate_ast(struct ast *ast)
 
         evaluate_ast(ast->left_child);
     }*/
+    /*else if (ast->type == AST_PIPE)
+    {
+        char **get_pipe(char ***arg, int *nb)
+    }*/
     else if (ast->type == AST_COMMAND)
     {
+        /*char *oo[3] = {"oui", "non", NULL};
+        add_elt_list(shell, "name", oo);
+        printf("%s %s\n", find_elt_list(shell, "name")[0], find_elt_list(shell, "name")[1]);
+        char *aa[3] = {"oui", "oui", NULL};
+        change_elt_list(shell, "name", aa);
+        printf("%s %s\n", find_elt_list(shell, "name")[0], find_elt_list(shell, "name")[1]);
+        free_list(shell);*/
         char **val = expand(ast);
         if (!val)
             return 1;

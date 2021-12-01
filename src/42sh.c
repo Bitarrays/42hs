@@ -34,6 +34,7 @@ static void init_shell(int argc, char **argv)
     shell->ifs = calloc(100, sizeof(char));
     strcpy(shell->ifs, " \t\n");
     shell->uid = getuid();
+    shell->var_list = NULL;
 }
 
 void free_shell(void)

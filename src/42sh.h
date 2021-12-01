@@ -9,7 +9,7 @@
 struct var
 {
     char *name;
-    char **value;
+    char *value;
     struct var *next;
 };
 

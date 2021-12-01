@@ -15,9 +15,26 @@ int is_in(char **condition)
     return 0;
 }
 
+int expend_var(char *s, char *new, int *size, int *i)
+{
+    int bracket = s[++(*i)] == '{';
+    int size_var = 0;
+    if (bracket)
+        (*i)++;
+    while (s[*i] != '\0' && s[*i] != ' ' && s[*i] != '\t' && (bracket))
+    {
+        (*i)++;
+        size_var++;
+    }
+    *size += size_var;
+    char *tmp = realloc(new, (*size + 1) * sizeof(char *));
+    strncat(new, )
+}
+
 int expand_s(char **elt, char *s, enum quotes type)
 {
-    char *new = calloc(strlen(s) + 1, sizeof(char));
+    int size = strlen(s);
+    char *new = calloc(size + 1, sizeof(char));
     if (!new)
         return 0;
     strcpy(new, s);
@@ -27,8 +44,30 @@ int expand_s(char **elt, char *s, enum quotes type)
         int i_new = 0;
         while (s[i] != '\0')
         {
-            if (s[i] == '\\')
+            if (escaped)
+                escaped = 0;
+            else if (s[i] == '$')
+            {
+                int bracket = s[++i] == '{';
+                if (bracket)
+                    i++;
+                int size_var = 0;
+                while (s[i] != '\0' && s[i] != ' ' && s[i] != '\t' && (!bracket || bracket && s[i] != '}'))
+                {
+                    i++;
+                    size_var++;
+                }
+                if (bracket)
+                    i++;
+                size += size_var;
+                char *tmp = realloc(new, (size + 1) * sizeof(char *));
+                strncat(new, )
+            }
+            else if (s[i] == '\\')
+            {
                 i++;
+                escaped = 1;
+            }
             new[i_new++] = s[i++];
         }
         new[i_new] = '\0';
@@ -37,9 +76,12 @@ int expand_s(char **elt, char *s, enum quotes type)
     {
         int i = 0;
         int i_new = 0;
+        int escaped = 0;
         while (s[i] != '\0')
         {
-            if (s[i] == '\\')
+            if (escaped)
+                escaped = 0;
+            else if (s[i] == '\\')
             {
                 i++;
                 if (s[i] == 'n')
@@ -58,6 +100,8 @@ int expand_s(char **elt, char *s, enum quotes type)
                     i++;
                     new[i_new++] = '\'';
                 }
+                else
+                    escaped = 1;
             }
             new[i_new++] = s[i++];
         }
