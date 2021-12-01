@@ -21,6 +21,8 @@ enum token_type
     TOKEN_UNTIL,
     TOKEN_FOR,
     TOKEN_IN,
+    TOKEN_AND,
+    TOKEN_OR,
     TOKEN_SEMICOLON,
     TOKEN_NEWLINE,
     TOKEN_REDIR,
@@ -31,8 +33,6 @@ enum token_type
     TOKEN_WORD_DOUBLE_QUOTE,
     TOKEN_WORD_SINGLE_QUOTE,
     TOKEN_EOF,
-    TOKEN_AND,
-    TOKEN_OR
 };
 
 struct lexer_token

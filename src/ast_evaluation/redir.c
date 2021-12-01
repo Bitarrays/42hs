@@ -58,12 +58,12 @@ static int get_open_flags(char **redir)
     char *type = redir[0][0] == '>' ? redir[0] : redir[1];
     switch (type[1])
     {
-        case 0:
-            return O_CREAT | O_WRONLY | O_TRUNC;
-        case '>':
-            return O_CREAT | O_WRONLY | O_APPEND;
-        default:
-            return O_CREAT | O_WRONLY | O_TRUNC;
+    case 0:
+        return O_CREAT | O_WRONLY | O_TRUNC;
+    case '>':
+        return O_CREAT | O_WRONLY | O_APPEND;
+    default:
+        return O_CREAT | O_WRONLY | O_TRUNC;
     }
 }
 
@@ -92,7 +92,8 @@ int exec_redirections(char **cmd, char ***redirs)
             int fd = open(filename, O_RDONLY);
             if (fd == -1)
             {
-                fprintf(stderr, "42sh: %s: No such file or directory\n", filename);
+                fprintf(stderr, "42sh: %s: No such file or directory\n",
+                        filename);
                 redirs_pos++;
                 return -1;
             }

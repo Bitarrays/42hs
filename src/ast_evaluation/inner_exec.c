@@ -57,7 +57,8 @@ int expand_s(char **elt, char *s, enum quotes type)
                     i++;
                 }
                 int size_var = 0;
-                while (s[i] != '\0' && s[i] != ' ' && s[i] != '\t' && (!bracket || (bracket && s[i] != '}')))
+                while (s[i] != '\0' && s[i] != ' ' && s[i] != '\t'
+                       && (!bracket || (bracket && s[i] != '}')))
                 {
                     i++;
                     size_var++;

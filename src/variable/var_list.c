@@ -1,8 +1,9 @@
+#include "var_list.h"
+
 #include <stdlib.h>
 #include <string.h>
 
 #include "../42sh.h"
-#include "var_list.h"
 
 /*struct var *init_list(void)
 {

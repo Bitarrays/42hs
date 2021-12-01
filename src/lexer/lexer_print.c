@@ -14,6 +14,8 @@ static char *get_token_string(enum token_type type)
                              "UNTIL",
                              "FOR",
                              "IN",
+                             "&&",
+                             "||",
                              "SEMICOLON",
                              "NEWLINE",
                              "REDIR",

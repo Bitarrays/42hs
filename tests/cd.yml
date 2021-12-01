@@ -52,21 +52,6 @@
 - name: Chained dash
   input: cd /tmp; cd /root; echo start; cd -; pwd; cd -; pwd; cd -; pwd; cd -; pwd; cd -; pwd; cd -; echo end; pwd
 
-- name: Go to home
-  input: cd; pwd
-
-- name: Go to home
-  input: cd ~; pwd
-
-- name: Go to home and go back
-  input: cd /tmp; cd ~; cd -; pwd
-
-- name: Go to tmp then go to home and go back twice
-  input: cd /tmp; cd ~; cd -; cd -; pwd
-
-- name: Go to home then go to tmp and go back twice
-  input: cd ~; cd /tmp; cd -; cd -; pwd
-
 - name: Go back but too far
   input: cd ../../../../../../../../../../../../../../tmp; pwd; cd /home; cd -; pwd;
 

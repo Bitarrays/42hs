@@ -109,9 +109,9 @@ static void create_word_and_append(char *word, int word_pos, bool *in_cmd,
     lexer_append(lexer, token);
 }
 
-static bool is_pipe(char c)
+static bool is_pipe(char c, char next)
 {
-    return (c == '|');
+    return (c == '|' && next != '|');
 }
 
 static bool is_redir(char c1)
@@ -163,7 +163,7 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
                 break;
         }
         if ((*word_type != TOKEN_WORD_SINGLE_QUOTE && is_separator(input[j]))
-            || (is_pipe(input[j]) && *word_type == TOKEN_WORD))
+            || (is_pipe(input[j], input[j + 1]) && *word_type == TOKEN_WORD))
         {
             if (word)
             {
@@ -179,6 +179,21 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
             if (is_separator(input[j]))
                 lexer->in_for = true;
             *in_cmd = false;
+        }
+        else if (*word_type == TOKEN_WORD
+                 && ((input[j] == '&' && input[j + 1] == '&')
+                     || (input[j] == '|' && input[j + 1] == '|')))
+        {
+            if (word)
+            {
+                create_word_and_append(word, word_pos, in_cmd, lexer,
+                                       word_type);
+                word = NULL;
+                word_pos = 0;
+            }
+            create_and_append_token(
+                lexer, input[j] == '&' ? TOKEN_AND : TOKEN_OR, NULL);
+            j++;
         }
         else if (*word_type == TOKEN_WORD && is_redir(input[j]))
         {
