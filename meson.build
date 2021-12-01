@@ -45,6 +45,7 @@ common = [
   'src/variable/var_list.c',
   'src/builtins/echo.c',
   'src/builtins/cd.c',
+  'src/builtins/exit.c',
 ]
 
 token_printer = executable(
