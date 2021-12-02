@@ -25,5 +25,8 @@ int cd(char **args)
 
     getcwd(shell->pwd, 2048);
 
+    setenv("OLDPWD", shell->oldpwd, 1);
+    setenv("PWD", shell->pwd, 1);
+
     return 0;
 }

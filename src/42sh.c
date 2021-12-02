@@ -22,10 +22,13 @@ static void init_shell(int argc, char **argv)
     if (shell->verbose)
         printf("Verbose mode enabled\n");
     shell->oldpwd = calloc(2048, sizeof(char));
-    if (getcwd(shell->oldpwd, 2048) == NULL)
+    if (getenv("OLDPWD"))
+        strcpy(shell->oldpwd, getenv("OLDPWD"));
+    else if (getcwd(shell->oldpwd, 2048) == NULL)
         shell->exit = true;
+    
     shell->pwd = calloc(2048, sizeof(char));
-    if (getcwd(shell->pwd, 2048) == NULL)
+    if (!shell->exit && getcwd(shell->pwd, 2048) == NULL)
         shell->exit = true;
 
     // TODO: what are the shell parameters?

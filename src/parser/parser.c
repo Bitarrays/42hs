@@ -97,10 +97,11 @@ int parse_input(char *input)
             if (shell->pretty_print)
                 pretty_print(ast);
             int res_eval = evaluate_ast(ast);
+            shell->return_code = res_eval;
 
             ast_free(ast);
             lexer_free(lex);
-            return res_eval;
+            return 0;
         }
     }
 
