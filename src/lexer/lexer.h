@@ -33,6 +33,7 @@ enum token_type
     TOKEN_WORD_DOUBLE_QUOTE,
     TOKEN_WORD_SINGLE_QUOTE,
     TOKEN_EOF,
+    TOKEN_ASSIGNMENT_WORD
 };
 
 struct lexer_token

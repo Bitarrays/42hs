@@ -45,13 +45,13 @@ int evaluate_ast(struct ast *ast)
     }
     else if (ast->type == AST_AND)
     {
-        return !evaluate_ast(ast->left_child)
-            && !evaluate_ast(ast->right_child);
+        return !(!evaluate_ast(ast->left_child)
+            && !evaluate_ast(ast->right_child));
     }
     else if (ast->type == AST_OR)
     {
-        return !evaluate_ast(ast->left_child)
-            || !evaluate_ast(ast->right_child);
+        return !(!evaluate_ast(ast->left_child)
+            || !evaluate_ast(ast->right_child));
     }
     /*else if (ast->type == AST_REDIR)
     {

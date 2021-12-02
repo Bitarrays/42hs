@@ -132,6 +132,7 @@ enum parser_status parse_and_or(struct ast **ast, struct lexer *lexer)
     while (true)
     {
         // Try ('&&'| '||')
+        tok = lexer_peek(lexer);
         bool is_and = true;
         if (tok->type == TOKEN_AND)
             is_and = true;
@@ -169,7 +170,7 @@ enum parser_status parse_and_or(struct ast **ast, struct lexer *lexer)
             last_op->right_child = ast_new(is_and ? AST_AND : AST_OR);
             last_op = last_op->right_child;
             last_op->left_child = tmp_left_cmd;
-            last_op->left_child = new_command;
+            last_op->right_child = new_command;
         }
     }
 
