@@ -1,58 +1,4 @@
-#define _GNU_SOURCE
-#include <fcntl.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/wait.h>
-#include <unistd.h>
-#include <string.h>
-
-static char *get_filename_from_redir(char **redir)
-{
-    char *filename = NULL;
-    int len = 0;
-    while (redir[len])
-        len++;
-    filename = redir[len - 1];
-    return filename;
-}
-
-static bool is_int(char *str)
-{
-    int i = 0;
-    while (str[i])
-    {
-        if (str[i] < '0' || str[i] > '9')
-            return false;
-        i++;
-    }
-    return true;
-}
-
-static int get_fd_from_redir(char **redir, bool out_redir)
-{
-    if (is_int(redir[0]))
-    {
-        int res = atoi(redir[0]);
-        if (res > 2)
-        {
-            fprintf(stderr, "42sh: bad file descriptor\n");
-            return -1;
-        }
-        return res;
-    }
-    return out_redir ? STDOUT_FILENO : STDIN_FILENO;
-}
-
-static bool is_out_redir(char **redir)
-{
-    return (redir[0][0] == '>' || redir[1][0] == '>' || (redir[0][0] == '<' && redir[0][1] == '>') || (redir[1][0] == '<' && redir[1][1] == '>'));
-}
-
-static bool is_in_redir(char **redir)
-{
-    return (redir[0][0] == '<' || redir[1][0] == '<' || (redir[0][0] == '<' && redir[0][1] == '>') || (redir[1][0] == '<' && redir[1][1] == '>'));
-}
+#include "redir.h"
 
 static int get_open_flags(char **redir)
 {
@@ -67,6 +13,31 @@ static int get_open_flags(char **redir)
     default:
         return O_CREAT | O_WRONLY | O_TRUNC;
     }
+}
+
+static bool readable(int fd)
+{
+    if (fd >= 0 && fd <= 2)
+        return true;
+    int o_accmode = 0;
+    int rc = fcntl(fd, F_GETFL, &o_accmode);
+    if (rc == -1)
+        return false;
+    rc = (o_accmode & O_ACCMODE);
+    printf("%d\n", rc);
+    return (rc == O_RDONLY || rc == O_RDWR);
+}
+
+static bool writeable(int fd)
+{
+    if (fd == 1 || fd == 2)
+        return true;
+    int o_accmode = 0;
+    int rc = fcntl(fd, F_GETFL, &o_accmode);
+    if (rc == -1)
+        return false;
+    rc = (o_accmode & O_ACCMODE);
+    return (rc == O_WRONLY || rc == O_RDWR);
 }
 
 static void setup_out_redir(char **redir)
@@ -89,8 +60,7 @@ static void setup_in_redir(char **redir)
     int fd = open(filename, O_RDONLY);
     if (fd == -1)
     {
-        fprintf(stderr, "42sh: %s: No such file or directory\n",
-                filename);
+        fprintf(stderr, "42sh: %s: No such file or directory\n", filename);
         return;
     }
     int ionumber = get_fd_from_redir(redir, false);
@@ -112,14 +82,48 @@ static int is_out_dup(char **redir)
 
 static void setup_dup_redir(char **redir)
 {
-    int fd1 = get_fd_from_redir(redir, is_out_dup(redir));
+    int is_out = is_out_dup(redir);
+    int fd1 = get_fd_from_redir(redir, is_out);
     char *filename = get_filename_from_redir(redir);
-    if (!strcmp(filename, "-"))
-        close(fd1);
-    else if (is_int(filename))
+    if (is_out)
     {
-        int fd2 = atoi(filename);
-        dup2(fd1, fd2);
+        if (!strcmp(filename, "-"))
+            close(fd1);
+        else if (is_int(filename))
+        {
+            int fd2 = atoi(filename);
+            if (fd2 == fd1)
+                return;
+            if (!writeable(fd2))
+            {
+                fprintf(stderr, "42sh: file descriptor %d is not writable\n",
+                        fd2);
+                return;
+            }
+            int tmpout = dup(fd1);
+            dup2(fd2, tmpout);
+            close(tmpout);
+        }
+    }
+    else
+    {
+        if (!strcmp(filename, "-"))
+            close(fd1);
+        else if (is_int(filename))
+        {
+            int fd2 = atoi(filename);
+            if (fd2 == fd1)
+                return;
+            if (!readable(fd2))
+            {
+                fprintf(stderr, "42sh: file descriptor %d is not readable\n",
+                        fd2);
+                return;
+            }
+            int tmpin = dup(fd1);
+            dup2(fd2, tmpin);
+            close(tmpin);
+        }
     }
 }
 
@@ -173,13 +177,9 @@ int main(void)
     cmd[1] = "-0";
     char ***redirs = calloc(3, sizeof(char *));
     redirs[0] = calloc(4, sizeof(char *));
-    redirs[0][0] = "0";
-    redirs[0][0] = "<";
-    redirs[0][1] = "tests/cd.yml";
-    redirs[1] = calloc(4, sizeof(char *));
-    redirs[1][0] = "";
-    redirs[1][0] = ">>";
-    redirs[1][1] = "out.txt";
+    redirs[0][0] = "";
+    redirs[0][0] = "<&";
+    redirs[0][1] = "1";
     exec_redirections(cmd, redirs);
     free(redirs[0]);
     free(redirs[1]);

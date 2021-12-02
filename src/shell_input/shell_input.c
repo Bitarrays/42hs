@@ -10,11 +10,13 @@ static int shell_prompt(void)
     while (!shell->exit)
     {
         if (shell->return_code)
-            fprintf(stderr, "\033[1m\033[31m➜  \033[1m\033[36m42sh \033[1m\033[33m✗ "
-                   "\033[0;37m");
+            fprintf(stderr,
+                    "\033[1m\033[31m➜  \033[1m\033[36m42sh \033[1m\033[33m✗ "
+                    "\033[0;37m");
         else
-            fprintf(stderr, "\033[1m\033[32m➜  \033[1m\033[36m42sh \033[1m\033[33m✗ "
-                   "\033[0;37m");
+            fprintf(stderr,
+                    "\033[1m\033[32m➜  \033[1m\033[36m42sh \033[1m\033[33m✗ "
+                    "\033[0;37m");
         fflush(stderr);
         int line = 0;
         while (read(STDIN_FILENO, &c, 1) > 0)
