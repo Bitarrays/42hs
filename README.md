@@ -31,3 +31,11 @@ In order to debug the program, there are 2 options.
 - ```--verbose``` print some functions output during execution. For now, there is only the lexer output.
 
 :warning: **The order is important**: ```--petty-print``` has to be before ```--verbose```
+
+## Environment
+
+```sh
+➜  42-sh-bitarrays git:(main) env -i ./42sh
+```
+
+You need to execute the shell with this command, in order to start with an empty environment
