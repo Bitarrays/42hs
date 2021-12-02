@@ -61,8 +61,27 @@ enum parser_status parse_redirection(struct ast **ast, struct lexer *lexer)
     return PARSER_OK;
 }
 
+/**
+ * @brief Check if simple_command grammar rule is respected
+ * >> prefix: ASSIGNMENT_WORD | redirection
+ * 
+ * @param ast the general ast to update 
+ * @param lexer the lexer to read tokens from 
+ * @return enum parser_status - current parser status 
+ */
 static enum parser_status parse_prefix(struct ast **ast, struct lexer *lexer)
 {
+    // Try ASSIGNMENT_WORD
+    struct lexer_token *tok = lexer_peek(lexer);
+    if (tok->type == TOKEN_ASSIGNMENT_WORD)
+    {
+        *ast = ast_new(AST_ASSIGNMENT);
+        (*ast)->var_name = tok->value;
+
+        lexer_pop(lexer);
+        return PARSER_OK;
+    }
+
     // Try redirection
     enum parser_status status_redir = parse_redirection(ast, lexer);
     if (status_redir == PARSER_ERROR)
@@ -109,6 +128,7 @@ enum parser_status parse_simple_command(struct ast **ast, struct lexer *lexer)
 {
     bool first_prefix = true;
     struct lexer_token *save_tok = lexer_peek(lexer);
+    bool is_assignment = false;
 
     // Try (prefix)*
     struct ast *cur_prefix = NULL;
@@ -124,6 +144,13 @@ enum parser_status parse_simple_command(struct ast **ast, struct lexer *lexer)
             ast_free(ast_prefix);
             break;
         }
+
+        //? If we saw a variable and we get something else after other than a word, then the assignment is incorrect but we go on and it will be catched while executing
+        //! Should maybe be an error clause if is_assignment is already set to true
+        is_assignment = false;
+
+        if (ast_prefix->type == AST_ASSIGNMENT)
+            is_assignment = true;
 
         if (first_prefix)
         {
@@ -160,6 +187,18 @@ enum parser_status parse_simple_command(struct ast **ast, struct lexer *lexer)
         // command
         if (ast_element->type == AST_COMMAND)
         {
+            //? following words are consider in variable assignment
+            if (is_assignment)
+            {
+                struct string_array_with_quotes res = merge_values(cur_prefix->value, ast_element->value, cur_prefix->enclosure, ast_element->enclosure);
+                cur_prefix->value = res.value;
+                cur_prefix->enclosure = res.q;
+                ast_free(ast_element);
+
+                first_is_command = true; //! To be sure about
+                continue;
+            }
+
             struct ast *last_command = NULL;
             if ((first_element && first_prefix) || first_is_command)
             {
@@ -186,6 +225,7 @@ enum parser_status parse_simple_command(struct ast **ast, struct lexer *lexer)
         }
         else
         {
+            is_assignment = false;
             if ((first_element && first_prefix) || first_is_command)
             {
                 *ast = ast_element;
