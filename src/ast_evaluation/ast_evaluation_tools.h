@@ -12,5 +12,6 @@ int is_builtin(char *);
 int call_exec(char **cmd);
 int is_in(char **condition);
 char **expand(struct ast *ast);
+char **split_arg(char **arg, enum quotes *enclosure);
 
 #endif /* !AST_EVALUATION_TOOLS_H */

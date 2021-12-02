@@ -19,6 +19,15 @@ int evaluate_ast(struct ast *ast)
     }
     /*else if (ast->type == AST_FOR)
     {
+        char *oo = "oui non";
+        add_elt_list(shell, "name", oo);
+        //printf("%s\n", find_elt_list(shell, "name"));
+        char *aa = "oui oui";
+        change_elt_list(shell, "name", aa);
+        //printf("%s\n", find_elt_list(shell, "name"));
+        //free_list(shell);
+        char **val = expand(ast);
+        val = split_arg(val, ast->enclosure);
         char **var;
         if (!ast->value[1] || !ast->value[2])
             var = shell->args; // add var in array
@@ -43,16 +52,30 @@ int evaluate_ast(struct ast *ast)
             ret = evaluate_ast(ast->left_child);
         return ret;
     }
-    else if (ast->type == AST_AND)
+    else if (ast->type == AST_AND || ast->type == AST_OR)
     {
-        return !(!evaluate_ast(ast->left_child)
-            && !evaluate_ast(ast->right_child));
+        int prec = !evaluate_ast(ast->left_child);
+        while (ast->right_child && (ast->right_child->type == AST_OR || ast->right_child->type == AST_AND))
+        {
+            if (ast->type == AST_AND)
+                prec = prec && !evaluate_ast(ast->right_child->left_child);
+            else if (ast->type == AST_OR)
+                prec = prec || !evaluate_ast(ast->right_child->left_child);
+            ast = ast->right_child;
+        }
+        if (ast->type == AST_AND)
+            prec = prec && !evaluate_ast(ast->right_child);
+        else if (ast->type == AST_OR)
+           prec = prec || !evaluate_ast(ast->right_child);
+        return !prec;
+        /*return !evaluate_ast(ast->left_child)
+            && !evaluate_ast(ast->right_child);*/
     }
-    else if (ast->type == AST_OR)
+    /*else if (ast->type == AST_OR)
     {
-        return !(!evaluate_ast(ast->left_child)
-            || !evaluate_ast(ast->right_child));
-    }
+        return !evaluate_ast(ast->left_child)
+            || !evaluate_ast(ast->right_child);
+    }*/
     /*else if (ast->type == AST_REDIR)
     {
 
@@ -67,14 +90,15 @@ int evaluate_ast(struct ast *ast)
     }*/
     else if (ast->type == AST_COMMAND)
     {
-        char *oo = "ouinon";
+        char *oo = "oui non";
         add_elt_list(shell, "name", oo);
-        // printf("%s\n", find_elt_list(shell, "name"));
-        char *aa = "ouioui";
+        //printf("%s\n", find_elt_list(shell, "name"));
+        char *aa = "oui oui";
         change_elt_list(shell, "name", aa);
-        // printf("%s\n", find_elt_list(shell, "name"));
-        // free_list(shell);
+        //printf("%s\n", find_elt_list(shell, "name"));
+        //free_list(shell);
         char **val = expand(ast);
+        //val = split_arg(val, ast->enclosure);
         if (!val)
             return 1;
         int res;

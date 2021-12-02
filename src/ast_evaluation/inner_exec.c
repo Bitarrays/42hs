@@ -57,8 +57,7 @@ int expand_s(char **elt, char *s, enum quotes type)
                     i++;
                 }
                 int size_var = 0;
-                while (s[i] != '\0' && s[i] != ' ' && s[i] != '\t'
-                       && (!bracket || (bracket && s[i] != '}')))
+                while (s[i] != '\0' && s[i] != ' ' && s[i] != '\t' && (!bracket || (bracket && s[i] != '}')))
                 {
                     i++;
                     size_var++;
@@ -69,7 +68,6 @@ int expand_s(char **elt, char *s, enum quotes type)
                 char *name = calloc(size_var + 1, sizeof(char));
                 strncpy(name, new + i_new + offset, size_var);
                 name[size_var] = '\0';
-                printf("%s\n", name);
                 if (!find_elt_list(shell, name))
                     return 0;
                 int new_size = strlen(find_elt_list(shell, name));
@@ -152,6 +150,63 @@ char **expand(struct ast *ast)
         i++;
     }
     new[i] = NULL;
+    if (!ret_val)
+        return NULL;
+    return new;
+}
+
+int str_in(char *s, char c)
+{
+    int i = 0;
+    while (s[i] != '\0')
+    {
+        if (s[i++] == c)
+            return 1;
+    }
+    return 0;
+}
+
+char **split_arg(char **arg, enum quotes *enclosure)
+{
+    int size = array_len(arg) + 1;
+    char **new = calloc(size, sizeof(char *));
+    if (!new)
+        return NULL;
+    int ret_val = 1;
+    int i = 0;
+    int i_new = 0;
+    while (arg[i] != NULL && ret_val)
+    {
+        ret_val = expand_s(new + i_new, arg[i], enclosure[i]);
+        char *s = *(new + i_new);
+        printf("%s\n", *(new + i_new));
+        int j = 0;
+        int start = 0;
+        while (s[j] != '\0')
+        {
+            start = 0;
+            if (str_in(shell->ifs, s[j]))
+            {
+                start = 1;
+                size++;
+                char **tmp = realloc(new, size * sizeof(char *));
+                if (!tmp)
+                    return NULL;
+                new = tmp;
+                new[i_new + 1] = calloc(strlen(new[i_new] + j + 1) + 1, sizeof(char));
+                strcpy(new[i_new + 1], new[i_new] + j + 1);
+                new[i_new][j] = '\0';
+                s = new[++i_new];
+                j = 0;
+            }
+            else
+                j++;
+        }
+        if (start == 0)
+            i_new++;
+        i++;
+    }
+    new[i_new] = NULL;
     if (!ret_val)
         return NULL;
     return new;
