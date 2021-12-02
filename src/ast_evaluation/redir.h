@@ -3,4 +3,6 @@
 
 #include "redir_tools.h"
 
+int exec_redirections(char ***redirs);
+
 #endif // !REDIR_H

@@ -127,7 +127,7 @@ static void setup_dup_redir(char **redir)
     }
 }
 
-int exec_redirections(char **cmd, char ***redirs)
+int exec_redirections(char ***redirs)
 {
     int redirs_pos = 0;
     while (redirs[redirs_pos])
@@ -140,49 +140,21 @@ int exec_redirections(char **cmd, char ***redirs)
             setup_dup_redir(redirs[redirs_pos]);
         redirs_pos++;
     }
-    pid_t pid = fork();
-    if (pid == 0)
-    {
-        if (execvp(cmd[0], cmd))
-            return (127);
-        return 0;
-    }
-    else
-    {
-        int status;
-        if (waitpid(pid, &status, 0) > 0)
-        {
-            if (WIFEXITED(status))
-            {
-                if (WEXITSTATUS(status) == 127)
-                {
-                    fprintf(stderr, "%s: command not found\n", cmd[0]);
-                    return 1;
-                }
-                printf("%s exited with %d!\n", cmd[0], WEXITSTATUS(status));
-                return 0;
-            }
-            return 1;
-        }
-        else
-            return 1;
-    }
-    return cmd != NULL;
 }
 
-int main(void)
-{
-    char **cmd = calloc(3, sizeof(char *));
-    cmd[0] = "xargs";
-    cmd[1] = "-0";
-    char ***redirs = calloc(3, sizeof(char *));
-    redirs[0] = calloc(4, sizeof(char *));
-    redirs[0][0] = "";
-    redirs[0][0] = "<&";
-    redirs[0][1] = "1";
-    exec_redirections(cmd, redirs);
-    free(redirs[0]);
-    free(redirs[1]);
-    free(redirs);
-    free(cmd);
-}
+// int main(void)
+// {
+//     char **cmd = calloc(3, sizeof(char *));
+//     cmd[0] = "xargs";
+//     cmd[1] = "-0";
+//     char ***redirs = calloc(3, sizeof(char *));
+//     redirs[0] = calloc(4, sizeof(char *));
+//     redirs[0][0] = "3";
+//     redirs[0][1] = ">";
+//     redirs[0][2] = "test.txt";
+//     exec_redirections(cmd, redirs);
+//     free(redirs[0]);
+//     free(redirs[1]);
+//     free(redirs);
+//     free(cmd);
+// }
