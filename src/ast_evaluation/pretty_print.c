@@ -98,6 +98,12 @@ void pretty_print(struct ast *ast)
             printf("! ");
             pretty_print(ast->left_child);
         }
+        else if (ast->type == AST_ASSIGNMENT)
+        {
+            printf("%s=", ast->var_name);
+            for (size_t i = 0; ast->value && ast->value[i] != NULL; i++)
+                printf("%s ", ast->value[i]);
+        }
         else if (ast->type == AST_EOF)
             printf("EOF\n");
     }

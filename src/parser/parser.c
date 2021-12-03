@@ -29,11 +29,11 @@ struct string_array_with_quotes merge_values(char **values_1, char **values_2,
                                              enum quotes *q_1, enum quotes *q_2)
 {
     int length_1 = 0;
-    while (values_1[length_1] != NULL)
+    while (values_1 && values_1[length_1] != NULL)
         length_1++;
 
     int length_2 = 0;
-    while (values_2[length_2] != NULL)
+    while (values_2 && values_2[length_2] != NULL)
         length_2++;
 
     values_1 = realloc(values_1, (length_1 + 1 + length_2) * sizeof(char *));
