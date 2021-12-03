@@ -57,7 +57,8 @@ int expand_s(char **elt, char *s, enum quotes type)
                     i++;
                 }
                 int size_var = 0;
-                while (s[i] != '\0' && s[i] != ' ' && s[i] != '\t' && (!bracket || (bracket && s[i] != '}')))
+                while (s[i] != '\0' && s[i] != ' ' && s[i] != '\t'
+                       && (!bracket || (bracket && s[i] != '}')))
                 {
                     i++;
                     size_var++;
@@ -193,7 +194,8 @@ char **split_arg(char **arg, enum quotes *enclosure)
                 if (!tmp)
                     return NULL;
                 new = tmp;
-                new[i_new + 1] = calloc(strlen(new[i_new] + j + 1) + 1, sizeof(char));
+                new[i_new + 1] =
+                    calloc(strlen(new[i_new] + j + 1) + 1, sizeof(char));
                 strcpy(new[i_new + 1], new[i_new] + j + 1);
                 new[i_new][j] = '\0';
                 s = new[++i_new];

@@ -64,10 +64,10 @@ enum parser_status parse_redirection(struct ast **ast, struct lexer *lexer)
 /**
  * @brief Check if simple_command grammar rule is respected
  * >> prefix: ASSIGNMENT_WORD | redirection
- * 
- * @param ast the general ast to update 
- * @param lexer the lexer to read tokens from 
- * @return enum parser_status - current parser status 
+ *
+ * @param ast the general ast to update
+ * @param lexer the lexer to read tokens from
+ * @return enum parser_status - current parser status
  */
 static enum parser_status parse_prefix(struct ast **ast, struct lexer *lexer)
 {
@@ -145,8 +145,11 @@ enum parser_status parse_simple_command(struct ast **ast, struct lexer *lexer)
             break;
         }
 
-        //? If we saw a variable and we get something else after other than a word, then the assignment is incorrect but we go on and it will be catched while executing
-        //! Should maybe be an error clause if is_assignment is already set to true
+        //? If we saw a variable and we get something else after other than a
+        //word, then the assignment is incorrect but we go on and it will be
+        //catched while executing
+        //! Should maybe be an error clause if is_assignment is already set to
+        //! true
         is_assignment = false;
 
         if (ast_prefix->type == AST_ASSIGNMENT)
@@ -190,7 +193,9 @@ enum parser_status parse_simple_command(struct ast **ast, struct lexer *lexer)
             //? following words are consider in variable assignment
             if (is_assignment)
             {
-                struct string_array_with_quotes res = merge_values(cur_prefix->value, ast_element->value, cur_prefix->enclosure, ast_element->enclosure);
+                struct string_array_with_quotes res =
+                    merge_values(cur_prefix->value, ast_element->value,
+                                 cur_prefix->enclosure, ast_element->enclosure);
                 cur_prefix->value = res.value;
                 cur_prefix->enclosure = res.q;
                 ast_free(ast_element);

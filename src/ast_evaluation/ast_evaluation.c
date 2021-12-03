@@ -55,7 +55,9 @@ int evaluate_ast(struct ast *ast)
     else if (ast->type == AST_AND || ast->type == AST_OR)
     {
         int prec = !evaluate_ast(ast->left_child);
-        while (ast->right_child && (ast->right_child->type == AST_OR || ast->right_child->type == AST_AND))
+        while (ast->right_child
+               && (ast->right_child->type == AST_OR
+                   || ast->right_child->type == AST_AND))
         {
             if (ast->type == AST_AND)
                 prec = prec && !evaluate_ast(ast->right_child->left_child);
@@ -66,7 +68,7 @@ int evaluate_ast(struct ast *ast)
         if (ast->type == AST_AND)
             prec = prec && !evaluate_ast(ast->right_child);
         else if (ast->type == AST_OR)
-           prec = prec || !evaluate_ast(ast->right_child);
+            prec = prec || !evaluate_ast(ast->right_child);
         return !prec;
         /*return !evaluate_ast(ast->left_child)
             && !evaluate_ast(ast->right_child);*/
@@ -92,13 +94,13 @@ int evaluate_ast(struct ast *ast)
     {
         char *oo = "oui non";
         add_elt_list(shell, "name", oo);
-        //printf("%s\n", find_elt_list(shell, "name"));
+        // printf("%s\n", find_elt_list(shell, "name"));
         char *aa = "oui oui";
         change_elt_list(shell, "name", aa);
-        //printf("%s\n", find_elt_list(shell, "name"));
-        //free_list(shell);
+        // printf("%s\n", find_elt_list(shell, "name"));
+        // free_list(shell);
         char **val = expand(ast);
-        //val = split_arg(val, ast->enclosure);
+        // val = split_arg(val, ast->enclosure);
         if (!val)
             return 1;
         int res;
