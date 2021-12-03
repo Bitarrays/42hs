@@ -271,6 +271,7 @@ void lexer_build(struct lexer *lexer)
     {
         fprintf(stderr, "Error: quote <%c> is not terminated.\n",
                 word_type == TOKEN_WORD_SINGLE_QUOTE ? '\'' : '\"');
+        shell->return_code = 2;
         shell->exit = true;
     }
     create_and_append_token(lexer, TOKEN_EOF, NULL);
