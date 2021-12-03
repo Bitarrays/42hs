@@ -21,6 +21,7 @@ static int display_parser_error(struct ast **res)
     warnx("Parser: unexpected token");
     ast_free(*res);
     *res = NULL;
+    shell->return_code = 2;
     return 2;
 }
 

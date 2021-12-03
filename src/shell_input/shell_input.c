@@ -22,7 +22,7 @@ static int shell_prompt(void)
         while (read(STDIN_FILENO, &c, 1) > 0)
         {
             if (c == EOF)
-                return 0;
+                return shell->return_code;
             if (c == '\n')
             {
                 line = 1;
@@ -49,7 +49,7 @@ static int shell_prompt(void)
         input = NULL;
         input_len = 0;
     }
-    return 0;
+    return shell->return_code;
 }
 
 static char *get_file_content(char *filename)
@@ -101,12 +101,11 @@ int get_input(int argc, char **argv)
             return 1;
         input_len = strlen(input);
     }
-    int res = 2;
     if (input)
     {
         input[input_len] = '\0';
-        res = parse_input(input);
+        parse_input(input);
         free(input);
     }
-    return res;
+    return shell->return_code;
 }
