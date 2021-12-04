@@ -156,7 +156,6 @@ enum parser_status parse_for(struct ast **ast, struct lexer *lexer)
         while (tok->type == TOKEN_WORD || tok->type == TOKEN_WORD_DOUBLE_QUOTE
                || tok->type == TOKEN_WORD_SINGLE_QUOTE)
         {
-            printf("val: %s\n", tok->value);
             len++;
             values = realloc(values, (len + 1) * sizeof(char *));
             values[len - 1] = tok->value;
