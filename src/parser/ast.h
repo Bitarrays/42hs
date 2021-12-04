@@ -18,7 +18,8 @@ enum ast_type
     AST_REDIR,
     AST_FUNC,
     AST_EOF,
-    AST_ASSIGNMENT
+    AST_ASSIGNMENT,
+    AST_CASE_SWITCH
 };
 
 enum quotes

@@ -119,6 +119,36 @@ enum parser_status parse_rule_if(struct ast **ast, struct lexer *l);
 enum parser_status parse_else_clause(struct ast **ast, struct lexer *l);
 
 /**
+ ** @brief Check if rule_case grammar rule is respected
+ ** >> rule_case: Case WORD ('newline')* 'in' ('newline')* [case_clause] Esac
+ **
+ ** @param ast the general ast to update
+ ** @param lexer the lexer to read tokens from
+ ** @return enum parser_status - current parser status
+ **/
+enum parser_status parse_rule_case(struct ast **ast, struct lexer *l);
+
+/**
+ ** @brief Check if case_clause grammar rule is respected
+ ** >> case_clause: case_item (';;' ('newline')* case_item)* [;;] ('newline')*
+ **
+ ** @param ast the general ast to update
+ ** @param lexer the lexer to read tokens from
+ ** @return enum parser_status - current parser status
+ **/
+enum parser_status parse_case_clause(struct ast **ast, struct lexer *l);
+
+/**
+ ** @brief Check if case_item grammar rule is respected
+ ** >> case_item: ['('] WORD ('|' WORD)* ')' ('newline')*  [ compound_list ]
+ **
+ ** @param ast the general ast to update
+ ** @param lexer the lexer to read tokens from
+ ** @return enum parser_status - current parser status
+ **/
+enum parser_status parse_case_item(struct ast **ast, struct lexer *l);
+
+/**
  ** @brief Check if redirection grammar rule is respected
  ** >> redirection: [IONUMBER] '>' WORD
  **       |   [IONUMBER] '<' WORD
