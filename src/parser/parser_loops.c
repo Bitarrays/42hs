@@ -141,7 +141,7 @@ enum parser_status parse_for(struct ast **ast, struct lexer *lexer)
         //? add 'in' in char **values
         len++;
         values = realloc(values, (len + 1) * sizeof(char *));
-        values[len - 1] = tok->value;
+        values[len - 1] = "in";
         values[len] = NULL;
         enclosure = realloc(enclosure, len * sizeof(enum quotes));
         enclosure[len - 1] = tok->type - TOKEN_WORD;
