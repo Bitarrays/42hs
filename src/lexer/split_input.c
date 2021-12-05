@@ -46,6 +46,8 @@ char **split_in_words(char *input)
         words[words_nb] = word;
         words_nb++;
     }
+    if (!words)
+        words = realloc(words, sizeof(char *));
     words[words_nb] = NULL;
     free(save);
     return words;
