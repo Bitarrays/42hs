@@ -102,6 +102,43 @@ int expand_s(char **elt, char *s, enum quotes type)
         {
             if (escaped)
                 escaped = 0;
+            else if (s[i] == '$')
+            {
+                int bracket = s[++i] == '{';
+                int offset = 1;
+                if (bracket)
+                {
+                    offset++;
+                    i++;
+                }
+                int size_var = 0;
+                while (s[i] != '\0' && s[i] != ' ' && s[i] != '\t'
+                       && s[i] != '$' && (!bracket || (bracket && s[i] != '}')))
+                {
+                    i++;
+                    size_var++;
+                }
+                if (bracket)
+                    i++;
+                size += size_var;
+                char *name = calloc(size_var + 1, sizeof(char));
+                strncpy(name, new + i_new + offset, size_var);
+                name[size_var] = '\0';
+                if (!find_elt_list(shell, name))
+                    return 0;
+                int new_size = strlen(find_elt_list(shell, name));
+                char *tmp = realloc(new, (new_size + 1) * sizeof(char *));
+                if (!tmp)
+                    return 0;
+                new = tmp;
+                strcpy(new + i_new, find_elt_list(shell, name));
+                i_new += new_size;
+                free(name);
+                if (s[i] == '\0')
+                    break;
+                if (s[i] == '$')
+                    continue;
+            }
             else if (s[i] == '\\')
             {
                 i++;
@@ -203,34 +240,43 @@ char **split_arg(char **arg, enum quotes *enclosure)
     while (arg[i] != NULL && ret_val)
     {
         ret_val = expand_s(new + i_new, arg[i], enclosure[i]);
-        char *s = *(new + i_new);
-        // printf("%s\n", *(new + i_new));
-        int j = 0;
-        int start = 0;
-        while (s[j] != '\0')
+        printf("%d\n", enclosure[i]);
+        if (enclosure[i] == Q_NONE)
         {
-            start = 0;
-            if (str_in(shell->ifs, s[j]))
+            char *s = *(new + i_new);
+            // printf("%s\n", *(new + i_new));
+            int j = 0;
+            int start = 0;
+            while (s[j] != '\0')
             {
-                start = 1;
-                size++;
-                char **tmp = realloc(new, size * sizeof(char *));
-                if (!tmp)
-                    return NULL;
-                new = tmp;
-                new[i_new + 1] =
-                    calloc(strlen(new[i_new] + j + 1) + 1, sizeof(char));
-                strcpy(new[i_new + 1], new[i_new] + j + 1);
-                new[i_new][j] = '\0';
-                s = new[++i_new];
-                j = 0;
+                start = 0;
+                if (str_in(shell->ifs, s[j]))
+                {
+                    start = 1;
+                    size++;
+                    char **tmp = realloc(new, size * sizeof(char *));
+                    if (!tmp)
+                        return NULL;
+                    new = tmp;
+                    new[i_new + 1] =
+                        calloc(strlen(new[i_new] + j + 1) + 1, sizeof(char));
+                    strcpy(new[i_new + 1], new[i_new] + j + 1);
+                    new[i_new][j] = '\0';
+                    s = new[++i_new];
+                    j = 0;
+                }
+                else
+                    j++;
             }
-            else
-                j++;
+            if (start == 0)
+                i_new++;
+            i++;
         }
-        if (start == 0)
+        else
+        {
+            i++;
             i_new++;
-        i++;
+        }
     }
     new[i_new] = NULL;
     if (!ret_val)

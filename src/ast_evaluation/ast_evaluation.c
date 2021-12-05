@@ -31,6 +31,7 @@ int evaluate_ast(struct ast *ast)
         char **var;
         char *test[3] = { "oui", "non", NULL };
         enum quotes enclosure2[2] = { Q_DOUBLE, Q_DOUBLE };
+        printf("%d\n", ast->enclosure[0]);
         // printf("%s\n", ast->value[0]);
         if (!ast->value[1] || !ast->value[2])
         {
