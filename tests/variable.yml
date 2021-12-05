@@ -1,6 +1,27 @@
 - name: basic
   input: a=ok; echo $a
 
+- name: for basic
+  input: for i in yo lo; do echo $i; done
+
+- name: for basic quotes
+  input: for i in 'yo' "lo"; do echo $i;; done
+
+- name: for quotes with variable
+  input: a=12; for i in 'y$ao' "lo"; do echo $i; echo $a; done
+
+- name: for quotes with variable 2
+  input: a=12; for i in 'y$ao' "l$ao"; do echo $i; echo $a; done
+
+- name: for with double declaration
+  input: i=12; for i in 'yo' "lo"; do echo $i; done
+
+- name: for with brackets variable
+  input: a=12; for i in 'y$ao' "l$ao"; do echo ${i}; echo $a; done
+
+- name: for basic
+  input: for i in yo lo; do echo $i; done
+
 - name: for adv 1
   input: r=aaa; t='-$r-'; s="-$r-"; elt=rr$r$t$s'oo$r 'oo" tt"pp" "; cat=ee${elt}ee; for i in "gg" "$cat"; do echo "$i"; done
 
