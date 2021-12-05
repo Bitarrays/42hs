@@ -11,7 +11,7 @@ extern struct shell *shell;
 int is_builtin(char *);
 int call_exec(char **cmd);
 int is_in(char **condition);
-char **expand(struct ast *ast);
+char **expand(char **arg, enum quotes *enclosure);
 char **split_arg(char **arg, enum quotes *enclosure);
 char *merge_arg(char **arg);
 int atoi_begining(char *s);

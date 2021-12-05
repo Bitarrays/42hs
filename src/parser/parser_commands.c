@@ -154,8 +154,8 @@ enum parser_status parse_simple_command(struct ast **ast, struct lexer *lexer)
         }
 
         //? If we saw a variable and we get something else after other than a
-        //word, then the assignment is incorrect but we go on and it will be
-        //catched while executing
+        // word, then the assignment is incorrect but we go on and it will be
+        // catched while executing
         //! Should maybe be an error clause if is_assignment is already set to
         //! true
         is_assignment = false;

@@ -69,7 +69,7 @@ int push_elt_list(struct shell *sh, char *name, char *value)
         strcpy(new->name, name);
         new->value = new_content;
         new->next = sh->var_list;
-        sh->var_list = new; 
+        sh->var_list = new;
     }
     return 0;
 }

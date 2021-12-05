@@ -57,8 +57,8 @@ int expand_s(char **elt, char *s, enum quotes type)
                     i++;
                 }
                 int size_var = 0;
-                while (s[i] != '\0' && s[i] != ' ' && s[i] != '\t' && s[i] != '$'
-                       && (!bracket || (bracket && s[i] != '}')))
+                while (s[i] != '\0' && s[i] != ' ' && s[i] != '\t'
+                       && s[i] != '$' && (!bracket || (bracket && s[i] != '}')))
                 {
                     i++;
                     size_var++;
@@ -140,16 +140,16 @@ int array_len(char **arr)
     return i;
 }
 
-char **expand(struct ast *ast)
+char **expand(char **arg, enum quotes *enclosure)
 {
-    char **new = calloc(array_len(ast->value) + 1, sizeof(char *));
+    char **new = calloc(array_len(arg) + 1, sizeof(char *));
     if (!new)
         return NULL;
     int ret_val = 1;
     int i = 0;
-    while (ast->value[i] != NULL && ret_val)
+    while (arg[i] != NULL && ret_val)
     {
-        ret_val = expand_s(new + i, ast->value[i], ast->enclosure[i]);
+        ret_val = expand_s(new + i, arg[i], enclosure[i]);
         i++;
     }
     new[i] = NULL;
@@ -204,7 +204,7 @@ char **split_arg(char **arg, enum quotes *enclosure)
     {
         ret_val = expand_s(new + i_new, arg[i], enclosure[i]);
         char *s = *(new + i_new);
-        //printf("%s\n", *(new + i_new));
+        // printf("%s\n", *(new + i_new));
         int j = 0;
         int start = 0;
         while (s[j] != '\0')
