@@ -144,7 +144,7 @@ enum parser_status parse_for(struct ast **ast, struct lexer *lexer)
         values[len - 1] = "in";
         values[len] = NULL;
         enclosure = realloc(enclosure, len * sizeof(enum quotes));
-        enclosure[len - 1] = tok->type - TOKEN_WORD;
+        enclosure[len - 1] = 0;
 
         //? already took left part of \ condition
         if (semi_colon)
