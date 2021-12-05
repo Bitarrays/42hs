@@ -1,0 +1,26 @@
+- name: basic
+  input: a=ok; echo $a
+
+- name: for adv 1
+  input: r=aaa; t='-$r-'; s="-$r-"; elt=rr$r$t$s'oo$r 'oo" tt"pp" "; cat=ee${elt}ee; for i in "gg" "$cat"; do echo "$i"; done
+
+- name: for adv 2
+  input: r=aaa; t='-$r-'; s="-$r-'"; elt=rr$r$t$s'oo$r 'oo" tt"pp" "; cat=ee${elt}ee; for i in "gg" "$cat"; do echo "$i"; done
+
+- name: for adv 3
+  input: r=aaa; t='-$r-'; s="-$r-"; elt=rr$r$t$s'oo$r 'oo" tt"pp" "; cat=ee${elt}ee; for i in "gg ""$cat"; do echo "$i"; done
+
+- name: for adv 4
+  input: r=aaa; t='-$r-'; s="-$r-'"; elt=rr$r$t$s'oo$r 'oo" tt"pp" "; cat=ee${elt}ee; for i in "gg ""$cat"; do echo "$i"; done
+
+- name: for space in list
+  input: for i in "ee oo"; do echo $i; done
+
+- name: for space in list 2
+  input: a=22; for i in "ee oo" $a; do echo $i; done
+
+- name: name with \
+  input: \$a=11; b=22; echo $\$a $b
+
+- name: mix non quote and quote
+  input: A=hello; echo $A'$A'\'$A\'

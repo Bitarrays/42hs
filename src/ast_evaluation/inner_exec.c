@@ -15,6 +15,11 @@ int is_in(char **condition)
     return 0;
 }
 
+int is_char_name(char c)
+{
+    return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_';
+}
+
 /*int expend_var(char *s, char *new, int *size, int *i)
 {
     int bracket = s[++(*i)] == '{';
@@ -55,9 +60,9 @@ int expand_s(char **elt, char *s, enum quotes type)
                 }
                 int start = i;
                 int size_var = 0;
-                while (s[i] != '\0' && s[i] != ' ' && s[i] != '\t'
+                while (is_char_name(s[i])/*s[i] != '\0' && s[i] != ' ' && s[i] != '\t'
                        && s[i] != '$' && s[i] != '\\'
-                       && (!bracket || (bracket && s[i] != '}')))
+                       && (!bracket || (bracket && s[i] != '}'))*/)
                 {
                     i++;
                     size_var++;
@@ -68,14 +73,15 @@ int expand_s(char **elt, char *s, enum quotes type)
                 char *name = calloc(size_var + 1, sizeof(char));
                 strncpy(name, s + start, size_var);
                 name[size_var] = '\0';
-                if (!find_elt_list(shell, name))
-                    return 0;
-                int new_size = strlen(find_elt_list(shell, name));
+                char *var = find_elt_list(shell, name);
+                if (!var)
+                    var = "";
+                int new_size = strlen(var);
                 char *tmp = realloc(new, (new_size + 1) * sizeof(char *));
                 if (!tmp)
                     return 0;
                 new = tmp;
-                strcpy(new + i_new, find_elt_list(shell, name));
+                strcpy(new + i_new, var);
                 i_new += new_size;
                 free(name);
                 if (s[i] == '\0')
@@ -110,9 +116,9 @@ int expand_s(char **elt, char *s, enum quotes type)
                 }
                 int start = i;
                 int size_var = 0;
-                while (s[i] != '\0' && s[i] != ' ' && s[i] != '\t'
+                while (is_char_name(s[i])/*s[i] != '\0' && s[i] != ' ' && s[i] != '\t'
                        && s[i] != '$' && s[i] != '\\'
-                       && (!bracket || (bracket && s[i] != '}')))
+                       && (!bracket || (bracket && s[i] != '}'))*/)
                 {
                     i++;
                     size_var++;
@@ -123,14 +129,15 @@ int expand_s(char **elt, char *s, enum quotes type)
                 char *name = calloc(size_var + 1, sizeof(char));
                 strncpy(name, s + start, size_var);
                 name[size_var] = '\0';
-                if (!find_elt_list(shell, name))
-                    return 0;
-                int new_size = strlen(find_elt_list(shell, name));
+                char *var = find_elt_list(shell, name);
+                if (!var)
+                    var = "";
+                int new_size = strlen(var);
                 char *tmp = realloc(new, (new_size + 1) * sizeof(char *));
                 if (!tmp)
                     return 0;
                 new = tmp;
-                strcpy(new + i_new, find_elt_list(shell, name));
+                strcpy(new + i_new, var);
                 i_new += new_size;
                 free(name);
                 if (s[i] == '\0')
@@ -206,6 +213,8 @@ int str_in(char *s, char c)
 
 char *merge_arg(char **arg)
 {
+    if (!arg)
+        return NULL;
     char *s = calloc(1, sizeof(char));
     s[0] = '\0';
     int size = 0;
@@ -228,6 +237,8 @@ char *merge_arg(char **arg)
 
 char **split_arg(char **arg, enum quotes *enclosure)
 {
+    if (!arg)
+        return NULL;
     int size = array_len(arg) + 1;
     char **new = calloc(size, sizeof(char *));
     if (!new)

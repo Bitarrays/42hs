@@ -40,9 +40,8 @@ int evaluate_ast(struct ast *ast)
             // var = split_arg(shell->args, enclosure); // add var in array
         }
         else
-            var = split_arg(expand(ast->value + 2, ast->enclosure + 2),
+            var = split_arg(ast->value + 2/*expand(ast->value + 2, ast->enclosure + 2)*/,
                             ast->enclosure + 2);
-
         if (var && ast->value)
         {
             int i = 0;
@@ -153,7 +152,6 @@ int evaluate_ast(struct ast *ast)
         // printf("%s\n", find_elt_list(shell, "name"));
         // free_list(shell);
         char **val = expand(ast->value, ast->enclosure);
-        printf("%sww\n", ast->value[1]);
         // printf("%s\n", val[0]);
         // val = split_arg(val, ast->enclosure);
         if (!val)
