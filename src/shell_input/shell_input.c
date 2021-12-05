@@ -4,9 +4,9 @@
 
 static int shell_prompt(void)
 {
-    int c = '\n';
+    // int c = '\n';
     char *input = NULL;
-    int input_len = 0;
+    size_t input_len = 0;
     while (!shell->exit)
     {
         if (shell->return_code)
@@ -19,17 +19,12 @@ static int shell_prompt(void)
                     "\033[0;37m");
         fflush(stderr);
         int line = 0;
-        while (read(STDIN_FILENO, &c, 1) > 0)
+        if (getline(&input, &input_len, stdin) < 1)
         {
-            if (c == EOF)
-                return shell->return_code;
-            if (c == '\n')
-            {
-                line = 1;
-                break;
-            }
-            input = realloc(input, (input_len + 2) * sizeof(char));
-            input[input_len++] = c;
+            free(input);
+            input = NULL;
+            input_len = 0;
+            break;
         }
         if (!input)
         {
@@ -37,8 +32,7 @@ static int shell_prompt(void)
                 fprintf(stderr, "\n");
             continue;
         }
-        input[input_len] = 0;
-        if (!strcmp(input, "exit"))
+        if (!strcmp(input, "exit\n"))
         {
             shell->exit = 1;
             free(input);
