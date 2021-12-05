@@ -3,6 +3,7 @@
 enum parser_status parse_redirection(struct ast **ast, struct lexer *lexer)
 {
     struct lexer_token *tok = lexer_peek(lexer);
+    char *fd = NULL;
     char *type = NULL;
     size_t len = 0;
 
@@ -10,29 +11,36 @@ enum parser_status parse_redirection(struct ast **ast, struct lexer *lexer)
     if (tok->type == TOKEN_IONUMBER)
     {
         len = strlen(tok->value);
-        type = realloc(type, len + 1);
-        type = strcpy(type, tok->value);
-        type[len] = '\0';
+        fd = realloc(fd, len + 1);
+        fd = strcpy(fd, tok->value);
+        fd[len] = '\0';
         lexer_pop(lexer);
     }
 
     tok = lexer_peek(lexer);
     if (tok->type != TOKEN_REDIR)
     {
-        free(type);
+        free(fd);
         return handle_parser_error(PARSER_ERROR, ast);
     }
 
-    len += strlen(tok->value);
-    if (!type)
-        type = calloc(len + 1, sizeof(char));
-    else
-        type = realloc(type, len + 1);
+    len = strlen(tok->value);
+    type = calloc(len + 1, sizeof(char));
+    type = strcpy(type, tok->value);
     type[len] = '\0';
-    type = strcat(type, tok->value);
+    char **redir_value = NULL;
     *ast = ast_new(AST_REDIR);
-    char **redir_value = calloc(2, sizeof(char *));
-    redir_value[0] = type;
+    if (fd)
+    {
+        redir_value = calloc(3, sizeof(char *));
+        redir_value[0] = fd;
+        redir_value[1] = type;
+    }
+    else
+    {
+        redir_value = calloc(2, sizeof(char *));
+        redir_value[0] = type;
+    }
     (*ast)->value = redir_value;
 
     lexer_pop(lexer);

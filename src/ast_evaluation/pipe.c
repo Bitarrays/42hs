@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "ast_evaluation_tools.h"
+
 void exec_pipe(char ***args, int pipe_nb)
 {
     int **fds = calloc(pipe_nb, sizeof(int *));
@@ -54,6 +56,7 @@ void exec_pipe(char ***args, int pipe_nb)
         }
         else if (i != 0)
         {
+            printf("%d\n", i);
             close(fds[i - 1][0]);
             close(fds[i - 1][1]);
             if (i == pipe_nb)
@@ -69,7 +72,7 @@ void exec_pipe(char ***args, int pipe_nb)
     free(fds);
 }
 
-int main(void)
+/*int main(void)
 {
     char ***args = calloc(4, sizeof(char **));
     args[0] = calloc(3, sizeof(char *));
@@ -96,3 +99,4 @@ int main(void)
     free(args[3]);
     free(args);
 }
+*/

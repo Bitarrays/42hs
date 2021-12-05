@@ -17,27 +17,42 @@ int evaluate_ast(struct ast *ast)
         else
             return evaluate_ast(ast->right_child);
     }
-    /*else if (ast->type == AST_FOR)
+    else if (ast->type == AST_FOR)
     {
         char *oo = "oui non";
-        add_elt_list(shell, "name", oo);
+        push_elt_list(shell, "name", oo);
         //printf("%s\n", find_elt_list(shell, "name"));
         char *aa = "oui oui";
-        change_elt_list(shell, "name", aa);
+        push_elt_list(shell, "name", aa);
         //printf("%s\n", find_elt_list(shell, "name"));
         //free_list(shell);
-        char **val = expand(ast);
-        val = split_arg(val, ast->enclosure);
+        //char **val = expand(ast);
+        //val = split_arg(val, ast->enclosure);
         char **var;
+        char *test[3] = {"oui", "non", NULL};
+        enum quotes enclosure2[2] = {Q_DOUBLE, Q_DOUBLE};
+        //printf("%s\n", ast->value[0]);
         if (!ast->value[1] || !ast->value[2])
-            var = shell->args; // add var in array
+        {
+            var = split_arg(test, enclosure2);
+            // wait impletation of env var
+            //enum quotes enclosure[1] = {Q_NONE};
+            //var = split_arg(shell->args, enclosure); // add var in array
+        }
         else
-            var = find_elt_list(list, ) // boucle on every var
+            var = split_arg(expand(ast), ast->enclosure);
 
-        while (!evaluate_ast(ast->condition))
-            evaluate_ast(ast->left_child);
-        return evaluate_ast(ast->right_child);
-    }*/
+        if (var && ast->value)
+        {
+            int i = 0;
+            while (var[i])
+            {
+                push_elt_list(shell, ast->value[0], var[i++]);
+                evaluate_ast(ast->left_child);
+            }
+        }
+        return evaluate_ast(ast->right_child); // check return code for a null for
+    }
     else if (ast->type == AST_WHILE)
     {
         int ret = 0;
@@ -78,28 +93,65 @@ int evaluate_ast(struct ast *ast)
         return !evaluate_ast(ast->left_child)
             || !evaluate_ast(ast->right_child);
     }*/
-    /*else if (ast->type == AST_REDIR)
+    else if (ast->type == AST_REDIR)
     {
-
-        evaluate_ast(ast->right_child); // talk about that with Fisch
-
-
-        evaluate_ast(ast->left_child);
-    }*/
-    /*else if (ast->type == AST_PIPE)
+        int nb = 1;
+        struct ast *tmp = ast;
+        while (tmp->right_child->type == AST_REDIR)
+        {
+            tmp = tmp->right_child;
+            nb++;
+        }
+        char ***redirs = calloc(nb + 1, sizeof(char **));
+        if (!redirs)
+            return 1;
+        while (ast->right_child->type)
+        {
+            continue;
+        }
+        //int fd = atoi_begining(char *s);
+        printf("%d\n", nb);
+        printf("%s\n", ast->left_child->value[0]);
+    }
+    else if (ast->type == AST_PIPE)
     {
-        char **get_pipe(char ***arg, int *nb)
-    }*/
+        int nb = 1;
+        struct ast *tmp = ast;
+        while (tmp->right_child->type == AST_PIPE)
+        {
+            tmp = tmp->right_child;
+            nb++;
+        }
+        char ***redirs = calloc(nb + 2, sizeof(char **));
+        if (!redirs)
+            return 1;
+        int i = 0;
+        while (ast->right_child->type)
+        {
+            redirs[i] = ast->left_child->value;
+            ast = ast->right_child;
+        }
+        printf("nb %d\n", nb);
+        redirs[i] = ast->right_child->value;
+        exec_pipe(redirs, nb + 1);
+    }
+    else if (ast->type == AST_ASSIGNMENT)
+    {
+        char **var = expand(ast);
+        char *val = merge_arg(var);
+        push_elt_list(shell, ast->var_name, val);
+    }
     else if (ast->type == AST_COMMAND)
     {
         char *oo = "oui non";
-        add_elt_list(shell, "name", oo);
+        push_elt_list(shell, "name", oo);
         // printf("%s\n", find_elt_list(shell, "name"));
         char *aa = "oui oui";
-        change_elt_list(shell, "name", aa);
+        push_elt_list(shell, "name", aa);
         // printf("%s\n", find_elt_list(shell, "name"));
         // free_list(shell);
         char **val = expand(ast);
+                //printf("%s\n", val[0]);
         // val = split_arg(val, ast->enclosure);
         if (!val)
             return 1;

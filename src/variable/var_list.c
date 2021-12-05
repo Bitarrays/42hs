@@ -15,7 +15,7 @@
     new->next = NULL;
 }*/
 
-int add_elt_list(struct shell *sh, char *name, char *value)
+/*int add_elt_list(struct shell *sh, char *name, char *value)
 {
     struct var *new = calloc(1, sizeof(struct var));
     if (!new)
@@ -35,67 +35,41 @@ int add_elt_list(struct shell *sh, char *name, char *value)
         return 1;
     }
     strcpy(new->value, value);
-    /*int nb_elt = 0;
-    while (value[nb_elt] != NULL)
-        nb_elt++;
-    new->value = calloc(nb_elt + 1, sizeof(char *));
-    int i = 0;
-    while (value[i] != NULL)
-    {
-        new->value[i] = calloc(strlen(value[i]) + 1, sizeof(char));
-        if (!new->value)
-        {
-            free(new->name);
-            free(new);
-            return 1;
-        }
-        strcpy(new->value[i], value[i]);
-        i++;
-    }
-    new->value[i] = NULL;*/
     new->next = sh->var_list;
     sh->var_list = new;
     return 0;
-}
+}*/
 
-int change_elt_list(struct shell *sh, char *name, char *value)
+int push_elt_list(struct shell *sh, char *name, char *value)
 {
-    /*char **new_content = NULL;
-    int nb_elt = 0;
-    while (value[nb_elt] != NULL)
-        nb_elt++;
-    new_content= calloc(nb_elt + 1, sizeof(char *));
-    int i = 0;
-    while (value[i] != NULL)
-    {
-        new_content[i] = calloc(strlen(value[i]) + 1, sizeof(char));
-        if (!new_content)
-            return 1;
-        strcpy(new_content[i], value[i]);
-        i++;
-    }
-    new_content[i] = NULL;
-    struct var *tmp = sh->var_list;
-    while (tmp && strcmp(tmp->name, name))
-        tmp->next = tmp;
-    if (tmp)
-    {
-        int j = 0;
-        while (tmp->value[j])
-            free(tmp->value[j++]);
-        free(tmp->value);
-    }*/
     char *new_content = calloc(strlen(value) + 1, sizeof(char));
     if (!new_content)
         return 1;
     strcpy(new_content, value);
     struct var *tmp = sh->var_list;
     while (tmp && strcmp(tmp->name, name))
-        tmp->next = tmp;
+        tmp = tmp->next;
     if (tmp)
     {
         free(tmp->value);
         tmp->value = new_content;
+    }
+    else
+    {
+        struct var *new = calloc(1, sizeof(struct var));
+        if (!new)
+            return 1;
+        new->name = calloc(strlen(name) + 1, sizeof(char));
+        if (!new->name)
+        {
+            free(new);
+            free(new_content);
+            return 1;
+        }
+        strcpy(new->name, name);
+        new->value = new_content;
+        new->next = sh->var_list;
+        sh->var_list = new; 
     }
     return 0;
 }

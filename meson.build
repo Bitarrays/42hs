@@ -40,6 +40,7 @@ common = [
   'src/ast_evaluation/builtin_exec.c',
   'src/ast_evaluation/inner_exec.c',
   'src/ast_evaluation/prog_exec.c',
+  'src/ast_evaluation/pipe.c',
   'src/shell_input/shell_input.c',
   'src/builtins/builtins.c',
   'src/variable/var_list.c',

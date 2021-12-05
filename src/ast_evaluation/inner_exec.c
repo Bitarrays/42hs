@@ -57,7 +57,7 @@ int expand_s(char **elt, char *s, enum quotes type)
                     i++;
                 }
                 int size_var = 0;
-                while (s[i] != '\0' && s[i] != ' ' && s[i] != '\t'
+                while (s[i] != '\0' && s[i] != ' ' && s[i] != '\t' && s[i] != '$'
                        && (!bracket || (bracket && s[i] != '}')))
                 {
                     i++;
@@ -81,6 +81,8 @@ int expand_s(char **elt, char *s, enum quotes type)
                 free(name);
                 if (s[i] == '\0')
                     break;
+                if (s[i] == '$')
+                    continue;
             }
             else if (s[i] == '\\')
             {
@@ -167,6 +169,28 @@ int str_in(char *s, char c)
     return 0;
 }
 
+char *merge_arg(char **arg)
+{
+    char *s = calloc(1, sizeof(char));
+    s[0] = '\0';
+    int size = 0;
+    int i = 0;
+    while (arg[i])
+    {
+        size += strlen(arg[i]);
+        char *tmp = realloc(s, (size + 1) * sizeof(char));
+        if (!tmp)
+        {
+            free(s);
+            return NULL;
+        }
+        s = tmp;
+        strcat(s, arg[i]);
+        i++;
+    }
+    return s;
+}
+
 char **split_arg(char **arg, enum quotes *enclosure)
 {
     int size = array_len(arg) + 1;
@@ -180,7 +204,7 @@ char **split_arg(char **arg, enum quotes *enclosure)
     {
         ret_val = expand_s(new + i_new, arg[i], enclosure[i]);
         char *s = *(new + i_new);
-        printf("%s\n", *(new + i_new));
+        //printf("%s\n", *(new + i_new));
         int j = 0;
         int start = 0;
         while (s[j] != '\0')
@@ -212,4 +236,19 @@ char **split_arg(char **arg, enum quotes *enclosure)
     if (!ret_val)
         return NULL;
     return new;
+}
+
+int atoi_begining(char *s)
+{
+    int i = 0;
+    int nb = 0;
+    while (s[i] != '\0')
+    {
+        if (s[i] < '0' || s[i] > '9')
+            break;
+        nb = nb * 10 + (s[i++] - '0');
+    }
+    if (nb == 0 && i == 0)
+        return -1;
+    return nb;
 }
