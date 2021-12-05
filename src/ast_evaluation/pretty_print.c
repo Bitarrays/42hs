@@ -28,7 +28,9 @@ void pretty_print(struct ast *ast)
             {
                 printf("for { ");
                 for (int i = 0; ast->value[i]; i++)
+                {
                     printf("%s ", ast->value[i]);
+                }
                 printf("}; do { ");
                 pretty_print(ast->left_child);
                 printf("}");
