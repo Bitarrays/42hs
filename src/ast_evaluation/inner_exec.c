@@ -42,12 +42,9 @@ int expand_s(char **elt, char *s, enum quotes type)
     {
         int i = 0;
         int i_new = 0;
-        int escaped = 0;
         while (s[i] != '\0')
         {
-            if (escaped)
-                escaped = 0;
-            else if (s[i] == '$')
+            if (s[i] == '$')
             {
                 int bracket = s[++i] == '{';
                 int offset = 1;
@@ -58,7 +55,8 @@ int expand_s(char **elt, char *s, enum quotes type)
                 }
                 int size_var = 0;
                 while (s[i] != '\0' && s[i] != ' ' && s[i] != '\t'
-                       && s[i] != '$' && (!bracket || (bracket && s[i] != '}')))
+                       && s[i] != '$' && s[i] != '\\'
+                       && (!bracket || (bracket && s[i] != '}')))
                 {
                     i++;
                     size_var++;
@@ -67,7 +65,7 @@ int expand_s(char **elt, char *s, enum quotes type)
                     i++;
                 size += size_var;
                 char *name = calloc(size_var + 1, sizeof(char));
-                strncpy(name, new + i_new + offset, size_var);
+                strncpy(name, new + i_new + offset + 1, size_var);
                 name[size_var] = '\0';
                 if (!find_elt_list(shell, name))
                     return 0;
@@ -87,9 +85,10 @@ int expand_s(char **elt, char *s, enum quotes type)
             else if (s[i] == '\\')
             {
                 i++;
-                escaped = 1;
+                new[i_new++] = s[i++];
             }
-            new[i_new++] = s[i++];
+            else
+                new[i_new++] = s[i++];
         }
         new[i_new] = '\0';
     }
@@ -97,12 +96,9 @@ int expand_s(char **elt, char *s, enum quotes type)
     {
         int i = 0;
         int i_new = 0;
-        int escaped = 0;
         while (s[i] != '\0')
         {
-            if (escaped)
-                escaped = 0;
-            else if (s[i] == '$')
+            if (s[i] == '$')
             {
                 int bracket = s[++i] == '{';
                 int offset = 1;
@@ -113,7 +109,8 @@ int expand_s(char **elt, char *s, enum quotes type)
                 }
                 int size_var = 0;
                 while (s[i] != '\0' && s[i] != ' ' && s[i] != '\t'
-                       && s[i] != '$' && (!bracket || (bracket && s[i] != '}')))
+                       && s[i] != '$' && s[i] != '\\'
+                       && (!bracket || (bracket && s[i] != '}')))
                 {
                     i++;
                     size_var++;
@@ -122,7 +119,7 @@ int expand_s(char **elt, char *s, enum quotes type)
                     i++;
                 size += size_var;
                 char *name = calloc(size_var + 1, sizeof(char));
-                strncpy(name, new + i_new + offset, size_var);
+                strncpy(name, new + i_new + offset + 1, size_var);
                 name[size_var] = '\0';
                 if (!find_elt_list(shell, name))
                     return 0;
@@ -158,10 +155,10 @@ int expand_s(char **elt, char *s, enum quotes type)
                     i++;
                     new[i_new++] = '\'';
                 }
-                else
-                    escaped = 1;
+                new[i_new++] = s[i++];
             }
-            new[i_new++] = s[i++];
+            else
+                new[i_new++] = s[i++];
         }
         new[i_new] = '\0';
     }
