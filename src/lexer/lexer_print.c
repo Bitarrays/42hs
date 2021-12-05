@@ -24,8 +24,8 @@ static char *get_token_string(enum token_type type)
                              "NOT",
                              "ASSIGNMENT_WORD",
                              "WORD",
-                             "WORD_SINGLE_QUOTE",
                              "WORD_DOUBLE_QUOTE",
+                             "WORD_SINGLE_QUOTE",
                              "EOF" };
     return token_string[type];
 }
