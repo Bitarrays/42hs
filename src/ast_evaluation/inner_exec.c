@@ -4,6 +4,14 @@
 
 #include "ast_evaluation_tools.h"
 
+void free_arg(char **var)
+{
+    int i = 0;
+    while (var[i])
+        free(var[i++]);
+    free(var);
+}
+
 int is_in(char **condition)
 {
     while ((*condition)[0] != '\0')
@@ -19,22 +27,6 @@ int is_char_name(char c)
 {
     return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_';
 }
-
-/*int expend_var(char *s, char *new, int *size, int *i)
-{
-    int bracket = s[++(*i)] == '{';
-    int size_var = 0;
-    if (bracket)
-        (*i)++;
-    while (s[*i] != '\0' && s[*i] != ' ' && s[*i] != '\t' && (bracket))
-    {
-        (*i)++;
-        size_var++;
-    }
-    *size += size_var;
-    char *tmp = realloc(new, (*size + 1) * sizeof(char *));
-    strncat(new, )
-}*/
 
 int expand_s(char **elt, char *s, enum quotes type)
 {
@@ -252,7 +244,6 @@ char **split_arg(char **arg, enum quotes *enclosure)
         if (enclosure[i] == Q_NONE)
         {
             char *s = *(new + i_new);
-            // printf("%s\n", *(new + i_new));
             int j = 0;
             int start = 0;
             while (s[j] != '\0')

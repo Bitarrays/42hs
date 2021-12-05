@@ -16,5 +16,6 @@ char **split_arg(char **arg, enum quotes *enclosure);
 char *merge_arg(char **arg);
 int atoi_begining(char *s);
 void exec_pipe(char ***args, int pipe_nb);
+void free_arg(char **var);
 
 #endif /* !AST_EVALUATION_TOOLS_H */

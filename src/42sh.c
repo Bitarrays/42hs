@@ -5,6 +5,7 @@
 
 #include "lexer.h"
 #include "shell_input.h"
+#include "variable/var_list.h"
 
 struct shell *shell;
 
@@ -43,6 +44,7 @@ static void init_shell(int argc, char **argv)
 
 void free_shell(void)
 {
+    free_list(shell);
     free(shell->oldpwd);
     free(shell->pwd);
     free(shell->ifs);
