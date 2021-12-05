@@ -31,7 +31,6 @@ int evaluate_ast(struct ast *ast)
         char **var;
         char *test[3] = { "oui", "non", NULL };
         enum quotes enclosure2[2] = { Q_DOUBLE, Q_DOUBLE };
-        printf("%d\n", ast->enclosure[0]);
         // printf("%s\n", ast->value[0]);
         if (!ast->value[1] || !ast->value[2])
         {
@@ -42,7 +41,7 @@ int evaluate_ast(struct ast *ast)
         }
         else
             var = split_arg(expand(ast->value + 2, ast->enclosure + 2),
-                            ast->enclosure);
+                            ast->enclosure + 2);
 
         if (var && ast->value)
         {
@@ -154,6 +153,7 @@ int evaluate_ast(struct ast *ast)
         // printf("%s\n", find_elt_list(shell, "name"));
         // free_list(shell);
         char **val = expand(ast->value, ast->enclosure);
+        printf("%sww\n", ast->value[1]);
         // printf("%s\n", val[0]);
         // val = split_arg(val, ast->enclosure);
         if (!val)

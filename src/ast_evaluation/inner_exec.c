@@ -53,6 +53,7 @@ int expand_s(char **elt, char *s, enum quotes type)
                     offset++;
                     i++;
                 }
+                int start = i;
                 int size_var = 0;
                 while (s[i] != '\0' && s[i] != ' ' && s[i] != '\t'
                        && s[i] != '$' && s[i] != '\\'
@@ -65,7 +66,7 @@ int expand_s(char **elt, char *s, enum quotes type)
                     i++;
                 size += size_var;
                 char *name = calloc(size_var + 1, sizeof(char));
-                strncpy(name, new + i_new + offset + 1, size_var);
+                strncpy(name, s + start, size_var);
                 name[size_var] = '\0';
                 if (!find_elt_list(shell, name))
                     return 0;
@@ -107,6 +108,7 @@ int expand_s(char **elt, char *s, enum quotes type)
                     offset++;
                     i++;
                 }
+                int start = i;
                 int size_var = 0;
                 while (s[i] != '\0' && s[i] != ' ' && s[i] != '\t'
                        && s[i] != '$' && s[i] != '\\'
@@ -119,7 +121,7 @@ int expand_s(char **elt, char *s, enum quotes type)
                     i++;
                 size += size_var;
                 char *name = calloc(size_var + 1, sizeof(char));
-                strncpy(name, new + i_new + offset + 1, size_var);
+                strncpy(name, s + start, size_var);
                 name[size_var] = '\0';
                 if (!find_elt_list(shell, name))
                     return 0;
@@ -151,7 +153,6 @@ int expand_s(char **elt, char *s, enum quotes type)
                 }
                 else if (s[i] == '\'')
                 {
-                    printf("->%d\n", s[i]);
                     i++;
                     new[i_new++] = '\'';
                 }
@@ -237,7 +238,6 @@ char **split_arg(char **arg, enum quotes *enclosure)
     while (arg[i] != NULL && ret_val)
     {
         ret_val = expand_s(new + i_new, arg[i], enclosure[i]);
-        printf("%d\n", enclosure[i]);
         if (enclosure[i] == Q_NONE)
         {
             char *s = *(new + i_new);
