@@ -4,6 +4,9 @@
 - name: double pipe
   input: ls | grep Makefile | grep Makefile
 
+- name: expand
+  input: a="Makefile"; ls | grep "$a"
+
 - name: multiple file
   input: ls -R src | grep src
 

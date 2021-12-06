@@ -134,11 +134,11 @@ int evaluate_ast(struct ast *ast)
         exec_redirections(redirs);
         return evaluate_ast(ast->left_child);
         // int fd = atoi_begining(char *s);
-        if (shell->verbose)
+        /*if (shell->verbose)
         {
             printf("%d\n", nb);
             printf("%s\n", ast->left_child->value[0]);
-        }
+        }*/
     }
     else if (ast->type == AST_PIPE)
     {
@@ -152,15 +152,21 @@ int evaluate_ast(struct ast *ast)
         char ***redirs = calloc(nb + 2, sizeof(char **));
         if (!redirs)
             return 1;
+        enum quotes **enclosure = calloc(nb + 2, sizeof(enum quotes *));
+        if (!redirs)
+            return 1;
         redirs[0] = ast->left_child->value;
+        enclosure[0] = ast->left_child->enclosure;
         int i = 1;
         while (ast->right_child->type == AST_PIPE)
         {
+            enclosure[i] = ast->left_child->enclosure;
             redirs[i++] = ast->left_child->value;
             ast = ast->right_child;
         }
         redirs[i] = ast->right_child->value;
-        exec_pipe(redirs, nb);
+        enclosure[i] = ast->right_child->enclosure;
+        return exec_pipe(redirs, enclosure, nb);
     }
     else if (ast->type == AST_ASSIGNMENT)
     {

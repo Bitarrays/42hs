@@ -32,7 +32,7 @@ int process_cmd(char **cmd, enum quotes *enclosure)
     return res;
 }*/
 
-void exec_with_fork(char **cmd, int i, int pipe_nb, int ***fds)
+int exec_with_fork(char **cmd, int i, int pipe_nb, int ***fds)
 {
     int pid = fork();
     if (pid == -1)
@@ -78,9 +78,10 @@ void exec_with_fork(char **cmd, int i, int pipe_nb, int ***fds)
             shell->return_code = WEXITSTATUS(wstatus);
         }
     }
+    return 0;
 }
 
-void exec_without_fork(char **cmd, int i, int pipe_nb, int ***fds)
+int exec_without_fork(char **cmd, int i, int pipe_nb, int ***fds)
 {
     if (i == 0)
     {
@@ -113,10 +114,12 @@ void exec_without_fork(char **cmd, int i, int pipe_nb, int ***fds)
         close((*fds)[i - 1][0]);
         close((*fds)[i - 1][1]);
     }
+    return 0;
 }
 
-void exec_pipe(char ***args, int pipe_nb)
+int exec_pipe(char ***args, enum quotes **enclosure, int pipe_nb)
 {
+    int res = 0;
     int **fds = calloc(pipe_nb, sizeof(int *));
 
     for (int i = 0; i < pipe_nb; i++)
@@ -131,15 +134,25 @@ void exec_pipe(char ***args, int pipe_nb)
                 fprintf(stderr, "42sh: bad pipe\n");
             }
         }
-        if (is_builtin(args[i][0]))
-            exec_without_fork(args[i], i, pipe_nb, &fds);
+        char **val = expand(args[i], enclosure[i]);
+        if (is_builtin(val[0]))
+            res = exec_without_fork(val, i, pipe_nb, &fds);
         else
-            exec_with_fork(args[i], i, pipe_nb, &fds);
+            res = exec_with_fork(val, i, pipe_nb, &fds);
+        char *tmp = val[0];
+        int pos = 0;
+        while (tmp)
+        {
+            free(tmp);
+            tmp = val[++pos];
+        }
+        free(val);
     }
     for (int i = 0; i < pipe_nb; i++)
         free(fds[i]);
     free(fds);
     free(args);
+    return res;
 }
 
 /*int main(void)
