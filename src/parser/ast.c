@@ -22,7 +22,9 @@ void ast_free(struct ast *ast)
     }
     else if (ast->type == AST_REDIR)
     {
-        free(ast->value[0]);
+        int i = 0;
+        while (ast->value[i])
+            free(ast->value[i++]);
         free(ast->value);
         free(ast->enclosure);
     }

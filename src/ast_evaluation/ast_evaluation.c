@@ -30,8 +30,9 @@ int evaluate_ast(struct ast *ast)
             // var = split_arg(shell->args, enclosure); // add var in array
         }
         else
-            var = split_arg(ast->value + 2/*expand(ast->value + 2, ast->enclosure + 2)*/,
-                            ast->enclosure + 2);
+            var = split_arg(
+                ast->value + 2 /*expand(ast->value + 2, ast->enclosure + 2)*/,
+                ast->enclosure + 2);
         if (var && ast->value)
         {
             int i = 0;
@@ -118,7 +119,7 @@ int evaluate_ast(struct ast *ast)
         }
         printf("nb %d\n", nb);
         redirs[i] = ast->right_child->value;
-        exec_pipe(redirs, nb + 1);
+        exec_pipe(redirs, nb);
     }
     else if (ast->type == AST_ASSIGNMENT)
     {
