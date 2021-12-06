@@ -137,7 +137,7 @@ int evaluate_ast(struct ast *ast)
             return 1;
         int res;
         if (is_builtin(*(val)))
-            res = find_command(val);
+            res = find_command(val, 1);
         else
             res = call_exec(val);
         char *tmp = val[0];
