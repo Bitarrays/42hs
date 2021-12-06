@@ -127,7 +127,7 @@ static void setup_dup_redir(char **redir)
     }
 }
 
-int exec_redirections(char ***redirs)
+void exec_redirections(char ***redirs)
 {
     int redirs_pos = 0;
     while (redirs[redirs_pos])
