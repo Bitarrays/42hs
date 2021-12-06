@@ -1,9 +1,9 @@
 #ifndef AST_EVALUATION_TOOLS_H
 #define AST_EVALUATION_TOOLS_H
 
-#include "../42sh.h"
-#include "../parser/ast.h"
-#include "../variable/var_list.h"
+#include "42sh.h"
+#include "ast.h"
+#include "var_list.h"
 
 // include builtin
 extern struct shell *shell;

@@ -5,13 +5,14 @@
 
 #include "lexer.h"
 #include "shell_input.h"
-#include "variable/var_list.h"
+#include "var_list.h"
 
 struct shell *shell;
 
 static void init_shell(int argc, char **argv)
 {
     shell = calloc(1, sizeof(struct shell));
+    shell->pid = getppid();
     shell->pretty_print = argc > 1 ? !strcmp(argv[1], "--pretty-print") : false;
     if (shell->pretty_print)
     {

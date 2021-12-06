@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "../parser/ast.h"
+#include "ast.h"
 #include "ast_evaluation_tools.h"
 
 void pretty_print(struct ast *ast)

@@ -27,6 +27,7 @@ struct shell
     bool verbose;
     bool interupt;
     struct var *var_list;
+    pid_t pid;
 };
 
 /**

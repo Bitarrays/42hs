@@ -1,6 +1,6 @@
 #include <string.h>
 
-#include "../builtins/builtins.h"
+#include "builtins.h"
 #include "ast_evaluation_tools.h"
 
 /*
