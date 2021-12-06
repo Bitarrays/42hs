@@ -5,9 +5,10 @@
 
 #include "ast_evaluation_tools.h"
 
-/*int process_cmd(char **cmd, enum quotes *enclosure)
+/*
+int process_cmd(char **cmd, enum quotes *enclosure)
 {
-    char **val = expand(ast->value, ast->enclosure);
+    char **val = expand(cmd, enclosure);
     // val = split_arg(val, ast->enclosure);
     if (!val)
         return 1;

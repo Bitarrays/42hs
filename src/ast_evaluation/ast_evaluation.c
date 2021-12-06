@@ -91,10 +91,46 @@ int evaluate_ast(struct ast *ast)
         char ***redirs = calloc(nb + 1, sizeof(char **));
         if (!redirs)
             return 1;
-        while (ast->right_child->type)
+        int i = 0;
+        tmp = ast;
+        while (tmp->right_child->type)
         {
-            continue;
+            redirs[i] = calloc(4, sizeof(char *));
+            if (!redirs[i])
+                return 1; // error a recheck
+            int j = 0;
+            while (tmp->value[j])
+            {
+                redirs[i][j] = tmp->value[j];
+                j++;
+            }
+            tmp = tmp->right_child;
+            redirs[i++][j] = tmp->left_child->value[0];
         }
+        redirs[i] = calloc(4, sizeof(char *));
+        if (!redirs[i])
+            return 1; // error a recheck
+        int j = 0;
+        while (tmp->value[j])
+        {
+            redirs[i][j] = tmp->value[j];
+            j++;
+        }
+        redirs[i][j] = tmp->right_child->value[0];
+
+        int k = 0;
+        while (redirs[k])
+        {
+            int l = 0;
+            while (redirs[k][l])
+            {
+                printf("%s ", redirs[k][l++]);
+            }
+            k++;
+            printf("\n");
+        }
+        // call redir
+        return evaluate_ast(ast->left_child);
         // int fd = atoi_begining(char *s);
         printf("%d\n", nb);
         printf("%s\n", ast->left_child->value[0]);
