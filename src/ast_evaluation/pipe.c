@@ -5,6 +5,28 @@
 
 #include "ast_evaluation_tools.h"
 
+/*int process_cmd(char **cmd, enum quotes *enclosure)
+{
+    char **val = expand(ast->value, ast->enclosure);
+    // val = split_arg(val, ast->enclosure);
+    if (!val)
+        return 1;
+    int res;
+    if (is_builtin(*(val)))
+        res = find_command(val);
+    else
+        res = call_exec(val);
+    char *tmp = val[0];
+    int pos = 0;
+    while (tmp)
+    {
+        free(tmp);
+        tmp = val[++pos];
+    }
+    free(val);
+    return res;
+}*/
+
 void exec_pipe(char ***args, int pipe_nb)
 {
     int **fds = calloc(pipe_nb, sizeof(int *));

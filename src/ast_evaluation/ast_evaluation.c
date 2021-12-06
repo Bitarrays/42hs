@@ -111,13 +111,13 @@ int evaluate_ast(struct ast *ast)
         char ***redirs = calloc(nb + 2, sizeof(char **));
         if (!redirs)
             return 1;
-        int i = 0;
-        while (ast->right_child->type)
+        redirs[0] = ast->left_child->value;
+        int i = 1;
+        while (ast->right_child->type == AST_PIPE)
         {
-            redirs[i] = ast->left_child->value;
+            redirs[i++] = ast->left_child->value;
             ast = ast->right_child;
         }
-        printf("nb %d\n", nb);
         redirs[i] = ast->right_child->value;
         exec_pipe(redirs, nb);
     }
