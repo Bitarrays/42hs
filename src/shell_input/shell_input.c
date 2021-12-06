@@ -4,7 +4,6 @@
 
 static int shell_prompt(void)
 {
-    // int c = '\n';
     char *input = NULL;
     size_t input_len = 0;
     while (!shell->exit)

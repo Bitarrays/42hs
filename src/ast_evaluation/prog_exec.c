@@ -20,26 +20,24 @@ int call_exec(char **cmd)
     }
     else if (!cpid)
     {
-        if (execvp(cmd[0], cmd) == -1)
+        execvp(cmd[0], cmd);
+        fprintf(stderr, "42sh: command not found: %s\n", cmd[0]);
+        kill(getpid(), SIGKILL);
+        return 127;
+    }
+    else
+    {
+        int cstatus = 0;
+        if (waitpid(cpid, &cstatus, 0) == -1)
         {
-            fprintf(stderr, "42sh: command not found: %s\n", cmd[0]);
+            return 1;
+        }
+
+        if (!WIFEXITED(cstatus))
+        {
             return 127;
         }
-        return 0;
-    }
 
-    int cstatus = 0;
-    if (waitpid(cpid, &cstatus, 0) == -1)
-    {
-        perror("42sh");
-        return 1;
+        return WEXITSTATUS(cstatus);
     }
-
-    if (!WIFEXITED(cstatus))
-    {
-        perror("42sh");
-        return 1;
-    }
-
-    return WEXITSTATUS(cstatus);
 }
