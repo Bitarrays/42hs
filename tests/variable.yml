@@ -29,9 +29,12 @@
   input: r=aaa; t='-$r-'; s="-$r-'"; elt=rr$r$t$s'oo$r 'oo" tt"pp" "; cat=ee${elt}ee; for i in "gg" "$cat"; do echo "$i"; done
 
 - name: for adv 3
-  input: r=aaa; t='-$r-'; s="-$r-"; elt=rr$r$t$s'oo$r 'oo" tt"pp" "; cat=ee${elt}ee; for i in "gg ""$cat"; do echo "$i"; done
+  input: r=aaa; t='-$r-'; s="-$r'-"; elt=rr$r$t$s'oo$r 'oo" tt"pp" "; cat=ee${elt}ee; for i in "gg" "$cat"; do echo "$i"; done
 
 - name: for adv 4
+  input: r=aaa; t='-$r-'; s="-$r-"; elt=rr$r$t$s'oo$r 'oo" tt"pp" "; cat=ee${elt}ee; for i in "gg ""$cat"; do echo "$i"; done
+
+- name: for adv 5
   input: r=aaa; t='-$r-'; s="-$r-'"; elt=rr$r$t$s'oo$r 'oo" tt"pp" "; cat=ee${elt}ee; for i in "gg ""$cat"; do echo "$i"; done
 
 - name: for space in list

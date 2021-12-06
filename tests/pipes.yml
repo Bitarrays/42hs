@@ -1,0 +1,20 @@
+- name: basic
+  input: ls | grep Makefile
+
+- name: double pipe
+  input: ls | grep Makefile | grep Makefile
+
+- name: multiple file
+  input: ls -R src | grep src
+
+- name: multiple file globing failed
+  input: ls -R src | grep *.c
+
+- name: multiple file globing
+  input: ls -R src | grep *c
+
+- name: pipe builtin pass
+  input: echo "test|pass" | grep pass
+
+- name: pipe builtin pass
+  input: echo "test|pass" | grep failed
