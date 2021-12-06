@@ -228,7 +228,7 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
                 lexer->tail->type = TOKEN_ASSIGNMENT_WORD;
             }
         }
-        else if (is_quote(input[j]))
+        else if (is_quote(input[j]) && (*word_type == get_quote(input[j]) || *word_type == TOKEN_WORD))
         {
             // enum token_type before = *word_type;
             if (word)
