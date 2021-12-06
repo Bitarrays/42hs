@@ -58,17 +58,15 @@ int exec_with_fork(char **cmd, int i, int pipe_nb, int ***fds)
         {
             close((*fds)[i - 1][0]);
             close((*fds)[i - 1][1]);
-            if (i == pipe_nb)
-            {
-                int wstatus;
-                if (waitpid(pid, &wstatus, 0) == -1)
-                    shell->return_code = 1;
+            
+            int wstatus;
+            if (waitpid(pid, &wstatus, 0) == -1)
+                shell->return_code = 1;
 
-                if (!WIFEXITED(wstatus))
-                    shell->return_code = 127;
-                else
-                    shell->return_code = WEXITSTATUS(wstatus);
-            }
+            if (!WIFEXITED(wstatus))
+                shell->return_code = 127;
+            else
+                shell->return_code = WEXITSTATUS(wstatus);
         }
         return shell->return_code;
     }
