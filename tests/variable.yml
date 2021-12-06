@@ -43,8 +43,8 @@
 - name: for space in list 2
   input: a=22; for i in "ee oo" $a; do echo $i; done
 
-- name: name with \
-  input: \$a=11; b=22; echo $\$a $b
+# - name: name with \
+#   input: \$a=11; b=22; echo $\$a $b
 
 - name: mix non quote and quote
   input: A=hello; echo $A'$A'\'$A\'
