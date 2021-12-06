@@ -41,6 +41,8 @@ common = [
   'src/ast_evaluation/inner_exec.c',
   'src/ast_evaluation/prog_exec.c',
   'src/ast_evaluation/pipe.c',
+  'src/ast_evaluation/redir.c',
+  'src/ast_evaluation/redir_tools.c',
   'src/shell_input/shell_input.c',
   'src/builtins/builtins.c',
   'src/variable/var_list.c',

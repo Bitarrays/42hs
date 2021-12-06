@@ -1,16 +1,6 @@
 #include "redir_tools.h"
 
-char *get_filename_from_redir(char **redir)
-{
-    char *filename = NULL;
-    int len = 0;
-    while (redir[len])
-        len++;
-    filename = redir[len - 1];
-    return filename;
-}
-
-bool is_int(char *str)
+static bool is_int(char *str)
 {
     int i = 0;
     while (str[i])
@@ -20,6 +10,16 @@ bool is_int(char *str)
         i++;
     }
     return true;
+}
+
+char *get_filename_from_redir(char **redir)
+{
+    char *filename = NULL;
+    int len = 0;
+    while (redir[len])
+        len++;
+    filename = redir[len - 1];
+    return filename;
 }
 
 int get_fd_from_redir(char **redir, bool out_redir)

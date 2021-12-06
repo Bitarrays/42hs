@@ -3,7 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../builtins/builtins.h"
+#include "builtins.h"
+#include "redir.h"
 
 int evaluate_ast(struct ast *ast)
 {
@@ -119,7 +120,7 @@ int evaluate_ast(struct ast *ast)
         redirs[i][j] = tmp->right_child->value[0];
 
         int k = 0;
-        while (redirs[k])
+        while (redirs[k] && shell->verbose)
         {
             int l = 0;
             while (redirs[k][l])
@@ -130,10 +131,14 @@ int evaluate_ast(struct ast *ast)
             printf("\n");
         }
         // call redir
+        exec_redirections(redirs);
         return evaluate_ast(ast->left_child);
         // int fd = atoi_begining(char *s);
-        printf("%d\n", nb);
-        printf("%s\n", ast->left_child->value[0]);
+        if (shell->verbose)
+        {
+            printf("%d\n", nb);
+            printf("%s\n", ast->left_child->value[0]);
+        }
     }
     else if (ast->type == AST_PIPE)
     {
