@@ -20,7 +20,12 @@ int call_exec(char **cmd)
     }
     else if (!cpid)
     {
-        return execvp(cmd[0], cmd);
+        if (execvp(cmd[0], cmd) == -1)
+        {
+            fprintf(stderr, "42sh: command not found: %s\n", cmd[0]);
+            return 127;
+        }
+        return 0;
     }
 
     int cstatus = 0;
