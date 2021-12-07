@@ -137,6 +137,24 @@ static char *get_redir(char c1, char c2)
     return res;
 }
 
+static bool is_special(char c)
+{
+    return (c == '(' || c == ')' || c == '{' || c == '}');
+}
+
+static enum token_type get_special(char c)
+{
+    if (c == '(')
+        return TOKEN_PARENTHESIS_OPEN;
+    if (c == ')')
+        return TOKEN_PARENTHESIS_CLOSE;
+    if (c == '{')
+        return TOKEN_BRACE_OPEN;
+    if (c == '}')
+        return TOKEN_BRACE_CLOSE;
+    return TOKEN_ERROR;
+}
+
 static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
                        enum token_type *word_type)
 {
@@ -194,6 +212,18 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
             create_and_append_token(
                 lexer, input[j] == '&' ? TOKEN_AND : TOKEN_OR, NULL);
             j++;
+        }
+        else if (*word_type == TOKEN_WORD && is_special(input[j]))
+        {
+            if (word)
+            {
+                create_word_and_append(word, word_pos, in_cmd, lexer,
+                                       word_type);
+                word = NULL;
+                word_pos = 0;
+            }
+            create_and_append_token(
+                lexer, get_special(input[j]), NULL);
         }
         else if (*word_type == TOKEN_WORD && is_redir(input[j]))
         {
