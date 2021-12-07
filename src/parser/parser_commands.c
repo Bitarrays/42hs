@@ -371,7 +371,6 @@ enum parser_status parse_command(struct ast **ast, struct lexer *lexer)
         // {
         //     break;
         // }
-
         return status;
     }
     ast_free(ast_fundec);
