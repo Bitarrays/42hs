@@ -1,5 +1,6 @@
 #include <err.h>
 #include <errno.h>
+#include <signal.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -58,7 +59,7 @@ int exec_with_fork(char **cmd, int i, int pipe_nb, int ***fds)
         {
             close((*fds)[i - 1][0]);
             close((*fds)[i - 1][1]);
-            
+
             int wstatus;
             if (waitpid(pid, &wstatus, 0) == -1)
                 shell->return_code = 1;
