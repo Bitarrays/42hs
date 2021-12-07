@@ -14,6 +14,10 @@ int is_builtin(char *cmd)
         return 1;
     if (!strcmp(cmd, "cd"))
         return 1;
+    if (!strcmp(cmd, "continue"))
+        return 1;
+    if (!strcmp(cmd, "break"))
+        return 1;
     return 0;
 }
 

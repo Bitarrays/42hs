@@ -39,4 +39,20 @@ int cd(char **args);
  */
 void echo(char **args);
 
+/**
+ * @brief The continue command.
+ * 
+ * @param args the list of arguments.
+ * @return int the number of enclosing loops to continue. -1 on failure.
+ */
+int my_continue(char **args);
+
+/**
+ * @brief The break command.
+ * 
+ * @param args the list of arguments.
+ * @return int the number of enclosing loops to break. -1 on failure.
+ */
+int my_break(char **args);
+
 #endif
