@@ -18,6 +18,15 @@ int evaluate_ast(struct ast *ast)
         else
             return evaluate_ast(ast->right_child);
     }
+    if (ast->type == AST_FUNC)
+    {
+        new_var(shell, ast->value);
+        int res = ast_evaluation(ast->left_child);
+        del_stack(shell);
+        push_int_elt_list(shell, "?", res);
+        res = ast_evaluation(ast->right_child);
+        return res;
+    }
     else if (ast->type == AST_FOR)
     {
         char **var;
@@ -166,7 +175,9 @@ int evaluate_ast(struct ast *ast)
         }
         redirs[i] = ast->right_child->value;
         enclosure[i] = ast->right_child->enclosure;
-        return exec_pipe(redirs, enclosure, nb);
+        int res = exec_pipe(redirs, enclosure, nb);
+        push_int_elt_list(shell, "?", res);
+        return res;
     }
     else if (ast->type == AST_ASSIGNMENT)
     {
@@ -195,6 +206,7 @@ int evaluate_ast(struct ast *ast)
             tmp = val[++pos];
         }
         free(val);
+        push_int_elt_list(shell, "?", res);
         return res;
     }
     else if (ast->type == AST_NOT)

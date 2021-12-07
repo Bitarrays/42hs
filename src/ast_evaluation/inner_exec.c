@@ -26,7 +26,8 @@ int is_in(char **condition)
 int is_char_name(char c)
 {
     return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z')
-        || (c >= 'a' && c <= 'z') || c == '_';
+        || (c >= 'a' && c <= 'z') || c == '_' || c == '#' || c == '?'
+        || c == '*' || c == '@' || c == '$' || c == '!';
 }
 
 int expand_s(char **elt, char *s, enum quotes type)

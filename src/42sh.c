@@ -41,6 +41,9 @@ static void init_shell(int argc, char **argv)
     strcpy(shell->ifs, " \t\n");
     shell->uid = getuid();
     shell->var_list = NULL;
+    shell->var_stack = NULL;
+    new_var(shell, argv);
+    // append param shell->var_stack
 }
 
 void free_shell(void)
