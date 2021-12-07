@@ -279,16 +279,19 @@ enum parser_status parse_shell_command(struct ast **ast, struct lexer *lexer)
         lexer_pop(lexer); // token {
 
         // Try compound_list
-        enum parser_status status_compound_list = parse_compound_list(ast, lexer);
+        struct ast *ast_list = ast_new(AST_LIST);
+        enum parser_status status_compound_list = parse_compound_list(&ast_list, lexer);
         if (status_compound_list == PARSER_OK)
         {
             tok = lexer_peek(lexer);
             if (tok->type == TOKEN_BRACE_CLOSE)
             {
+                *ast = ast_list;
                 lexer_pop(lexer); // token }
                 return PARSER_OK;
             }
         }
+        ast_free(ast_list);
 
         lexer_go_back(lexer, save_tok);
     }
@@ -326,13 +329,30 @@ enum parser_status parse_shell_command(struct ast **ast, struct lexer *lexer)
 
 enum parser_status parse_command(struct ast **ast, struct lexer *lexer)
 {
-    struct ast *ast_simple_command = NULL;
     enum parser_status status;
 
     // Save of current state of lexer because of | in grammar
     struct lexer_token *save_tok = lexer_peek(lexer);
 
+     // Try fundec
+    struct ast *ast_fundec = NULL;
+    if ((status = parse_funcdec(&ast_fundec, lexer)) == PARSER_OK)
+    {
+        *ast = ast_fundec;
+        // Try (redirection)*
+        // TODO
+        // while (true)
+        // {
+        //     break;
+        // }
+        return status;
+    }
+    ast_free(ast_fundec);
+
+    lexer_go_back(lexer, save_tok);
+
     // Try simple_command
+    struct ast *ast_simple_command = NULL;
     if ((status = parse_simple_command(&ast_simple_command, lexer))
         == PARSER_OK)
     {
@@ -359,21 +379,6 @@ enum parser_status parse_command(struct ast **ast, struct lexer *lexer)
         return status;
     }
     ast_free(ast_shell_command);
-
-    // Try fundec
-    struct ast *ast_fundec = NULL;
-    if ((status = parse_funcdec(&ast_fundec, lexer)) == PARSER_OK)
-    {
-        *ast = ast_fundec;
-        // Try (redirection)*
-        // TODO
-        // while (true)
-        // {
-        //     break;
-        // }
-        return status;
-    }
-    ast_free(ast_fundec);
 
     return PARSER_ERROR;
 }

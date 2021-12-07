@@ -110,7 +110,9 @@ enum parser_status parse_pipeline(struct ast **ast, struct lexer *lexer)
     if (cur_pipe)
         cur_pipe->right_child = last_command;
 
-    if (*ast == NULL)
+    if (ast == NULL)
+        ast = &last_command;
+    else if (*ast == NULL)
         *ast = last_command;
     else if (not &&first)
         (*ast)->left_child = last_command;
@@ -173,6 +175,5 @@ enum parser_status parse_and_or(struct ast **ast, struct lexer *lexer)
             last_op->right_child = new_command;
         }
     }
-
     return PARSER_OK;
 }

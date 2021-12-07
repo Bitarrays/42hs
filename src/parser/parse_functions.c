@@ -10,8 +10,7 @@ enum parser_status parse_funcdec(struct ast **ast, struct lexer *lexer)
     if (tok->type != TOKEN_WORD)
         return handle_parser_error(PARSER_ERROR, ast);
 
-    (*ast)->value = calloc(2, sizeof(char *));
-    (*ast)->value[0] = tok->value;
+    (*ast)->var_name = tok->value;
     lexer_pop(lexer); // token WORD
 
     // Try (
@@ -30,7 +29,9 @@ enum parser_status parse_funcdec(struct ast **ast, struct lexer *lexer)
     while ((tok = lexer_peek(lexer))->type == TOKEN_NEWLINE)
         lexer_pop(lexer); // token \n
 
-    enum parser_status status_shell_cmd = parse_shell_command(&((*ast)->left_child), lexer);
+    struct ast *fun_body = NULL;
+    enum parser_status status_shell_cmd = parse_shell_command(&fun_body, lexer);
+    (*ast)->left_child = fun_body;
     if (status_shell_cmd == PARSER_ERROR)
         return handle_parser_error(status_shell_cmd, ast);
 
