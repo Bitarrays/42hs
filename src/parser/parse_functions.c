@@ -16,13 +16,13 @@ enum parser_status parse_funcdec(struct ast **ast, struct lexer *lexer)
 
     // Try (
     tok = lexer_peek(lexer);
-    if (tok->type != TOKEN_LEFT_PARANTHESIS)
+    if (tok->type != TOKEN_PARENTHESIS_OPEN)
         return handle_parser_error(PARSER_ERROR, ast);
     lexer_pop(lexer); // token (
 
     // Try )
     tok = lexer_peek(lexer);
-    if (tok->type != TOKEN_RIGHT_PARANTHESIS)
+    if (tok->type != TOKEN_PARENTHESIS_CLOSE)
         return handle_parser_error(PARSER_ERROR, ast);
     lexer_pop(lexer); // token )
 

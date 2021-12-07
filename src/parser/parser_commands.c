@@ -274,7 +274,7 @@ enum parser_status parse_shell_command(struct ast **ast, struct lexer *lexer)
 
     // Try {
     struct lexer_token *tok = lexer_peek(lexer);
-    if (tok->type == TOKEN_LEFT_BRACKET)
+    if (tok->type == TOKEN_BRACE_OPEN)
     {
         lexer_pop(lexer); // token {
 
@@ -283,7 +283,7 @@ enum parser_status parse_shell_command(struct ast **ast, struct lexer *lexer)
         if (status_compound_list == PARSER_OK)
         {
             tok = lexer_peek(lexer);
-            if (tok->type == TOKEN_RIGHT_BRACKET)
+            if (tok->type == TOKEN_BRACE_CLOSE)
             {
                 lexer_pop(lexer); // token }
                 return PARSER_OK;
