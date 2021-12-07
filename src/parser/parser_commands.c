@@ -272,6 +272,27 @@ enum parser_status parse_shell_command(struct ast **ast, struct lexer *lexer)
 {
     struct lexer_token *save_tok = lexer_peek(lexer);
 
+    // Try {
+    struct lexer_token *tok = lexer_peek(lexer);
+    if (tok->type == TOKEN_LEFT_BRACKET)
+    {
+        lexer_pop(lexer); // token {
+
+        // Try compound_list
+        enum parser_status status_compound_list = parse_compound_list(ast, lexer);
+        if (status_compound_list == PARSER_OK)
+        {
+            tok = lexer_peek(lexer);
+            if (tok->type == TOKEN_RIGHT_BRACKET)
+            {
+                lexer_pop(lexer); // token }
+                return PARSER_OK;
+            }
+        }
+
+        lexer_go_back(lexer, save_tok);
+    }
+
     // Try rule_for
     enum parser_status status_command = parse_for(ast, lexer);
     if (status_command == PARSER_OK)
@@ -328,17 +349,31 @@ enum parser_status parse_command(struct ast **ast, struct lexer *lexer)
     if ((status = parse_shell_command(&ast_shell_command, lexer)) == PARSER_OK)
     {
         *ast = ast_shell_command;
+        // Try (redirection)*
+        // TODO
+        // while (true)
+        // {
+        //     break;
+        // }
+
         return status;
     }
-
-    // Try (redirection)*
-    while (true)
-    {
-        // TODO
-        break;
-    }
-
     ast_free(ast_shell_command);
+
+    // Try fundec
+    struct ast *ast_fundec = NULL;
+    if ((status = parse_funcdec(&ast_fundec, lexer)) == PARSER_OK)
+    {
+        *ast = ast_fundec;
+        // Try (redirection)*
+        // TODO
+        // while (true)
+        // {
+        //     break;
+        // }
+        return status;
+    }
+    ast_free(ast_fundec);
 
     return PARSER_ERROR;
 }
