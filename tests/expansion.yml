@@ -22,5 +22,8 @@
 # - name: basic variable with quotes in quotes
 #   input: first=""; a='first value is $i $first'; echo "$a $first"
 
+- name: wrong basic variable with quotes in quotes
+  input: first="""; a='first value is $i $first'; echo "$a $first"
+
 - name: basic variable with undefined variable and weird quotes
   input: first="$first"; a="'first value is "$first"'"; echo ''$a "$first''
