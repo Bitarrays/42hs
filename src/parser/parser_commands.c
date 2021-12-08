@@ -347,12 +347,39 @@ enum parser_status parse_command(struct ast **ast, struct lexer *lexer)
     if ((status = parse_funcdec(&ast_fundec, lexer)) == PARSER_OK)
     {
         *ast = ast_fundec;
+        bool first_redir = true;
+        struct ast *cur_redir = NULL;
+
         // Try (redirection)*
-        // TODO
-        // while (true)
-        // {
-        //     break;
-        // }
+        while (true)
+        {
+            printf("test\n");
+            struct lexer_token *save_tok = lexer_peek(lexer);
+
+            // Try redirection
+            struct ast *ast_redir = NULL;
+            enum parser_status status_redir = parse_redirection(&ast_redir, lexer);
+            if (status_redir == PARSER_ERROR)
+            {
+                lexer_go_back(lexer, save_tok);
+                break;
+            }
+
+            if (first_redir)
+            {
+                ast_redir->left_child = *ast;
+                *ast = ast_redir;
+                first_redir = false;
+                cur_redir = *ast;
+            }
+            else
+            {
+                ast_redir->left_child = cur_redir->right_child;
+                cur_redir->right_child = ast_redir;
+                cur_redir = cur_redir->right_child;
+            }
+        }
+
         return status;
     }
     ast_free(ast_fundec);
@@ -377,14 +404,39 @@ enum parser_status parse_command(struct ast **ast, struct lexer *lexer)
     if ((status = parse_shell_command(&ast_shell_command, lexer)) == PARSER_OK)
     {
         *ast = ast_shell_command;
-        // Try (redirection)*
-        // TODO
-        // while (true)
-        // {
-        //     break;
-        // }
+        bool first_redir = true;
+        struct ast *cur_redir = NULL;
 
-        return status;
+        // Try (redirection)*
+        while (true)
+        {
+            struct lexer_token *save_tok = lexer_peek(lexer);
+
+            // Try redirection
+            struct ast *ast_redir = NULL;
+            enum parser_status status_redir = parse_redirection(&ast_redir, lexer);
+            if (status_redir == PARSER_ERROR)
+            {
+                lexer_go_back(lexer, save_tok);
+                break;
+            }
+
+            if (first_redir)
+            {
+                ast_redir->left_child = *ast;
+                *ast = ast_redir;
+                first_redir = false;
+                cur_redir = *ast;
+            }
+            else
+            {
+                ast_redir->left_child = cur_redir->right_child;
+                cur_redir->right_child = ast_redir;
+                cur_redir = cur_redir->right_child;
+            }
+        }
+
+        return PARSER_OK;
     }
     ast_free(ast_shell_command);
 
