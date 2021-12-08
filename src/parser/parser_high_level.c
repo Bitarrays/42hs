@@ -2,6 +2,12 @@
 
 enum parser_status parse_compound_list(struct ast **ast, struct lexer *lexer)
 {
+    struct lexer_token *tok = lexer_peek(lexer);
+
+    // Try ('\n')*
+    while ((tok = lexer_peek(lexer))->type == TOKEN_NEWLINE)
+        lexer_pop(lexer); // token \n
+
     // Try and_or
     enum parser_status status_and_or =
         parse_and_or(&(*ast)->right_child, lexer);
@@ -13,9 +19,13 @@ enum parser_status parse_compound_list(struct ast **ast, struct lexer *lexer)
     while (true)
     {
         struct lexer_token *save_tok = lexer_peek(lexer);
-        if (save_tok->type != TOKEN_SEMICOLON)
+        if (save_tok->type != TOKEN_SEMICOLON && save_tok->type != TOKEN_NEWLINE)
             break;
         lexer_pop(lexer);
+
+        // Try ('\n')*
+        while ((tok = lexer_peek(lexer))->type == TOKEN_NEWLINE)
+            lexer_pop(lexer); // token \n
 
         struct ast *new_list = ast_new(AST_LIST);
         enum parser_status status = parse_and_or(&new_list->right_child, lexer);
@@ -31,9 +41,14 @@ enum parser_status parse_compound_list(struct ast **ast, struct lexer *lexer)
     }
 
     // Try [';'] and skip it if present
-    struct lexer_token *tok = lexer_peek(lexer);
-    if (tok->type == TOKEN_SEMICOLON)
+    tok = lexer_peek(lexer);
+    if (tok->type == TOKEN_SEMICOLON || tok->type == TOKEN_NEWLINE)
+    {
         lexer_pop(lexer);
+        // Try ('\n')*
+        while ((tok = lexer_peek(lexer))->type == TOKEN_NEWLINE)
+            lexer_pop(lexer); // token \n
+    }
 
     return PARSER_OK;
 }
