@@ -78,20 +78,32 @@ int new_var(struct shell *sh, char **arg)
     sh->var_stack = s;
     int i = 0;
     char *nb = calloc(21, sizeof(char));
+    int size = 1;
+    char *var = calloc(size, sizeof(char));
+    var[0] = '\0';
     while (arg[i])
     {
+        if (i != 0)
+        {
+            size += strlen(arg[i]);
+            var = realloc(var, size * sizeof(char));
+            strcat(var, arg[i]);
+        }
         my_itoa(i, nb);
         push_elt_list(sh, nb, arg[i++]);
     }
     push_int_elt_list(sh, "#", i);
     push_int_elt_list(sh, "?", 0);
+    push_elt_list(sh, "@", var);
+    push_elt_list(sh, "*", var);
+    push_int_elt_list(sh, "$", sh->pid);
     free(nb);
     return 0;
 }
 
 int push_elt_list(struct shell *sh, char *name, char *value)
 {
-    int param = is_param("*@#?$!", name);
+    int param = is_param("*@#?$", name);
     char *new_content = calloc(strlen(value) + 1, sizeof(char));
     if (!new_content)
         return 1;
@@ -140,7 +152,7 @@ int push_int_elt_list(struct shell *sh, char *name, int val)
 {
     char *value = calloc(21, sizeof(char));
     my_itoa(val, value);
-    int param = is_param("*@#?$!", name);
+    int param = is_param("*@#?$", name);
     char *new_content = calloc(strlen(value) + 1, sizeof(char));
     if (!new_content)
         return 1;
@@ -187,7 +199,7 @@ int push_int_elt_list(struct shell *sh, char *name, int val)
 
 char *find_elt_list(struct shell *sh, char *name)
 {
-    int param = is_param("*@#?$!", name);
+    int param = is_param("*@#?$", name);
     struct var *tmp = NULL;
     if (param)
         tmp = sh->var_stack->var_list;

@@ -18,7 +18,7 @@ int evaluate_ast(struct ast *ast)
         else
             return evaluate_ast(ast->right_child);
     }
-    if (ast->type == AST_FUNC)
+    /*if (ast->type == AST_FUNC)
     {
         new_var(shell, ast->value);
         int res = ast_evaluation(ast->left_child);
@@ -26,7 +26,7 @@ int evaluate_ast(struct ast *ast)
         push_int_elt_list(shell, "?", res);
         res = ast_evaluation(ast->right_child);
         return res;
-    }
+    }*/
     else if (ast->type == AST_FOR)
     {
         char **var;
