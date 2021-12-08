@@ -181,7 +181,7 @@ int evaluate_ast(struct ast *ast)
     }
     else if (ast->type == AST_ASSIGNMENT)
     {
-        if (!ast->value)
+        if (ast->value)
         {
             char **var = expand(ast->value, ast->enclosure);
             char *val = merge_arg(var);
