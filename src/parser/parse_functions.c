@@ -29,9 +29,7 @@ enum parser_status parse_funcdec(struct ast **ast, struct lexer *lexer)
     while ((tok = lexer_peek(lexer))->type == TOKEN_NEWLINE)
         lexer_pop(lexer); // token \n
 
-    struct ast *fun_body = NULL;
-    enum parser_status status_shell_cmd = parse_shell_command(&fun_body, lexer);
-    (*ast)->left_child = fun_body;
+    enum parser_status status_shell_cmd = parse_shell_command(ast, lexer);
     if (status_shell_cmd == PARSER_ERROR)
         return handle_parser_error(status_shell_cmd, ast);
 

@@ -286,7 +286,15 @@ enum parser_status parse_shell_command(struct ast **ast, struct lexer *lexer)
             tok = lexer_peek(lexer);
             if (tok->type == TOKEN_BRACE_CLOSE)
             {
-                *ast = ast_list;
+                if (ast != NULL && *ast != NULL)
+                    (*ast)->left_child = ast_list;
+                else
+                {
+                    *ast = ast_new(AST_FUNC);
+                    (*ast)->var_name = NULL;
+                    (*ast)->left_child = ast_list;
+                }
+
                 lexer_pop(lexer); // token }
                 return PARSER_OK;
             }

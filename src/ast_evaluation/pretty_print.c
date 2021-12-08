@@ -108,7 +108,9 @@ void pretty_print(struct ast *ast)
         }
         else if (ast->type == AST_FUNC)
         {
-            printf("%s() { ", ast->var_name);
+            if (ast->var_name)
+                printf("%s() ", ast->var_name);
+            printf("{ ");
             pretty_print(ast->left_child);
             printf("}");
         }
