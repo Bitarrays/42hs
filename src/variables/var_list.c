@@ -98,6 +98,7 @@ int new_var(struct shell *sh, char **arg)
     push_elt_list(sh, "*", var);
     push_int_elt_list(sh, "$", sh->pid);
     free(nb);
+    free(var);
     return 0;
 }
 
