@@ -70,6 +70,7 @@ struct lexer
     struct lexer_token *tail;
     struct lexer_token *head;
     bool in_for;
+    bool in_variable;
 };
 
 /**

@@ -217,42 +217,35 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
         }
         else if (*word_type == TOKEN_WORD && is_special(input[j]))
         {
-            if (word)
+            if (input[j] == '}' && lexer->in_variable)
             {
-                create_word_and_append(word, word_pos, in_cmd, lexer,
-                                       word_type);
-                word = NULL;
-                word_pos = 0;
+                word = realloc(word, (word_pos + 2) * sizeof(char));
+                word[word_pos++] = input[j];
+                lexer->in_variable = false;
             }
-            if (get_special(input[j]) == TOKEN_DOLLAR)
+            else
             {
-                if (input[j + 1] == '{')
+                if (word)
                 {
-                    while (input[j])
+                    create_word_and_append(word, word_pos, in_cmd, lexer,
+                                        word_type);
+                    word = NULL;
+                    word_pos = 0;
+                }
+                if (input[j] == '$')
+                {
+                    word = realloc(word, 3 * sizeof(char));
+                    word[word_pos++] = input[j];
+                    if (input[j + 1] == '{')
                     {
-                        if (input[j] == ';')
-                            break;
-                        word = realloc(word, (word_pos + 2) * sizeof(char));
-                        word[word_pos++] = input[j];
-                        if (input[j++] == '}')
-                            break;
+                        word[word_pos++] = input[++j];
+                        lexer->in_variable = true;
                     }
                 }
                 else
-                {
-                    while (input[j])
-                    {
-                        if (input[j] == ';')
-                            break;
-                        word = realloc(word, (word_pos + 2) * sizeof(char));
-                        word[word_pos++] = input[j++];
-                    }
-                }
-                j--;
+                    create_and_append_token(
+                        lexer, get_special(input[j]), NULL);
             }
-            else
-                create_and_append_token(
-                    lexer, get_special(input[j]), NULL);
         }
         else if (*word_type == TOKEN_WORD && is_redir(input[j]))
         {
