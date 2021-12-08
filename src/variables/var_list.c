@@ -194,6 +194,7 @@ int push_int_elt_list(struct shell *sh, char *name, int val)
             sh->var_list = new;
         }
     }
+    free(value);
     return 0;
 }
 
