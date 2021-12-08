@@ -19,6 +19,14 @@ struct var_stack
     struct var_stack *next;
 };
 
+struct loop_stack
+{
+    struct ast *loop;
+    char **var;
+    int index;
+    struct loop_stack *next;
+};
+
 struct shell
 {
     bool pretty_print;
