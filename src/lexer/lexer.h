@@ -34,6 +34,7 @@ enum token_type
     TOKEN_PARENTHESIS_CLOSE,
     TOKEN_BRACE_OPEN,
     TOKEN_BRACE_CLOSE,
+    TOKEN_DOLLAR,
     TOKEN_WORD,
     TOKEN_WORD_DOUBLE_QUOTE,
     TOKEN_WORD_SINGLE_QUOTE,
@@ -69,6 +70,7 @@ struct lexer
     struct lexer_token *tail;
     struct lexer_token *head;
     bool in_for;
+    bool in_variable;
 };
 
 /**

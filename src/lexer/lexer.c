@@ -139,7 +139,7 @@ static char *get_redir(char c1, char c2)
 
 static bool is_special(char c)
 {
-    return (c == '(' || c == ')' || c == '{' || c == '}');
+    return (c == '(' || c == ')' || c == '{' || c == '}' || c == '$');
 }
 
 static enum token_type get_special(char c)
@@ -152,6 +152,8 @@ static enum token_type get_special(char c)
         return TOKEN_BRACE_OPEN;
     if (c == '}')
         return TOKEN_BRACE_CLOSE;
+    if (c == '$')
+        return TOKEN_DOLLAR;
     return TOKEN_ERROR;
 }
 
@@ -215,15 +217,35 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
         }
         else if (*word_type == TOKEN_WORD && is_special(input[j]))
         {
-            if (word)
+            if (input[j] == '}' && lexer->in_variable)
             {
-                create_word_and_append(word, word_pos, in_cmd, lexer,
-                                       word_type);
-                word = NULL;
-                word_pos = 0;
+                word = realloc(word, (word_pos + 2) * sizeof(char));
+                word[word_pos++] = input[j];
+                lexer->in_variable = false;
             }
-            create_and_append_token(
-                lexer, get_special(input[j]), NULL);
+            else
+            {
+                if (word)
+                {
+                    create_word_and_append(word, word_pos, in_cmd, lexer,
+                                        word_type);
+                    word = NULL;
+                    word_pos = 0;
+                }
+                if (input[j] == '$')
+                {
+                    word = realloc(word, 3 * sizeof(char));
+                    word[word_pos++] = input[j];
+                    if (input[j + 1] == '{')
+                    {
+                        word[word_pos++] = input[++j];
+                        lexer->in_variable = true;
+                    }
+                }
+                else
+                    create_and_append_token(
+                        lexer, get_special(input[j]), NULL);
+            }
         }
         else if (*word_type == TOKEN_WORD && is_redir(input[j]))
         {
@@ -262,7 +284,6 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
                  && (*word_type == get_quote(input[j])
                      || *word_type == TOKEN_WORD))
         {
-            // enum token_type before = *word_type;
             if (word)
             {
                 create_word_and_append(word, word_pos, in_cmd, lexer,

@@ -20,7 +20,7 @@ char **split_in_words(char *input)
             else if (!quote)
                 quote = input[i];
         }
-        if ((input[i] == ' ' || input[i] == '\t' || input[i] == '\n') && !quote)
+        if ((input[i] == ' ' || input[i] == '\t') && !quote)
         {
             if (word_len > 0)
             {
