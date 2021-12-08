@@ -8,15 +8,25 @@
 
 int evaluate_ast(struct ast *ast)
 {
+    if (shell->exit || shell->continue || shell->break)
+        return shell->return_code;
     if (!ast)
         return 0;
 
     if (ast->type == AST_IF)
     {
         if (!evaluate_ast(ast->condition))
+        {
+            if (shell->exit || shell->continue || shell->break)
+                return shell->return_code;
             return evaluate_ast(ast->left_child);
+        }
         else
+        {
+            if (shell->exit || shell->continue || shell->break)
+                return shell->return_code;
             return evaluate_ast(ast->right_child);
+        }
     }
     /*if (ast->type == AST_FUNC)
     {
@@ -50,24 +60,41 @@ int evaluate_ast(struct ast *ast)
             {
                 push_elt_list(shell, ast->value[0], var[i++]);
                 evaluate_ast(ast->left_child);
+                if (shell->exit || shell->continue || shell->break)
+                    return shell->return_code;
             }
         }
         free_arg(var);
-        return evaluate_ast(
+        int res = evaluate_ast(
             ast->right_child); // check return code for a null for
+        if (shell->exit || shell->continue || shell->break)
+            return shell->return_code;
+        return res;
     }
     else if (ast->type == AST_WHILE)
     {
         int ret = 0;
         while (!evaluate_ast(ast->condition))
+        {
+            if (shell->exit || shell->continue || shell->break)
+                return shell->return_code;
             ret = evaluate_ast(ast->left_child);
+        }
+        if (shell->exit || shell->continue || shell->break)
+            return shell->return_code;
         return ret;
     }
     else if (ast->type == AST_UNTIL)
     {
         int ret = 0;
         while (evaluate_ast(ast->condition))
+        {
+            if (shell->exit || shell->continue || shell->break)
+                return shell->return_code;
             ret = evaluate_ast(ast->left_child);
+        }
+        if (shell->exit || shell->continue || shell->break)
+            return shell->return_code;
         return ret;
     }
     else if (ast->type == AST_AND || ast->type == AST_OR)
@@ -81,12 +108,24 @@ int evaluate_ast(struct ast *ast)
                 prec = prec && !evaluate_ast(ast->right_child->left_child);
             else if (ast->type == AST_OR)
                 prec = prec || !evaluate_ast(ast->right_child->left_child);
+            /*if (shell->continue)
+            {
+                
+            }
+            else if (shell->break)
+            {
+
+            }*/
+            if (shell->exit)
+                return shell->return_code;
             ast = ast->right_child;
         }
         if (ast->type == AST_AND)
             prec = prec && !evaluate_ast(ast->right_child);
         else if (ast->type == AST_OR)
             prec = prec || !evaluate_ast(ast->right_child);
+        if (shell->exit || shell->continue || shell->break)
+            return shell->return_code;
         return !prec;
     }
     else if (ast->type == AST_REDIR)
@@ -141,7 +180,10 @@ int evaluate_ast(struct ast *ast)
         }
         // call redir
         exec_redirections(redirs);
-        return evaluate_ast(ast->left_child);
+        int res = evaluate_ast(ast->left_child);
+        if (shell->exit || shell->continue || shell->break)
+            return shell->return_code;
+        return res;
         // int fd = atoi_begining(char *s);
         /*if (shell->verbose)
         {
@@ -217,6 +259,12 @@ int evaluate_ast(struct ast *ast)
     else if (ast->type == AST_LIST)
     {
         int r = evaluate_ast(ast->right_child);
+        printf("%d\n", shell->exit);
+        if (shell->exit || shell->continue || shell->break)
+        {
+            printf("%d\n", shell->return_code);
+            return shell->return_code;
+        }
         if (ast->left_child && ast->left_child->type != AST_EOF)
             return evaluate_ast(ast->left_child);
         return r;

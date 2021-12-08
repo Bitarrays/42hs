@@ -42,6 +42,7 @@ struct shell
     bool interupt;
     struct var_stack *var_stack;
     struct var *var_list;
+    struct loop_stack *loop_stack;
     pid_t pid;
 };
 
