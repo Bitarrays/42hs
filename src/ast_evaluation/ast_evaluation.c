@@ -181,11 +181,14 @@ int evaluate_ast(struct ast *ast)
     }
     else if (ast->type == AST_ASSIGNMENT)
     {
-        char **var = expand(ast->value, ast->enclosure);
-        char *val = merge_arg(var);
-        push_elt_list(shell, ast->var_name, val);
-        free_arg(var);
-        free(val);
+        if (!ast->value)
+        {
+            char **var = expand(ast->value, ast->enclosure);
+            char *val = merge_arg(var);
+            push_elt_list(shell, ast->var_name, val);
+            free_arg(var);
+            free(val);
+        }
     }
     else if (ast->type == AST_COMMAND)
     {
