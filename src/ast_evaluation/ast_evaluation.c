@@ -259,10 +259,10 @@ int evaluate_ast(struct ast *ast)
     else if (ast->type == AST_LIST)
     {
         int r = evaluate_ast(ast->right_child);
-        printf("%d\n", shell->exit);
+        // printf("%d\n", shell->exit);
         if (shell->exit/* || shell->continue || shell->break*/)
         {
-            printf("%d\n", shell->return_code);
+            // printf("%d\n", shell->return_code);
             return shell->return_code;
         }
         if (ast->left_child && ast->left_child->type != AST_EOF)
