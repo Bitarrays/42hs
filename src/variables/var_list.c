@@ -225,7 +225,6 @@ void free_list_sub(struct var *l)
         free(tmp);
     }
 }
-<<<<<<< HEAD
 
 void del_stack(struct shell *sh)
 {
@@ -241,5 +240,3 @@ void free_list(struct shell *sh)
         del_stack(sh);
     free_list_sub(sh->var_list);
 }
-=======
->>>>>>> 380399e4bc3d6e57376b0df692d7c81b09e8ec77
