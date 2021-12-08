@@ -35,15 +35,14 @@ void echo(char **args, int fd_write)
 
     for (; args[start_print] != NULL; start_print++)
     {
-        if (!strcmp(args[start_print], "-n") && !n_option)
+        if (!strcmp(args[start_print], "-n"))
             n_option = true;
-        else if (!strcmp(args[start_print], "-e") && !e_option)
+        else if (!strcmp(args[start_print], "-e"))
             e_option = true;
-        else if (!strcmp(args[start_print], "-ne") && !e_option && !n_option)
+        else if (!strcmp(args[start_print], "-ne") || !strcmp(args[start_print], "-en"))
         {
             e_option = true;
             n_option = true;
-            break;
         }
         else
             break;
