@@ -145,5 +145,6 @@ int exec_pipe(char ***args, enum quotes **enclosure, int pipe_nb)
         free(fds[i]);
     free(fds);
     free(args);
+    free(enclosure);
     return res;
 }
