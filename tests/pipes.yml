@@ -14,7 +14,7 @@
   input: ls -R src | grep *.c
 
 - name: multiple file globing
-  input: ls -R src | grep *c
+  input: ls -R src | grep .c
 
 - name: pipe builtin pass
   input: echo "test|pass" | grep pass

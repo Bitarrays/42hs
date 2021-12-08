@@ -1,5 +1,6 @@
 #include <err.h>
 #include <errno.h>
+#include <signal.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,29 +9,6 @@
 
 #include "ast_evaluation_tools.h"
 #include "builtins.h"
-
-/*
-int process_cmd(char **cmd, enum quotes *enclosure)
-{
-    char **val = expand(cmd, enclosure);
-    // val = split_arg(val, ast->enclosure);
-    if (!val)
-        return 1;
-    int res;
-    if (is_builtin(*(val)))
-        res = find_command(val);
-    else
-        res = call_exec(val);
-    char *tmp = val[0];
-    int pos = 0;
-    while (tmp)
-    {
-        free(tmp);
-        tmp = val[++pos];
-    }
-    free(val);
-    return res;
-}*/
 
 int exec_with_fork(char **cmd, int i, int pipe_nb, int ***fds)
 {
@@ -47,6 +25,9 @@ int exec_with_fork(char **cmd, int i, int pipe_nb, int ***fds)
             close((*fds)[i][0]);
             close((*fds)[i][1]);
             execvp(cmd[0], cmd);
+            fprintf(stderr, "42sh: command not found: %s\n", cmd[0]);
+            kill(getpid(), SIGKILL);
+            return 127;
         }
         else if (i == pipe_nb)
         {
@@ -54,6 +35,9 @@ int exec_with_fork(char **cmd, int i, int pipe_nb, int ***fds)
             close((*fds)[i - 1][0]);
             close((*fds)[i - 1][1]);
             execvp(cmd[0], cmd);
+            fprintf(stderr, "42sh: command not found: %s\n", cmd[0]);
+            kill(getpid(), SIGKILL);
+            return 127;
         }
         else
         {
@@ -64,21 +48,30 @@ int exec_with_fork(char **cmd, int i, int pipe_nb, int ***fds)
             close((*fds)[i][0]);
             close((*fds)[i][1]);
             execvp(cmd[0], cmd);
+            fprintf(stderr, "42sh: command not found: %s\n", cmd[0]);
+            kill(getpid(), SIGKILL);
+            return 127;
         }
     }
-    if (i != 0)
+    else
     {
-        close((*fds)[i - 1][0]);
-        close((*fds)[i - 1][1]);
-        if (i == pipe_nb)
+        if (i != 0)
         {
+            close((*fds)[i - 1][0]);
+            close((*fds)[i - 1][1]);
+
             int wstatus;
             if (waitpid(pid, &wstatus, 0) == -1)
-                fprintf(stderr, "42sh: waitpid error\n");
-            shell->return_code = WEXITSTATUS(wstatus);
+                shell->return_code = 1;
+
+            if (!WIFEXITED(wstatus))
+                shell->return_code = 127;
+            else
+                shell->return_code = WEXITSTATUS(wstatus);
         }
+        return shell->return_code;
     }
-    return 0;
+    return shell->return_code;
 }
 
 int exec_without_fork(char **cmd, int i, int pipe_nb, int ***fds)
@@ -154,32 +147,3 @@ int exec_pipe(char ***args, enum quotes **enclosure, int pipe_nb)
     free(args);
     return res;
 }
-
-/*int main(void)
-{
-    char ***args = calloc(4, sizeof(char **));
-    args[0] = calloc(3, sizeof(char *));
-    args[0][0] = "ls";
-    args[0][1] = "-l";
-    args[0][2] = NULL;
-    args[2] = calloc(4, sizeof(char *));
-    args[2][0] = "tail";
-    args[2][1] = "-n";
-    args[2][2] = "3";
-    args[2][3] = NULL;
-    args[1] = calloc(2, sizeof(char *));
-    args[1][0] = "uniq";
-    args[1][1] = NULL;
-    args[3] = calloc(4, sizeof(char *));
-    args[3][0] = "tail";
-    args[3][1] = "-n";
-    args[3][2] = "4";
-    args[3][3] = NULL;
-    exec_pipe(args, 3);
-    free(args[0]);
-    free(args[1]);
-    free(args[2]);
-    free(args[3]);
-    free(args);
-}
-*/
