@@ -230,6 +230,8 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
                 {
                     while (input[j])
                     {
+                        if (input[j] == ';')
+                            break;
                         word = realloc(word, (word_pos + 2) * sizeof(char));
                         word[word_pos++] = input[j];
                         if (input[j++] == '}')
@@ -240,6 +242,8 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
                 {
                     while (input[j])
                     {
+                        if (input[j] == ';')
+                            break;
                         word = realloc(word, (word_pos + 2) * sizeof(char));
                         word[word_pos++] = input[j++];
                     }
