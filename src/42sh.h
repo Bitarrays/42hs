@@ -13,6 +13,20 @@ struct var
     struct var *next;
 };
 
+struct var_stack
+{
+    struct var *var_list;
+    struct var_stack *next;
+};
+
+struct loop_stack
+{
+    struct ast *loop;
+    char **var;
+    int index;
+    struct loop_stack *next;
+};
+
 struct shell
 {
     bool pretty_print;
@@ -26,7 +40,9 @@ struct shell
     int return_code;
     bool verbose;
     bool interupt;
+    struct var_stack *var_stack;
     struct var *var_list;
+    pid_t pid;
 };
 
 /**

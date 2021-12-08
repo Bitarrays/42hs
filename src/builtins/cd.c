@@ -2,14 +2,6 @@
 
 int cd(char **args)
 {
-    if (!args[1] || !strcmp(args[1], "~"))
-    {
-        shell->oldpwd = strcpy(shell->oldpwd, shell->pwd);
-        strcpy(shell->pwd, getenv("HOME"));
-        chdir(shell->pwd);
-        return 0;
-    }
-
     if (!strcmp(args[1], "-"))
     {
         chdir(shell->oldpwd);
@@ -32,6 +24,9 @@ int cd(char **args)
     shell->oldpwd = strcpy(shell->oldpwd, shell->pwd);
 
     getcwd(shell->pwd, 2048);
+
+    setenv("OLDPWD", shell->oldpwd, 1);
+    setenv("PWD", shell->pwd, 1);
 
     return 0;
 }

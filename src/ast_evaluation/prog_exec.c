@@ -1,4 +1,5 @@
 #include <errno.h>
+#include <signal.h>
 #include <stdio.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -20,21 +21,24 @@ int call_exec(char **cmd)
     }
     else if (!cpid)
     {
-        return execvp(cmd[0], cmd);
+        execvp(cmd[0], cmd);
+        fprintf(stderr, "42sh: command not found: %s\n", cmd[0]);
+        kill(getpid(), SIGKILL);
+        return 127;
     }
-
-    int cstatus = 0;
-    if (waitpid(cpid, &cstatus, 0) == -1)
+    else
     {
-        perror("42sh");
-        return 1;
-    }
+        int cstatus = 0;
+        if (waitpid(cpid, &cstatus, 0) == -1)
+        {
+            return 1;
+        }
 
-    if (!WIFEXITED(cstatus))
-    {
-        perror("42sh");
-        return 1;
-    }
+        if (!WIFEXITED(cstatus))
+        {
+            return 127;
+        }
 
-    return WEXITSTATUS(cstatus);
+        return WEXITSTATUS(cstatus);
+    }
 }

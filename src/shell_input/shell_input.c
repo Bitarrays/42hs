@@ -4,52 +4,45 @@
 
 static int shell_prompt(void)
 {
-    int c = '\n';
     char *input = NULL;
-    int input_len = 0;
-    int err = 0;
+    size_t input_len = 0;
     while (!shell->exit)
     {
-        if (err)
-            printf("\033[1m\033[31m➜  \033[1m\033[36m42sh \033[1m\033[33m✗ "
-                   "\033[0;37m");
+        if (shell->return_code)
+            fprintf(stderr,
+                    "\033[1m\033[31m➜  \033[1m\033[36m42sh \033[1m\033[33m✗ "
+                    "\033[0;37m");
         else
-            printf("\033[1m\033[32m➜  \033[1m\033[36m42sh \033[1m\033[33m✗ "
-                   "\033[0;37m");
-        fflush(stdout);
+            fprintf(stderr,
+                    "\033[1m\033[32m➜  \033[1m\033[36m42sh \033[1m\033[33m✗ "
+                    "\033[0;37m");
+        fflush(stderr);
         int line = 0;
-        while (read(STDIN_FILENO, &c, 1) > 0)
+        if (getline(&input, &input_len, stdin) < 1)
         {
-            if (c == EOF)
-                return 0;
-            if (c == '\n')
-            {
-                line = 1;
-                break;
-            }
-            input = realloc(input, (input_len + 2) * sizeof(char));
-            input[input_len++] = c;
+            free(input);
+            input = NULL;
+            input_len = 0;
+            break;
         }
         if (!input)
         {
             if (!line)
-                printf("\n");
+                fprintf(stderr, "\n");
             continue;
         }
-        input[input_len] = 0;
-        if (!strcmp(input, "exit"))
+        if (!strcmp(input, "exit\n"))
         {
             shell->exit = 1;
             free(input);
             continue;
         }
-        err = parse_input(input);
-        shell->return_code = err;
+        parse_input(input);
         free(input);
         input = NULL;
         input_len = 0;
     }
-    return err;
+    return shell->return_code;
 }
 
 static char *get_file_content(char *filename)
@@ -101,12 +94,11 @@ int get_input(int argc, char **argv)
             return 1;
         input_len = strlen(input);
     }
-    int res = 2;
     if (input)
     {
         input[input_len] = '\0';
-        res = parse_input(input);
+        parse_input(input);
         free(input);
     }
-    return res;
+    return shell->return_code;
 }

@@ -18,6 +18,7 @@ enum ast_type
     AST_REDIR,
     AST_FUNC,
     AST_EOF,
+    AST_ASSIGNMENT
 };
 
 enum quotes
@@ -32,6 +33,7 @@ struct ast
 {
     enum ast_type type;
     char **value;
+    char *var_name;
     enum quotes *enclosure;
     struct ast *left_child;
     struct ast *right_child;

@@ -21,18 +21,24 @@ enum token_type
     TOKEN_UNTIL,
     TOKEN_FOR,
     TOKEN_IN,
+    TOKEN_AND,
+    TOKEN_OR,
     TOKEN_SEMICOLON,
     TOKEN_NEWLINE,
     TOKEN_REDIR,
     TOKEN_IONUMBER,
     TOKEN_PIPE,
     TOKEN_NOT,
+    TOKEN_ASSIGNMENT_WORD,
+    TOKEN_PARENTHESIS_OPEN,
+    TOKEN_PARENTHESIS_CLOSE,
+    TOKEN_BRACE_OPEN,
+    TOKEN_BRACE_CLOSE,
+    TOKEN_DOLLAR,
     TOKEN_WORD,
     TOKEN_WORD_DOUBLE_QUOTE,
     TOKEN_WORD_SINGLE_QUOTE,
-    TOKEN_EOF,
-    TOKEN_AND,
-    TOKEN_OR
+    TOKEN_EOF
 };
 
 struct lexer_token
@@ -64,6 +70,7 @@ struct lexer
     struct lexer_token *tail;
     struct lexer_token *head;
     bool in_for;
+    bool in_variable;
 };
 
 /**

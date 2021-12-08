@@ -14,14 +14,17 @@ void ast_free(struct ast *ast)
     if (ast == NULL)
         return;
 
-    if (ast->type == AST_COMMAND || ast->type == AST_FOR)
+    if (ast->type == AST_COMMAND || ast->type == AST_FOR
+        || ast->type == AST_ASSIGNMENT)
     {
         free(ast->value);
         free(ast->enclosure);
     }
     else if (ast->type == AST_REDIR)
     {
-        free(ast->value[0]);
+        int i = 0;
+        while (ast->value[i])
+            free(ast->value[i++]);
         free(ast->value);
         free(ast->enclosure);
     }

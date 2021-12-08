@@ -1,6 +1,6 @@
 #include "builtins.h"
 
-static void afterBackslash(char *toCheck, int *index)
+static void afterBackslash(char *toCheck, int *index, int fd_write)
 {
     *index += 1;
 
@@ -9,25 +9,25 @@ static void afterBackslash(char *toCheck, int *index)
         switch (toCheck[*index])
         {
         case '\\':
-            putchar('\\');
+            write(fd_write, "\\", 1);
             break;
         case 'n':
-            putchar('\n');
+            write(fd_write, "\n", 1);
             break;
         case 't':
-            putchar('\t');
+            write(fd_write, "\t", 1);
             break;
         default:
-            putchar('\\');
-            putchar(toCheck[*index]);
+            write(fd_write, "\\", 1);
+            write(fd_write, &(toCheck[*index]), 1);
             break;
         }
     }
     else
-        putchar('\\');
+        write(fd_write, "\\", 1);
 }
 
-void echo(char **args)
+void echo(char **args, int fd_write)
 {
     bool n_option = false;
     bool e_option = false;
@@ -56,13 +56,13 @@ void echo(char **args)
             for (int i = 0; args[start_print][i] != '\0'; i++)
             {
                 if (args[start_print][i] == '\\')
-                    afterBackslash(args[start_print], &i);
+                    afterBackslash(args[start_print], &i, fd_write);
                 else
-                    putchar(args[start_print][i]);
+                    write(fd_write, &(args[start_print][i]), 1);
             }
 
             if (args[start_print + 1] != NULL)
-                putchar(' ');
+                write(fd_write, " ", 1);
         }
     }
     else
@@ -70,10 +70,10 @@ void echo(char **args)
         for (; args[start_print] != NULL; start_print++)
         {
             for (int i = 0; args[start_print][i] != '\0'; i++)
-                putchar(args[start_print][i]);
+                write(fd_write, &(args[start_print][i]), 1);
 
             if (args[start_print + 1] != NULL)
-                putchar(' ');
+                write(fd_write, " ", 1);
         }
     }
 

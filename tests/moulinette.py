@@ -18,7 +18,7 @@ def diff(expected: str, actual: str) -> str:
     return ''.join(unified_diff(actual_lines, expected_lines, fromfile='actual', tofile='expected'))
 
 def run_shell(shell: str, stdin: str) -> sp.CompletedProcess:
-    return sp.run([shell], input=stdin, capture_output=True, text=True)
+    return sp.run([shell], input=stdin, capture_output=True, text=True, env={})
 
 def perform_check(expected: sp.CompletedProcess, actual: sp.CompletedProcess):
     assert expected.returncode == actual.returncode, f"EXIT_CODE_ERR: expected {expected.returncode}, got {actual.returncode}"

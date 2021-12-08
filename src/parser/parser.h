@@ -60,7 +60,11 @@ enum parser_status parse_simple_command(struct ast **ast, struct lexer *l);
 
 /**
  ** @brief Check if shell_command grammar rule is respected
- ** >> shell_command: rule_if
+ ** >> shell_command: '{' compound_list '}'
+ **       |   rule_for
+ **       |   rule_while
+ **       |   rule_until
+ **       |   rule_if
  **
  ** @param ast the general ast to update
  ** @param lexer the lexer to read tokens from
@@ -174,5 +178,15 @@ enum parser_status parse_do_group(struct ast **ast, struct lexer *lexer);
  ** @return enum parser_status - current parser status
  **/
 enum parser_status parse_for(struct ast **ast, struct lexer *lexer);
+
+/**
+ ** @brief Check if funcdec grammar rule is respected
+ ** >> funcdec: WORD '(' ')' ('newline')* shell_command
+ **
+ ** @param ast the general ast to update
+ ** @param lexer the lexer to read tokens from
+ ** @return enum parser_status - current parser status
+ **/
+enum parser_status parse_funcdec(struct ast **ast, struct lexer *lexer);
 
 #endif // !PARSER_H

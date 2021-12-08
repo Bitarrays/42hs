@@ -22,7 +22,7 @@ extern struct shell *shell;
  *                      of it's argument.
  * @return int : 0 on success, 1 on failure.
  */
-int find_command(char **toExecute);
+int find_command(char **toExecute, int fd_write);
 
 /**
  * @brief Execute cd command.
@@ -37,7 +37,7 @@ int cd(char **args);
  *
  * @param args the list of arguments
  */
-void echo(char **args);
+void echo(char **args, int fd_write);
 
 /**
  * @brief  @brief Modify the shell->exit and shell->return_code parameter in the global variable shell
