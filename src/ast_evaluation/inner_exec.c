@@ -4,6 +4,14 @@
 
 #include "ast_evaluation_tools.h"
 
+void free_arg(char **var)
+{
+    int i = 0;
+    while (var[i])
+        free(var[i++]);
+    free(var);
+}
+
 int is_in(char **condition)
 {
     while ((*condition)[0] != '\0')
@@ -15,21 +23,17 @@ int is_in(char **condition)
     return 0;
 }
 
-/*int expend_var(char *s, char *new, int *size, int *i)
+int is_char_name(char c)
 {
-    int bracket = s[++(*i)] == '{';
-    int size_var = 0;
-    if (bracket)
-        (*i)++;
-    while (s[*i] != '\0' && s[*i] != ' ' && s[*i] != '\t' && (bracket))
-    {
-        (*i)++;
-        size_var++;
-    }
-    *size += size_var;
-    char *tmp = realloc(new, (*size + 1) * sizeof(char *));
-    strncat(new, )
-}*/
+    return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z')
+        || (c >= 'a' && c <= 'z') || c == '_';
+}
+
+int is_special(char c)
+{
+    return c == '#' || c == '?'
+        || c == '*' || c == '@' || c == '$' || c == '!';
+}
 
 int expand_s(char **elt, char *s, enum quotes type)
 {
@@ -42,13 +46,11 @@ int expand_s(char **elt, char *s, enum quotes type)
     {
         int i = 0;
         int i_new = 0;
-        int escaped = 0;
         while (s[i] != '\0')
         {
-            if (escaped)
-                escaped = 0;
-            else if (s[i] == '$')
+            if (s[i] == '$')
             {
+                int begin = i;
                 int bracket = s[++i] == '{';
                 int offset = 1;
                 if (bracket)
@@ -56,37 +58,52 @@ int expand_s(char **elt, char *s, enum quotes type)
                     offset++;
                     i++;
                 }
+                int start = i;
                 int size_var = 0;
-                while (s[i] != '\0' && s[i] != ' ' && s[i] != '\t' && (!bracket || (bracket && s[i] != '}')))
+                if (is_special(s[i]))
                 {
                     i++;
                     size_var++;
+                }
+                else
+                {
+                    while (is_char_name(s[i])/*s[i] != '\0' && s[i] != ' ' && s[i] != '\t'
+                        && s[i] != '$' && s[i] != '\\'
+                        && (!bracket || (bracket && s[i] != '}'))*/)
+                    {
+                        i++;
+                        size_var++;
+                    }
                 }
                 if (bracket)
                     i++;
                 size += size_var;
                 char *name = calloc(size_var + 1, sizeof(char));
-                strncpy(name, new + i_new + offset, size_var);
+                strncpy(name, s + start, size_var);
                 name[size_var] = '\0';
-                if (!find_elt_list(shell, name))
-                    return 0;
-                int new_size = strlen(find_elt_list(shell, name));
-                char *tmp = realloc(new, (new_size + 1) * sizeof(char *));
+                char *var = find_elt_list(shell, name);
+                if (!var)
+                    var = "";
+                int new_size = strlen(var);
+                char *tmp = realloc(new, (strlen(new) + begin - i + new_size + 1) * sizeof(char));
                 if (!tmp)
                     return 0;
                 new = tmp;
-                strcpy(new + i_new, find_elt_list(shell, name));
+                strcpy(new + i_new, var);
                 i_new += new_size;
                 free(name);
                 if (s[i] == '\0')
                     break;
+                if (s[i] == '$')
+                    continue;
             }
             else if (s[i] == '\\')
             {
                 i++;
-                escaped = 1;
+                new[i_new++] = s[i++];
             }
-            new[i_new++] = s[i++];
+            else
+                new[i_new++] = s[i++];
         }
         new[i_new] = '\0';
     }
@@ -94,11 +111,57 @@ int expand_s(char **elt, char *s, enum quotes type)
     {
         int i = 0;
         int i_new = 0;
-        int escaped = 0;
         while (s[i] != '\0')
         {
-            if (escaped)
-                escaped = 0;
+            if (s[i] == '$')
+            {
+                int begin = i;
+                int bracket = s[++i] == '{';
+                int offset = 1;
+                if (bracket)
+                {
+                    offset++;
+                    i++;
+                }
+                int start = i;
+                int size_var = 0;
+                if (is_special(s[i]))
+                {
+                    i++;
+                    size_var++;
+                }
+                else
+                {
+                    while (is_char_name(s[i])/*s[i] != '\0' && s[i] != ' ' && s[i] != '\t'
+                        && s[i] != '$' && s[i] != '\\'
+                        && (!bracket || (bracket && s[i] != '}'))*/)
+                    {
+                        i++;
+                        size_var++;
+                    }
+                }
+                if (bracket)
+                    i++;
+                size += size_var;
+                char *name = calloc(size_var + 1, sizeof(char));
+                strncpy(name, s + start, size_var);
+                name[size_var] = '\0';
+                char *var = find_elt_list(shell, name);
+                if (!var)
+                    var = "";
+                int new_size = strlen(var);
+                char *tmp = realloc(new, (strlen(new) + begin - i + new_size + 1) * sizeof(char));
+                if (!tmp)
+                    return 0;
+                new = tmp;
+                strcpy(new + i_new, var);
+                i_new += new_size;
+                free(name);
+                if (s[i] == '\0')
+                    break;
+                if (s[i] == '$')
+                    continue;
+            }
             else if (s[i] == '\\')
             {
                 i++;
@@ -114,14 +177,13 @@ int expand_s(char **elt, char *s, enum quotes type)
                 }
                 else if (s[i] == '\'')
                 {
-                    printf("->%d\n", s[i]);
                     i++;
                     new[i_new++] = '\'';
                 }
-                else
-                    escaped = 1;
+                new[i_new++] = s[i++];
             }
-            new[i_new++] = s[i++];
+            else
+                new[i_new++] = s[i++];
         }
         new[i_new] = '\0';
     }
@@ -137,16 +199,16 @@ int array_len(char **arr)
     return i;
 }
 
-char **expand(struct ast *ast)
+char **expand(char **arg, enum quotes *enclosure)
 {
-    char **new = calloc(array_len(ast->value) + 1, sizeof(char *));
+    char **new = calloc(array_len(arg) + 1, sizeof(char *));
     if (!new)
         return NULL;
     int ret_val = 1;
     int i = 0;
-    while (ast->value[i] != NULL && ret_val)
+    while (arg[i] != NULL && ret_val)
     {
-        ret_val = expand_s(new + i, ast->value[i], ast->enclosure[i]);
+        ret_val = expand_s(new + i, arg[i], enclosure[i]);
         i++;
     }
     new[i] = NULL;
@@ -166,8 +228,34 @@ int str_in(char *s, char c)
     return 0;
 }
 
+char *merge_arg(char **arg)
+{
+    if (!arg)
+        return NULL;
+    char *s = calloc(1, sizeof(char));
+    s[0] = '\0';
+    int size = 0;
+    int i = 0;
+    while (arg[i])
+    {
+        size += strlen(arg[i]);
+        char *tmp = realloc(s, (size + 1) * sizeof(char));
+        if (!tmp)
+        {
+            free(s);
+            return NULL;
+        }
+        s = tmp;
+        strcat(s, arg[i]);
+        i++;
+    }
+    return s;
+}
+
 char **split_arg(char **arg, enum quotes *enclosure)
 {
+    if (!arg)
+        return NULL;
     int size = array_len(arg) + 1;
     char **new = calloc(size, sizeof(char *));
     if (!new)
@@ -178,36 +266,59 @@ char **split_arg(char **arg, enum quotes *enclosure)
     while (arg[i] != NULL && ret_val)
     {
         ret_val = expand_s(new + i_new, arg[i], enclosure[i]);
-        char *s = *(new + i_new);
-        printf("%s\n", *(new + i_new));
-        int j = 0;
-        int start = 0;
-        while (s[j] != '\0')
+        if (enclosure[i] == Q_NONE)
         {
-            start = 0;
-            if (str_in(shell->ifs, s[j]))
+            char *s = *(new + i_new);
+            int j = 0;
+            int start = 0;
+            while (s[j] != '\0')
             {
-                start = 1;
-                size++;
-                char **tmp = realloc(new, size * sizeof(char *));
-                if (!tmp)
-                    return NULL;
-                new = tmp;
-                new[i_new + 1] = calloc(strlen(new[i_new] + j + 1) + 1, sizeof(char));
-                strcpy(new[i_new + 1], new[i_new] + j + 1);
-                new[i_new][j] = '\0';
-                s = new[++i_new];
-                j = 0;
+                start = 0;
+                if (str_in(shell->ifs, s[j]))
+                {
+                    start = 1;
+                    size++;
+                    char **tmp = realloc(new, size * sizeof(char *));
+                    if (!tmp)
+                        return NULL;
+                    new = tmp;
+                    new[i_new + 1] =
+                        calloc(strlen(new[i_new] + j + 1) + 1, sizeof(char));
+                    strcpy(new[i_new + 1], new[i_new] + j + 1);
+                    new[i_new][j] = '\0';
+                    s = new[++i_new];
+                    j = 0;
+                }
+                else
+                    j++;
             }
-            else
-                j++;
+            if (start == 0)
+                i_new++;
+            i++;
         }
-        if (start == 0)
+        else
+        {
+            i++;
             i_new++;
-        i++;
+        }
     }
     new[i_new] = NULL;
     if (!ret_val)
         return NULL;
     return new;
+}
+
+int atoi_begining(char *s)
+{
+    int i = 0;
+    int nb = 0;
+    while (s[i] != '\0')
+    {
+        if (s[i] < '0' || s[i] > '9')
+            break;
+        nb = nb * 10 + (s[i++] - '0');
+    }
+    if (nb == 0 && i == 0)
+        return -1;
+    return nb;
 }

@@ -18,7 +18,8 @@ incdirs = [
   include_directories('./src/shell_input'),
   include_directories('./src/ast_evaluation'),
   include_directories('./src/builtins'),
-  include_directories('./src/variable'),
+  include_directories('./src/variables'),
+  include_directories('./src/loops'),
   include_directories('./src/'),
 ]
 
@@ -40,13 +41,19 @@ common = [
   'src/ast_evaluation/builtin_exec.c',
   'src/ast_evaluation/inner_exec.c',
   'src/ast_evaluation/prog_exec.c',
+  'src/ast_evaluation/pipe.c',
+  'src/ast_evaluation/redir.c',
+  'src/ast_evaluation/redir_tools.c',
   'src/shell_input/shell_input.c',
   'src/builtins/builtins.c',
-  'src/variable/var_list.c',
+  'src/variables/var_list.c',
   'src/builtins/echo.c',
   'src/builtins/cd.c',
   'src/builtins/continue.c',
   'src/builtins/break.c',
+  'src/parser/parse_functions.c',
+  'src/loops/loop_stack.c',
+  'src/builtins/exit.c',
 ]
 
 token_printer = executable(

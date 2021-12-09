@@ -2,6 +2,11 @@
 
 int cd(char **args)
 {
+    int len = 0;
+    while (args[len])
+        len++;
+    if (len < 2)
+        return 0;
     if (!strcmp(args[1], "-"))
     {
         chdir(shell->oldpwd);
@@ -9,6 +14,8 @@ int cd(char **args)
         shell->oldpwd = shell->pwd;
         shell->pwd = swap;
         printf("%s\n", shell->pwd);
+        setenv("OLDPWD", shell->oldpwd, 1);
+        setenv("PWD", shell->pwd, 1);
         fflush(stdout);
         return 0;
     }

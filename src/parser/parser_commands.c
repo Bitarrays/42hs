@@ -3,6 +3,7 @@
 enum parser_status parse_redirection(struct ast **ast, struct lexer *lexer)
 {
     struct lexer_token *tok = lexer_peek(lexer);
+    char *fd = NULL;
     char *type = NULL;
     size_t len = 0;
 
@@ -10,29 +11,36 @@ enum parser_status parse_redirection(struct ast **ast, struct lexer *lexer)
     if (tok->type == TOKEN_IONUMBER)
     {
         len = strlen(tok->value);
-        type = realloc(type, len + 1);
-        type = strcpy(type, tok->value);
-        type[len] = '\0';
+        fd = realloc(fd, len + 1);
+        fd = strcpy(fd, tok->value);
+        fd[len] = '\0';
         lexer_pop(lexer);
     }
 
     tok = lexer_peek(lexer);
     if (tok->type != TOKEN_REDIR)
     {
-        free(type);
+        free(fd);
         return handle_parser_error(PARSER_ERROR, ast);
     }
 
-    len += strlen(tok->value);
-    if (!type)
-        type = calloc(len + 1, sizeof(char));
-    else
-        type = realloc(type, len + 1);
+    len = strlen(tok->value);
+    type = calloc(len + 1, sizeof(char));
+    type = strcpy(type, tok->value);
     type[len] = '\0';
-    type = strcat(type, tok->value);
+    char **redir_value = NULL;
     *ast = ast_new(AST_REDIR);
-    char **redir_value = calloc(2, sizeof(char *));
-    redir_value[0] = type;
+    if (fd)
+    {
+        redir_value = calloc(3, sizeof(char *));
+        redir_value[0] = fd;
+        redir_value[1] = type;
+    }
+    else
+    {
+        redir_value = calloc(2, sizeof(char *));
+        redir_value[0] = type;
+    }
     (*ast)->value = redir_value;
 
     lexer_pop(lexer);
@@ -64,10 +72,10 @@ enum parser_status parse_redirection(struct ast **ast, struct lexer *lexer)
 /**
  * @brief Check if simple_command grammar rule is respected
  * >> prefix: ASSIGNMENT_WORD | redirection
- * 
- * @param ast the general ast to update 
- * @param lexer the lexer to read tokens from 
- * @return enum parser_status - current parser status 
+ *
+ * @param ast the general ast to update
+ * @param lexer the lexer to read tokens from
+ * @return enum parser_status - current parser status
  */
 static enum parser_status parse_prefix(struct ast **ast, struct lexer *lexer)
 {
@@ -145,8 +153,11 @@ enum parser_status parse_simple_command(struct ast **ast, struct lexer *lexer)
             break;
         }
 
-        //? If we saw a variable and we get something else after other than a word, then the assignment is incorrect but we go on and it will be catched while executing
-        //! Should maybe be an error clause if is_assignment is already set to true
+        //? If we saw a variable and we get something else after other than a
+        // word, then the assignment is incorrect but we go on and it will be
+        // catched while executing
+        //! Should maybe be an error clause if is_assignment is already set to
+        //! true
         is_assignment = false;
 
         if (ast_prefix->type == AST_ASSIGNMENT)
@@ -190,7 +201,9 @@ enum parser_status parse_simple_command(struct ast **ast, struct lexer *lexer)
             //? following words are consider in variable assignment
             if (is_assignment)
             {
-                struct string_array_with_quotes res = merge_values(cur_prefix->value, ast_element->value, cur_prefix->enclosure, ast_element->enclosure);
+                struct string_array_with_quotes res =
+                    merge_values(cur_prefix->value, ast_element->value,
+                                 cur_prefix->enclosure, ast_element->enclosure);
                 cur_prefix->value = res.value;
                 cur_prefix->enclosure = res.q;
                 ast_free(ast_element);
@@ -259,6 +272,38 @@ enum parser_status parse_shell_command(struct ast **ast, struct lexer *lexer)
 {
     struct lexer_token *save_tok = lexer_peek(lexer);
 
+    // Try {
+    struct lexer_token *tok = lexer_peek(lexer);
+    if (tok->type == TOKEN_BRACE_OPEN)
+    {
+        lexer_pop(lexer); // token {
+
+        // Try compound_list
+        struct ast *ast_list = ast_new(AST_LIST);
+        enum parser_status status_compound_list = parse_compound_list(&ast_list, lexer);
+        if (status_compound_list == PARSER_OK)
+        {
+            tok = lexer_peek(lexer);
+            if (tok->type == TOKEN_BRACE_CLOSE)
+            {
+                if (ast != NULL && *ast != NULL)
+                    (*ast)->left_child = ast_list;
+                else
+                {
+                    *ast = ast_new(AST_FUNC);
+                    (*ast)->var_name = NULL;
+                    (*ast)->left_child = ast_list;
+                }
+
+                lexer_pop(lexer); // token }
+                return PARSER_OK;
+            }
+        }
+        ast_free(ast_list);
+
+        lexer_go_back(lexer, save_tok);
+    }
+
     // Try rule_for
     enum parser_status status_command = parse_for(ast, lexer);
     if (status_command == PARSER_OK)
@@ -292,13 +337,56 @@ enum parser_status parse_shell_command(struct ast **ast, struct lexer *lexer)
 
 enum parser_status parse_command(struct ast **ast, struct lexer *lexer)
 {
-    struct ast *ast_simple_command = NULL;
     enum parser_status status;
 
     // Save of current state of lexer because of | in grammar
     struct lexer_token *save_tok = lexer_peek(lexer);
 
+     // Try fundec
+    struct ast *ast_fundec = NULL;
+    if ((status = parse_funcdec(&ast_fundec, lexer)) == PARSER_OK)
+    {
+        *ast = ast_fundec;
+        bool first_redir = true;
+        struct ast *cur_redir = NULL;
+
+        // Try (redirection)*
+        while (true)
+        {
+            struct lexer_token *save_tok = lexer_peek(lexer);
+
+            // Try redirection
+            struct ast *ast_redir = NULL;
+            enum parser_status status_redir = parse_redirection(&ast_redir, lexer);
+            if (status_redir == PARSER_ERROR)
+            {
+                lexer_go_back(lexer, save_tok);
+                break;
+            }
+
+            if (first_redir)
+            {
+                ast_redir->left_child = *ast;
+                *ast = ast_redir;
+                first_redir = false;
+                cur_redir = *ast;
+            }
+            else
+            {
+                ast_redir->left_child = cur_redir->right_child;
+                cur_redir->right_child = ast_redir;
+                cur_redir = cur_redir->right_child;
+            }
+        }
+
+        return status;
+    }
+    ast_free(ast_fundec);
+
+    lexer_go_back(lexer, save_tok);
+
     // Try simple_command
+    struct ast *ast_simple_command = NULL;
     if ((status = parse_simple_command(&ast_simple_command, lexer))
         == PARSER_OK)
     {
@@ -315,16 +403,40 @@ enum parser_status parse_command(struct ast **ast, struct lexer *lexer)
     if ((status = parse_shell_command(&ast_shell_command, lexer)) == PARSER_OK)
     {
         *ast = ast_shell_command;
-        return status;
-    }
+        bool first_redir = true;
+        struct ast *cur_redir = NULL;
 
-    // Try (redirection)*
-    while (true)
-    {
-        // TODO
-        break;
-    }
+        // Try (redirection)*
+        while (true)
+        {
+            struct lexer_token *save_tok = lexer_peek(lexer);
 
+            // Try redirection
+            struct ast *ast_redir = NULL;
+            enum parser_status status_redir = parse_redirection(&ast_redir, lexer);
+            if (status_redir == PARSER_ERROR)
+            {
+                lexer_go_back(lexer, save_tok);
+                break;
+            }
+
+            if (first_redir)
+            {
+                ast_redir->left_child = *ast;
+                *ast = ast_redir;
+                first_redir = false;
+                cur_redir = *ast;
+            }
+            else
+            {
+                ast_redir->left_child = cur_redir->right_child;
+                cur_redir->right_child = ast_redir;
+                cur_redir = cur_redir->right_child;
+            }
+        }
+
+        return PARSER_OK;
+    }
     ast_free(ast_shell_command);
 
     return PARSER_ERROR;

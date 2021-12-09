@@ -14,8 +14,6 @@
 
 char *get_filename_from_redir(char **redir);
 
-bool is_int(char *str);
-
 int get_fd_from_redir(char **redir, bool out_redir);
 
 bool is_out_redir(char **redir);

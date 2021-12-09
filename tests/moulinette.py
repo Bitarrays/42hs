@@ -9,8 +9,10 @@ from dataclasses import dataclass
 
 @dataclass
 class TestCase:
-    name: str
-    input: str
+    def __init__(self, name, input = None, file = None):
+        self.name = name
+        self.input = input
+        self.file = file
 
 def diff(expected: str, actual: str) -> str:
     expected_lines = expected.splitlines(keepends=True)
@@ -42,8 +44,12 @@ if __name__ == '__main__':
         print(f"\033[6m## \033[0m\033[34m{test}\033[97m")
         for testcase in testsuite:
             tests += 1
-            actual = run_shell(binary_path, testcase.input)
-            expected = run_shell("dash", testcase.input)
+            input = testcase.input
+            if (testcase.file):
+                with open(testcase.file, 'r') as file:
+                    input = file.read()
+            actual = run_shell(binary_path, input)
+            expected = run_shell("dash", input)
             try:
                 perform_check(expected, actual)
             except AssertionError as e:

@@ -1,7 +1,7 @@
 #include <string.h>
 
-#include "../builtins/builtins.h"
 #include "ast_evaluation_tools.h"
+#include "builtins.h"
 
 /*
  * The main objectif of this source code is to call the builtin implemented
@@ -14,9 +14,11 @@ int is_builtin(char *cmd)
         return 1;
     if (!strcmp(cmd, "cd"))
         return 1;
+    if (!strcmp(cmd, "break"))
+        return 1;
     if (!strcmp(cmd, "continue"))
         return 1;
-    if (!strcmp(cmd, "break"))
+    if (!strcmp(cmd, "exit"))
         return 1;
     return 0;
 }
