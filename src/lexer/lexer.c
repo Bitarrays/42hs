@@ -184,7 +184,7 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
             if (input[j] == 0)
                 break;
         }
-        if ((*word_type != TOKEN_WORD_SINGLE_QUOTE && is_separator(input[j]))
+        if ((*word_type == TOKEN_WORD && is_separator(input[j]))
             || (is_pipe(input[j], input[j + 1]) && *word_type == TOKEN_WORD))
         {
             if (word)
