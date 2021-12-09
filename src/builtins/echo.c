@@ -39,7 +39,8 @@ void echo(char **args, int fd_write)
             n_option = true;
         else if (!strcmp(args[start_print], "-e"))
             e_option = true;
-        else if (!strcmp(args[start_print], "-ne") || !strcmp(args[start_print], "-en"))
+        else if (!strcmp(args[start_print], "-ne")
+                 || !strcmp(args[start_print], "-en"))
         {
             e_option = true;
             n_option = true;

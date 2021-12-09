@@ -14,7 +14,7 @@ before_script:
   - make build
   - pip3 install pyyaml
 
-echo_builtin:
+echo:
   stage: test
   script:
     - python3 tests/moulinette.py --binary 42sh --tests tests/echo.yml
@@ -33,3 +33,18 @@ cd:
   stage: test
   script:
     - python3 tests/moulinette.py --binary 42sh --tests tests/cd.yml
+
+expansion:
+  stage: test
+  script:
+    - python3 tests/moulinette.py --binary 42sh --tests tests/expansion.yml
+
+for:
+  stage: test
+  script:
+    - python3 tests/moulinette.py --binary 42sh --tests tests/for.yml
+
+wrong_commands:
+  stage: test
+  script:
+    - python3 tests/moulinette.py --binary 42sh --tests tests/wrong_commands.yml

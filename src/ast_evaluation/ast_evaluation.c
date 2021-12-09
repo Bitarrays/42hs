@@ -8,7 +8,7 @@
 
 int evaluate_ast(struct ast *ast)
 {
-    if (shell->exit/* || shell->continue || shell->break*/)
+    if (shell->exit || shell->ctn || shell->brk)
         return shell->return_code;
     if (!ast)
         return 0;
@@ -17,31 +17,23 @@ int evaluate_ast(struct ast *ast)
     {
         if (!evaluate_ast(ast->condition))
         {
-            if (shell->exit/* || shell->continue || shell->break*/)
+            if (shell->exit || shell->ctn || shell->brk)
                 return shell->return_code;
             return evaluate_ast(ast->left_child);
         }
         else
         {
-            if (shell->exit/* || shell->continue || shell->break*/)
+            if (shell->exit || shell->ctn || shell->brk)
                 return shell->return_code;
             return evaluate_ast(ast->right_child);
         }
     }
-    /*if (ast->type == AST_FUNC)
-    {
-        new_var(shell, ast->value);
-        int res = ast_evaluation(ast->left_child);
-        del_stack(shell);
-        push_int_elt_list(shell, "?", res);
-        res = ast_evaluation(ast->right_child);
-        return res;
-    }*/
     else if (ast->type == AST_FOR)
     {
         char **var;
         char *test[3] = { "oui", "non", NULL };
         enum quotes enclosure2[2] = { Q_DOUBLE, Q_DOUBLE };
+        push_loop(shell, ast);
         if (!ast->value[1] || !ast->value[2])
         {
             var = split_arg(test, enclosure2);
@@ -58,43 +50,117 @@ int evaluate_ast(struct ast *ast)
             int i = 0;
             while (var[i])
             {
-                push_elt_list(shell, ast->value[0], var[i++]);
+                int res = push_elt_list(shell, ast->value[0], var[i++]);
                 evaluate_ast(ast->left_child);
-                if (shell->exit/* || shell->continue || shell->break*/)
+                if (shell->ctn)
+                {
+                    shell->ctn--;
+                    if (shell->ctn > 0 && get_ast_loop(shell))
+                    {
+                        pop_loop(shell);
+                        return res;
+                    }
+                    else if (shell->ctn)
+                        shell->ctn = 0;
+                    continue;
+                }
+                else if (shell->brk)
+                {
+                    shell->brk--;
+                    pop_loop(shell);
+                    if (shell->brk > 0 && get_ast_loop(shell))
+                        return res;
+                    else if (shell->brk)
+                        shell->brk = 0;
+                    break;
+                }
+                if (shell->exit)
                     return shell->return_code;
             }
         }
         free_arg(var);
-        int res = evaluate_ast(
-            ast->right_child); // check return code for a null for
-        if (shell->exit/* || shell->continue || shell->break*/)
+        if (get_ast_loop(shell) == ast)
+            pop_loop(shell);
+        int res =
+            evaluate_ast(ast->right_child); // check return code for a null for
+        if (shell->exit || shell->ctn || shell->brk)
             return shell->return_code;
         return res;
     }
     else if (ast->type == AST_WHILE)
     {
         int ret = 0;
+        push_loop(shell, ast);
         while (!evaluate_ast(ast->condition))
         {
-            if (shell->exit/* || shell->continue || shell->break*/)
+            if (shell->exit)
                 return shell->return_code;
             ret = evaluate_ast(ast->left_child);
+            if (shell->ctn)
+            {
+                shell->ctn--;
+                if (shell->ctn > 0 && get_ast_loop(shell))
+                {
+                    pop_loop(shell);
+                    return ret;
+                }
+                else if (shell->ctn)
+                    shell->ctn = 0;
+                continue;
+            }
+            else if (shell->brk)
+            {
+                shell->brk--;
+                pop_loop(shell);
+                if (shell->brk > 0 && get_ast_loop(shell))
+                    return ret;
+                else if (shell->brk)
+                    shell->brk = 0;
+                break;
+            }
+            if (shell->exit)
+                return shell->return_code;
         }
-        if (shell->exit/* || shell->continue || shell->break*/)
-            return shell->return_code;
+        if (get_ast_loop(shell) == ast)
+            pop_loop(shell);
         return ret;
     }
     else if (ast->type == AST_UNTIL)
     {
         int ret = 0;
+        push_loop(shell, ast);
         while (evaluate_ast(ast->condition))
         {
-            if (shell->exit/* || shell->continue || shell->break*/)
+            if (shell->exit)
                 return shell->return_code;
             ret = evaluate_ast(ast->left_child);
+            if (shell->ctn)
+            {
+                shell->ctn--;
+                if (shell->ctn > 0 && get_ast_loop(shell))
+                {
+                    pop_loop(shell);
+                    return ret;
+                }
+                else if (shell->ctn)
+                    shell->ctn = 0;
+                continue;
+            }
+            else if (shell->brk)
+            {
+                shell->brk--;
+                pop_loop(shell);
+                if (shell->brk > 0 && get_ast_loop(shell))
+                    return ret;
+                else if (shell->brk)
+                    shell->brk = 0;
+                break;
+            }
+            if (shell->exit)
+                return shell->return_code;
         }
-        if (shell->exit/* || shell->continue || shell->break*/)
-            return shell->return_code;
+        if (get_ast_loop(shell) == ast)
+            pop_loop(shell);
         return ret;
     }
     else if (ast->type == AST_AND || ast->type == AST_OR)
@@ -110,7 +176,7 @@ int evaluate_ast(struct ast *ast)
                 prec = prec || !evaluate_ast(ast->right_child->left_child);
             /*if (shell->continue)
             {
-                
+
             }
             else if (shell->break)
             {
@@ -124,7 +190,7 @@ int evaluate_ast(struct ast *ast)
             prec = prec && !evaluate_ast(ast->right_child);
         else if (ast->type == AST_OR)
             prec = prec || !evaluate_ast(ast->right_child);
-        if (shell->exit/* || shell->continue || shell->break*/)
+        if (shell->exit || shell->ctn || shell->brk)
             return shell->return_code;
         return !prec;
     }
@@ -181,7 +247,7 @@ int evaluate_ast(struct ast *ast)
         // call redir
         exec_redirections(redirs);
         int res = evaluate_ast(ast->left_child);
-        if (shell->exit/* || shell->continue || shell->break*/)
+        if (shell->exit || shell->ctn || shell->brk)
             return shell->return_code;
         return res;
         // int fd = atoi_begining(char *s);
@@ -232,6 +298,17 @@ int evaluate_ast(struct ast *ast)
             free(val);
         }
     }
+    else if (ast->type == AST_FUNC)
+    {
+        if (ast->var_name)
+            push_elt_fun(shell, ast->var_name, ast->left_child);
+        /*new_var(shell, ast->value);
+        int res = ast_evaluation(ast->left_child);
+        del_stack(shell);
+        push_int_elt_list(shell, "?", res);
+        res = ast_evaluation(ast->right_child);
+        return res;*/
+    }
     else if (ast->type == AST_COMMAND)
     {
         char **val = expand(ast->value, ast->enclosure);
@@ -239,8 +316,11 @@ int evaluate_ast(struct ast *ast)
         if (!val)
             return 1;
         int res;
+        struct ast *block;
         if (is_builtin(*(val)))
             res = find_command(val, 1);
+        else if ((block = find_elt_fun(shell, *(ast->value))) != NULL)
+            res = evaluate_ast(block);
         else
             res = call_exec(val);
         char *tmp = val[0];
@@ -259,10 +339,10 @@ int evaluate_ast(struct ast *ast)
     else if (ast->type == AST_LIST)
     {
         int r = evaluate_ast(ast->right_child);
-        //printf("%d\n", shell->exit);
-        if (shell->exit/* || shell->continue || shell->break*/)
+        // printf("%d\n", shell->exit);
+        if (shell->exit || shell->ctn || shell->brk)
         {
-            //printf("%d\n", shell->return_code);
+            // printf("%d\n", shell->return_code);
             return shell->return_code;
         }
         if (ast->left_child && ast->left_child->type != AST_EOF)

@@ -9,6 +9,9 @@ project(
   ],
 )
 
+# add_project_arguments('-fsanitize=address', language : 'c')
+# add_project_link_arguments('-fsanitize=address', language : 'c')
+
 cflags = ['-D_GNU_SOURCE', '-D_POSIX_C_SOURCE=200809L']
 add_project_arguments(cflags, language: 'c')
 
@@ -20,6 +23,7 @@ incdirs = [
   include_directories('./src/builtins'),
   include_directories('./src/variables'),
   include_directories('./src/loops'),
+  include_directories('./src/functions'),
   include_directories('./src/'),
 ]
 
@@ -49,9 +53,13 @@ common = [
   'src/variables/var_list.c',
   'src/builtins/echo.c',
   'src/builtins/cd.c',
+  'src/builtins/continue.c',
+  'src/builtins/break.c',
   'src/parser/parse_functions.c',
   'src/loops/loop_stack.c',
-  'src/builtins/exit.c'
+  'src/builtins/exit.c',
+  'src/builtins/export.c',
+  'src/functions/functions.c',
 ]
 
 token_printer = executable(

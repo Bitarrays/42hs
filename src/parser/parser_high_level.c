@@ -19,7 +19,8 @@ enum parser_status parse_compound_list(struct ast **ast, struct lexer *lexer)
     while (true)
     {
         struct lexer_token *save_tok = lexer_peek(lexer);
-        if (save_tok->type != TOKEN_SEMICOLON && save_tok->type != TOKEN_NEWLINE)
+        if (save_tok->type != TOKEN_SEMICOLON
+            && save_tok->type != TOKEN_NEWLINE)
             break;
         lexer_pop(lexer);
 
