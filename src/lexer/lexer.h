@@ -71,6 +71,7 @@ struct lexer
     struct lexer_token *head;
     bool in_for;
     bool in_variable;
+    bool found_for;
 };
 
 /**

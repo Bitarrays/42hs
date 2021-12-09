@@ -103,6 +103,8 @@ static void create_word_and_append(char *word, int word_pos, bool *in_cmd,
         is_keyword(word) && !(*in_cmd) ? get_keyword(word) : *word_type;
     if (token->type >= TOKEN_WORD)
         *in_cmd = true;
+    if (token->type == TOKEN_FOR)
+        lexer->found_for = true;
     token->value = word;
     word = NULL;
     word_pos = 0;
@@ -163,7 +165,7 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
     int j = 0;
     char *word = NULL;
     int word_pos = 0;
-    if (*word_type == TOKEN_WORD && !strcmp(input, "in") && !lexer->in_for)
+    if (*word_type == TOKEN_WORD && !strcmp(input, "in") && !lexer->in_for && lexer->found_for)
     {
         create_and_append_token(lexer, TOKEN_IN, NULL);
         lexer->in_for = true;
@@ -197,7 +199,10 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
                 is_separator(input[j]) ? get_separator(input[j]) : TOKEN_PIPE,
                 NULL);
             if (is_separator(input[j]))
+            {
                 lexer->in_for = false;
+                lexer->found_for = false;
+            }
             *in_cmd = false;
         }
         else if (*word_type == TOKEN_WORD
@@ -236,7 +241,7 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
                 {
                     word = realloc(word, 3 * sizeof(char));
                     word[word_pos++] = input[j];
-                    if (input[j + 1] == '{')
+                    if (input[j + 1] == '{' || input[j + 1] == '$')
                     {
                         word[word_pos++] = input[++j];
                         lexer->in_variable = true;
