@@ -95,7 +95,8 @@ enum parser_status parse_pipeline(struct ast **ast, struct lexer *lexer)
         if (status_command == PARSER_ERROR)
         {
             ast_free(new_command);
-            ast_free(last_command);
+            if (first)
+                ast_free(last_command);
             return handle_parser_error(status_command, ast);
         }
 
