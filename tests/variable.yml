@@ -48,3 +48,12 @@
 
 - name: mix non quote and quote
   input: A=hello; echo $A'$A'\'$A\'
+
+- name: test special
+  input: echo $?
+
+- name: test special end
+  input: a=22; echo $a?
+
+- name: test special end 2
+  input: echo $?@

@@ -26,7 +26,12 @@ int is_in(char **condition)
 int is_char_name(char c)
 {
     return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z')
-        || (c >= 'a' && c <= 'z') || c == '_' || c == '#' || c == '?'
+        || (c >= 'a' && c <= 'z') || c == '_';
+}
+
+int is_special(char c)
+{
+    return c == '#' || c == '?'
         || c == '*' || c == '@' || c == '$' || c == '!';
 }
 
@@ -45,6 +50,7 @@ int expand_s(char **elt, char *s, enum quotes type)
         {
             if (s[i] == '$')
             {
+                int begin = i;
                 int bracket = s[++i] == '{';
                 int offset = 1;
                 if (bracket)
@@ -54,12 +60,20 @@ int expand_s(char **elt, char *s, enum quotes type)
                 }
                 int start = i;
                 int size_var = 0;
-                while (is_char_name(s[i])/*s[i] != '\0' && s[i] != ' ' && s[i] != '\t'
-                       && s[i] != '$' && s[i] != '\\'
-                       && (!bracket || (bracket && s[i] != '}'))*/)
+                if (is_special(s[i]))
                 {
                     i++;
                     size_var++;
+                }
+                else
+                {
+                    while (is_char_name(s[i])/*s[i] != '\0' && s[i] != ' ' && s[i] != '\t'
+                        && s[i] != '$' && s[i] != '\\'
+                        && (!bracket || (bracket && s[i] != '}'))*/)
+                    {
+                        i++;
+                        size_var++;
+                    }
                 }
                 if (bracket)
                     i++;
@@ -71,7 +85,7 @@ int expand_s(char **elt, char *s, enum quotes type)
                 if (!var)
                     var = "";
                 int new_size = strlen(var);
-                char *tmp = realloc(new, (new_size + 1) * sizeof(char *));
+                char *tmp = realloc(new, (strlen(new) + begin - i + new_size + 1) * sizeof(char));
                 if (!tmp)
                     return 0;
                 new = tmp;
@@ -101,6 +115,7 @@ int expand_s(char **elt, char *s, enum quotes type)
         {
             if (s[i] == '$')
             {
+                int begin = i;
                 int bracket = s[++i] == '{';
                 int offset = 1;
                 if (bracket)
@@ -110,12 +125,20 @@ int expand_s(char **elt, char *s, enum quotes type)
                 }
                 int start = i;
                 int size_var = 0;
-                while (is_char_name(s[i])/*s[i] != '\0' && s[i] != ' ' && s[i] != '\t'
-                       && s[i] != '$' && s[i] != '\\'
-                       && (!bracket || (bracket && s[i] != '}'))*/)
+                if (is_special(s[i]))
                 {
                     i++;
                     size_var++;
+                }
+                else
+                {
+                    while (is_char_name(s[i])/*s[i] != '\0' && s[i] != ' ' && s[i] != '\t'
+                        && s[i] != '$' && s[i] != '\\'
+                        && (!bracket || (bracket && s[i] != '}'))*/)
+                    {
+                        i++;
+                        size_var++;
+                    }
                 }
                 if (bracket)
                     i++;
@@ -127,7 +150,7 @@ int expand_s(char **elt, char *s, enum quotes type)
                 if (!var)
                     var = "";
                 int new_size = strlen(var);
-                char *tmp = realloc(new, (new_size + 1) * sizeof(char *));
+                char *tmp = realloc(new, (strlen(new) + begin - i + new_size + 1) * sizeof(char));
                 if (!tmp)
                     return 0;
                 new = tmp;
