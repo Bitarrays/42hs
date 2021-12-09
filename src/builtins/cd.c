@@ -2,6 +2,11 @@
 
 int cd(char **args)
 {
+    int len = 0;
+    while (args[len])
+        len++;
+    if (len < 2)
+        return 0;
     if (!strcmp(args[1], "-"))
     {
         chdir(shell->oldpwd);
