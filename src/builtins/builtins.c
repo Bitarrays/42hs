@@ -11,6 +11,8 @@ int find_command(char **args, int fd_write)
         return cd(args);
     if (!strcmp(args[0], "exit"))
         return my_exit(args);
+    if (!strcmp(args[0], "export"))
+        return export(args);
     else
         return 1;
 }
