@@ -47,4 +47,20 @@ void echo(char **args, int fd_write);
  */
 int my_exit(char **args);
 
+/**
+ * @brief The continue command.
+ * 
+ * @param args the list of arguments.
+ * @return int the number of enclosing loops to continue. -1 on failure.
+ */
+int my_continue(char **args);
+
+/**
+ * @brief The break command.
+ * 
+ * @param args the list of arguments.
+ * @return int the number of enclosing loops to break. -1 on failure.
+ */
+int my_break(char **args);
+
 #endif
