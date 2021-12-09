@@ -77,7 +77,6 @@ int expand_s(char **elt, char *s, enum quotes type)
                 }
                 if (bracket)
                     i++;
-                size += size_var;
                 char *name = calloc(size_var + 1, sizeof(char));
                 strncpy(name, s + start, size_var);
                 name[size_var] = '\0';
@@ -85,7 +84,8 @@ int expand_s(char **elt, char *s, enum quotes type)
                 if (!var)
                     var = "";
                 int new_size = strlen(var);
-                char *tmp = realloc(new, (strlen(new) + begin - i + new_size + 1) * sizeof(char));
+                size += begin - i + new_size;
+                char *tmp = realloc(new, (size + 1) * sizeof(char));
                 if (!tmp)
                     return 0;
                 new = tmp;
@@ -142,7 +142,6 @@ int expand_s(char **elt, char *s, enum quotes type)
                 }
                 if (bracket)
                     i++;
-                size += size_var;
                 char *name = calloc(size_var + 1, sizeof(char));
                 strncpy(name, s + start, size_var);
                 name[size_var] = '\0';
@@ -150,7 +149,8 @@ int expand_s(char **elt, char *s, enum quotes type)
                 if (!var)
                     var = "";
                 int new_size = strlen(var);
-                char *tmp = realloc(new, (strlen(new) + begin - i + new_size + 1) * sizeof(char));
+                size += begin - i + new_size;
+                char *tmp = realloc(new, (size + 1) * sizeof(char));
                 if (!tmp)
                     return 0;
                 new = tmp;
@@ -180,7 +180,9 @@ int expand_s(char **elt, char *s, enum quotes type)
                     i++;
                     new[i_new++] = '\'';
                 }
-                new[i_new++] = s[i++];
+                new[i_new++] = s[i];
+                if (s[i++] == '\0')
+                    break;
             }
             else
                 new[i_new++] = s[i++];
