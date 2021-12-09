@@ -44,6 +44,7 @@ static void init_shell(int argc, char **argv)
     shell->var_stack = NULL;
     new_var(shell, argv);
     shell->functions = NULL;
+    shell->loop_stack = NULL;
     // append param shell->var_stack
 }
 
