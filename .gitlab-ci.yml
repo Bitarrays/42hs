@@ -10,7 +10,7 @@ cache:
   - builddir/
 
 before_script:
-  - apk add build-base && apk add make && apk add meson && apk add ninja && apk add py3-pip && apk add dash && apk add libsanitizer-devel
+  - apk add build-base && apk add make && apk add meson && apk add ninja && apk add py3-pip && apk add dash && apk add world && apk add libsanitizer-devel
   - make build
   - pip3 install pyyaml
 
