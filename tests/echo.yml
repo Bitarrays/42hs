@@ -4,9 +4,6 @@
 - name: Basic -n
   input: echo -n "Cut, Copy and Paste!"
 
-- name: Double -n
-  input: echo -n -n "Cut, Copy and Paste!"
-
 - name: Basic words
   input: echo "-n"
 
