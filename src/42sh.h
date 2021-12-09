@@ -27,6 +27,13 @@ struct loop_stack
     struct loop_stack *next;
 };
 
+struct functions
+{
+    char *name;
+    struct ast *function;
+    struct functions *next;
+};
+
 struct shell
 {
     bool pretty_print;
@@ -43,6 +50,7 @@ struct shell
     struct var_stack *var_stack;
     struct var *var_list;
     struct loop_stack *loop_stack;
+    struct functions *functions;
     pid_t pid;
 };
 

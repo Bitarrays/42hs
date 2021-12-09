@@ -28,15 +28,6 @@ int evaluate_ast(struct ast *ast)
             return evaluate_ast(ast->right_child);
         }
     }
-    /*if (ast->type == AST_FUNC)
-    {
-        new_var(shell, ast->value);
-        int res = ast_evaluation(ast->left_child);
-        del_stack(shell);
-        push_int_elt_list(shell, "?", res);
-        res = ast_evaluation(ast->right_child);
-        return res;
-    }*/
     else if (ast->type == AST_FOR)
     {
         char **var;
@@ -232,6 +223,17 @@ int evaluate_ast(struct ast *ast)
             free(val);
         }
     }
+    else if (ast->type == AST_FUNC)
+    {
+        if (ast->var_name)
+            push_elt_fun(shell, ast->var_name, ast->left_child);
+        /*new_var(shell, ast->value);
+        int res = ast_evaluation(ast->left_child);
+        del_stack(shell);
+        push_int_elt_list(shell, "?", res);
+        res = ast_evaluation(ast->right_child);
+        return res;*/
+    }
     else if (ast->type == AST_COMMAND)
     {
         char **val = expand(ast->value, ast->enclosure);
@@ -239,8 +241,11 @@ int evaluate_ast(struct ast *ast)
         if (!val)
             return 1;
         int res;
+        struct ast *block;
         if (is_builtin(*(val)))
             res = find_command(val, 1);
+        else if ((block = find_elt_fun(shell, *(ast->value))) != NULL)
+            res = evaluate_ast(block);
         else
             res = call_exec(val);
         char *tmp = val[0];

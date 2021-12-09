@@ -20,6 +20,7 @@ incdirs = [
   include_directories('./src/builtins'),
   include_directories('./src/variables'),
   include_directories('./src/loops'),
+  include_directories('./src/functions'),
   include_directories('./src/'),
 ]
 
@@ -55,6 +56,7 @@ common = [
   'src/loops/loop_stack.c',
   'src/builtins/exit.c',
   'src/builtins/export.c',
+  'src/functions/functions.c',
 ]
 
 token_printer = executable(
