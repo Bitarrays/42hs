@@ -55,6 +55,7 @@ common = [
   'src/builtins/cd.c',
   'src/builtins/continue.c',
   'src/builtins/break.c',
+  'src/builtins/dot.c',
   'src/parser/parse_functions.c',
   'src/loops/loop_stack.c',
   'src/builtins/exit.c',

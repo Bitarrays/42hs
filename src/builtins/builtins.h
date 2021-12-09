@@ -73,4 +73,12 @@ int my_continue(char **args);
  */
 int my_break(char **args);
 
+/**
+ * @brief The dot builtin
+ * 
+ * @param argv the list of arguments.
+ * @return int 
+ */
+int dot(char **argv);
+
 #endif
