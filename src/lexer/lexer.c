@@ -239,12 +239,21 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
                 }
                 if (input[j] == '$')
                 {
-                    word = realloc(word, 3 * sizeof(char));
-                    word[word_pos++] = input[j];
-                    if (input[j + 1] == '{' || input[j + 1] == '$')
+                    if (input[j + 1] == '(')
                     {
-                        word[word_pos++] = input[++j];
-                        lexer->in_variable = true;
+                        j++;
+                        create_and_append_token(lexer, TOKEN_SUBSTITUTION_OPEN,
+                                                NULL);
+                    }
+                    else
+                    {
+                        word = realloc(word, 3 * sizeof(char));
+                        word[word_pos++] = input[j];
+                        if (input[j + 1] == '{' || input[j + 1] == '$')
+                        {
+                            word[word_pos++] = input[++j];
+                            lexer->in_variable = true;
+                        }
                     }
                 }
                 else
