@@ -48,7 +48,6 @@ void echo(char **args, int fd_write);
 int my_exit(char **args);
 
 /**
-
  * @brief Put a variable to the exported variable-list, if it doesn't exist, it creates it.
  * 
  * @param args the list of arguments.
@@ -56,6 +55,7 @@ int my_exit(char **args);
  */
 int export(char **args);
 
+/**
  * @brief The continue command.
  * 
  * @param args the list of arguments.
