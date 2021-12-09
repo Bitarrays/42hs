@@ -9,6 +9,8 @@ int cd(char **args)
         shell->oldpwd = shell->pwd;
         shell->pwd = swap;
         printf("%s\n", shell->pwd);
+        setenv("OLDPWD", shell->oldpwd, 1);
+        setenv("PWD", shell->pwd, 1);
         fflush(stdout);
         return 0;
     }
