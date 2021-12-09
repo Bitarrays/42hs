@@ -8,7 +8,7 @@
 
 int evaluate_ast(struct ast *ast)
 {
-    if (shell->exit/* || shell->continue || shell->break*/)
+    if (shell->exit /*|| shell->continue || shell->break*/)
         return shell->return_code;
     if (!ast)
         return 0;
@@ -17,13 +17,13 @@ int evaluate_ast(struct ast *ast)
     {
         if (!evaluate_ast(ast->condition))
         {
-            if (shell->exit/* || shell->continue || shell->break*/)
+            if (shell->exit /*|| shell->continue || shell->break*/)
                 return shell->return_code;
             return evaluate_ast(ast->left_child);
         }
         else
         {
-            if (shell->exit/* || shell->continue || shell->break*/)
+            if (shell->exit /*|| shell->continue || shell->break*/)
                 return shell->return_code;
             return evaluate_ast(ast->right_child);
         }
@@ -60,14 +60,14 @@ int evaluate_ast(struct ast *ast)
             {
                 push_elt_list(shell, ast->value[0], var[i++]);
                 evaluate_ast(ast->left_child);
-                if (shell->exit/* || shell->continue || shell->break*/)
+                if (shell->exit)
                     return shell->return_code;
             }
         }
         free_arg(var);
         int res = evaluate_ast(
             ast->right_child); // check return code for a null for
-        if (shell->exit/* || shell->continue || shell->break*/)
+        if (shell->exit /*|| shell->continue || shell->break*/)
             return shell->return_code;
         return res;
     }
@@ -76,11 +76,11 @@ int evaluate_ast(struct ast *ast)
         int ret = 0;
         while (!evaluate_ast(ast->condition))
         {
-            if (shell->exit/* || shell->continue || shell->break*/)
+            if (shell->exit /*|| shell->continue || shell->break*/)
                 return shell->return_code;
             ret = evaluate_ast(ast->left_child);
         }
-        if (shell->exit/* || shell->continue || shell->break*/)
+        if (shell->exit /*|| shell->continue || shell->break*/)
             return shell->return_code;
         return ret;
     }
@@ -89,11 +89,11 @@ int evaluate_ast(struct ast *ast)
         int ret = 0;
         while (evaluate_ast(ast->condition))
         {
-            if (shell->exit/* || shell->continue || shell->break*/)
+            if (shell->exit /*|| shell->continue || shell->break*/)
                 return shell->return_code;
             ret = evaluate_ast(ast->left_child);
         }
-        if (shell->exit/* || shell->continue || shell->break*/)
+        if (shell->exit /*|| shell->continue || shell->break*/)
             return shell->return_code;
         return ret;
     }
@@ -124,7 +124,7 @@ int evaluate_ast(struct ast *ast)
             prec = prec && !evaluate_ast(ast->right_child);
         else if (ast->type == AST_OR)
             prec = prec || !evaluate_ast(ast->right_child);
-        if (shell->exit/* || shell->continue || shell->break*/)
+        if (shell->exit /*|| shell->continue || shell->break*/)
             return shell->return_code;
         return !prec;
     }
@@ -181,7 +181,7 @@ int evaluate_ast(struct ast *ast)
         // call redir
         exec_redirections(redirs);
         int res = evaluate_ast(ast->left_child);
-        if (shell->exit/* || shell->continue || shell->break*/)
+        if (shell->exit /*|| shell->continue || shell->break*/)
             return shell->return_code;
         return res;
         // int fd = atoi_begining(char *s);
@@ -260,7 +260,7 @@ int evaluate_ast(struct ast *ast)
     {
         int r = evaluate_ast(ast->right_child);
         //printf("%d\n", shell->exit);
-        if (shell->exit/* || shell->continue || shell->break*/)
+        if (shell->exit /*|| shell->continue || shell->break*/)
         {
             //printf("%d\n", shell->return_code);
             return shell->return_code;
