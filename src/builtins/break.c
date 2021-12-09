@@ -16,7 +16,7 @@ int my_break(char **args)
 {
     if (args[1] == NULL)
         return 1;
-    
+
     if (is_int(args[1]))
         return atoi(args[1]);
 

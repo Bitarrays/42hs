@@ -280,7 +280,8 @@ enum parser_status parse_shell_command(struct ast **ast, struct lexer *lexer)
 
         // Try compound_list
         struct ast *ast_list = ast_new(AST_LIST);
-        enum parser_status status_compound_list = parse_compound_list(&ast_list, lexer);
+        enum parser_status status_compound_list =
+            parse_compound_list(&ast_list, lexer);
         if (status_compound_list == PARSER_OK)
         {
             tok = lexer_peek(lexer);
@@ -342,7 +343,7 @@ enum parser_status parse_command(struct ast **ast, struct lexer *lexer)
     // Save of current state of lexer because of | in grammar
     struct lexer_token *save_tok = lexer_peek(lexer);
 
-     // Try fundec
+    // Try fundec
     struct ast *ast_fundec = NULL;
     if ((status = parse_funcdec(&ast_fundec, lexer)) == PARSER_OK)
     {
@@ -357,7 +358,8 @@ enum parser_status parse_command(struct ast **ast, struct lexer *lexer)
 
             // Try redirection
             struct ast *ast_redir = NULL;
-            enum parser_status status_redir = parse_redirection(&ast_redir, lexer);
+            enum parser_status status_redir =
+                parse_redirection(&ast_redir, lexer);
             if (status_redir == PARSER_ERROR)
             {
                 lexer_go_back(lexer, save_tok);
@@ -413,7 +415,8 @@ enum parser_status parse_command(struct ast **ast, struct lexer *lexer)
 
             // Try redirection
             struct ast *ast_redir = NULL;
-            enum parser_status status_redir = parse_redirection(&ast_redir, lexer);
+            enum parser_status status_redir =
+                parse_redirection(&ast_redir, lexer);
             if (status_redir == PARSER_ERROR)
             {
                 lexer_go_back(lexer, save_tok);

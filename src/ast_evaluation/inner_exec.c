@@ -31,8 +31,7 @@ int is_char_name(char c)
 
 int is_special(char c)
 {
-    return c == '#' || c == '?'
-        || c == '*' || c == '@' || c == '$' || c == '!';
+    return c == '#' || c == '?' || c == '*' || c == '@' || c == '$' || c == '!';
 }
 
 int expand_s(char **elt, char *s, enum quotes type)

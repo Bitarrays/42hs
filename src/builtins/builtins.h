@@ -40,16 +40,18 @@ int cd(char **args);
 void echo(char **args, int fd_write);
 
 /**
- * @brief  @brief Modify the shell->exit and shell->return_code parameter in the global variable shell
- * 
+ * @brief  @brief Modify the shell->exit and shell->return_code parameter in the
+ * global variable shell
+ *
  * @param args the list of arguments
  * @return int return 0 on success, 1 on failure
  */
 int my_exit(char **args);
 
 /**
- * @brief Put a variable to the exported variable-list, if it doesn't exist, it creates it.
- * 
+ * @brief Put a variable to the exported variable-list, if it doesn't exist, it
+ * creates it.
+ *
  * @param args the list of arguments.
  * @return int return 0 on success, 1 on failure.
  */
@@ -57,7 +59,7 @@ int export(char **args);
 
 /**
  * @brief The continue command.
- * 
+ *
  * @param args the list of arguments.
  * @return int the number of enclosing loops to continue. -1 on failure.
  */
@@ -65,7 +67,7 @@ int my_continue(char **args);
 
 /**
  * @brief The break command.
- * 
+ *
  * @param args the list of arguments.
  * @return int the number of enclosing loops to break. -1 on failure.
  */

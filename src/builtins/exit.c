@@ -19,7 +19,7 @@ int my_exit(char **args)
     else
     {
         if (is_int(args[1]))
-        { 
+        {
             int return_code = atoi(args[1]);
             shell->return_code = return_code % 256;
         }
