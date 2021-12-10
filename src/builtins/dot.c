@@ -93,7 +93,7 @@ static char get_first_char(const char *arg)
 char *get_file_content(const char *path)
 {
     if (get_first_char(path) != '/')
-        path = find_in_path(path);
+        return NULL;
     if (!path)
         return NULL;
     char *buffer = 0;
