@@ -63,6 +63,24 @@ static char *get_file_content(char *filename)
     return content;
 }
 
+static char **copy_args(char **argv)
+{
+    int i = 0;
+    char **args = NULL;
+    while (argv[i])
+    {
+        args = realloc(args, (i + 2) * sizeof(char *));
+        args[i] = strdup(argv[i]);
+        i++;
+    }
+    shell->nb_args = i;
+    if (args)
+        args[i] = NULL;
+    else
+        args = calloc(1, sizeof(char *));
+    return args;
+}
+
 int get_input(int argc, char **argv)
 {
     char *input = NULL;
@@ -89,7 +107,10 @@ int get_input(int argc, char **argv)
         if (!strcmp(argv[i], "-c"))
             input = strdup(argv[++i]);
         else
+        {
             input = get_file_content(argv[i]);
+            shell->args = copy_args(argv + 2);
+        }
         if (!input)
             return 1;
         input_len = strlen(input);

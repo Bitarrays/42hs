@@ -47,26 +47,6 @@ char *get_file_content(const char *path)
     return buffer;
 }
 
-void set_args(char **argv)
-{
-    int i = 2;
-    int nb_args = 0;
-    char **args = NULL;
-    while (argv[i])
-    {
-        args = realloc(args, (i + 1) * sizeof(char *));
-        char *arg = calloc(strlen(argv[i]) + 1, sizeof(char));
-        strcpy(arg, argv[i++]);
-        args[nb_args++] = arg;
-    }
-    if (args)
-        args[nb_args] = NULL;
-    else
-        args = calloc(1, sizeof(char *));
-    shell->args = args;
-    shell->nb_args = nb_args;
-}
-
 int dot(char **argv)
 {
     struct var *save = shell->var_list;
@@ -76,7 +56,6 @@ int dot(char **argv)
     char *buf = get_file_content(argv[1]);
     if (!buf)
         return shell->return_code;
-    set_args(argv);
     int res = parse_input(buf);
     free(buf);
     struct var *tmp = shell->var_list;
