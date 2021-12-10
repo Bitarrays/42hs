@@ -1,4 +1,4 @@
-for salut in arg1 arg2 arg3
+for salut
 do
     echo $salut
 done

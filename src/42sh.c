@@ -49,6 +49,10 @@ static void init_shell(int argc, char **argv)
 
 void free_shell(void)
 {
+    int i = 0;
+    while (shell->args && shell->args[i])
+        free(shell->args[i++]);
+    free(shell->args);
     free_list(shell);
     free(shell->oldpwd);
     free(shell->pwd);
