@@ -313,7 +313,8 @@ enum parser_status parse_shell_command(struct ast **ast, struct lexer *lexer)
 
         // Try compound_list
         struct ast *ast_list = ast_new(AST_LIST);
-        enum parser_status status_compound_list = parse_compound_list(&ast_list, lexer);
+        enum parser_status status_compound_list =
+            parse_compound_list(&ast_list, lexer);
         if (status_compound_list == PARSER_OK)
         {
             // TODO: create correct AST node
