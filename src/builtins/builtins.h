@@ -73,4 +73,12 @@ int my_continue(char **args);
  */
 int my_break(char **args);
 
+/**
+ * @brief The unset command.
+ * 
+ * @param args the list of arguments.
+ * @return int return 0 on success, -1 on failure.
+ */
+int unset(char **args);
+
 #endif
