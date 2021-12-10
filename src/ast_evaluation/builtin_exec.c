@@ -22,7 +22,7 @@ int is_builtin(char *cmd)
         return 1;
     if (!strcmp(cmd, "export"))
         return 1;
-    if (cmd[0] == '.')
+    if (!strcmp(cmd, "."))
         return 1;
     return 0;
 }

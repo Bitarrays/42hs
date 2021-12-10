@@ -49,7 +49,7 @@ char *get_file_content(const char *path)
 
 void set_args(char **argv)
 {
-    int i = 1;
+    int i = 2;
     int nb_args = 0;
     char **args = NULL;
     while (argv[i])
@@ -71,7 +71,9 @@ int dot(char **argv)
 {
     struct var *save = shell->var_list;
     shell->var_list = NULL;
-    char *buf = get_file_content(argv[0]);
+    if (!argv[1])
+        return 0;
+    char *buf = get_file_content(argv[1]);
     if (!buf)
         return shell->return_code;
     set_args(argv);

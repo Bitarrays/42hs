@@ -31,11 +31,11 @@ int evaluate_ast(struct ast *ast)
     else if (ast->type == AST_FOR)
     {
         char **var;
-        char *test[3] = { "oui", "non", NULL };
-        enum quotes enclosure2[2] = { Q_DOUBLE, Q_DOUBLE };
         if (!ast->value[1] || !ast->value[2])
         {
-            var = split_arg(test, enclosure2);
+            enum quotes *enclosure = calloc(shell->nb_args, sizeof(enum quotes));
+            var = split_arg(shell->args, enclosure);
+            free(enclosure);
             // wait impletation of env var
             // enum quotes enclosure[1] = {Q_NONE};
             // var = split_arg(shell->args, enclosure); // add var in array

@@ -17,7 +17,7 @@ int find_command(char **args, int fd_write)
         return my_exit(args);
     if (!strcmp(args[0], "export"))
         return export(args);
-    if (args[0][0] == '.')
+    if (!strcmp(args[0], "."))
         return dot(args);
     else
         return 1;
