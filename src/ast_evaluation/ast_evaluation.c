@@ -302,6 +302,8 @@ int evaluate_ast(struct ast *ast)
     {
         if (ast->var_name)
             push_elt_fun(shell, ast->var_name, ast->left_child);
+        else
+            evaluate_ast(ast->left_child);
         /*new_var(shell, ast->value);
         int res = ast_evaluation(ast->left_child);
         del_stack(shell);

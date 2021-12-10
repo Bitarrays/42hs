@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "../42sh.h"
 
@@ -44,6 +45,15 @@
 void my_itoa(int nb, char *buff)
 {
     sprintf(buff, "%d", nb);
+}
+
+char *generate_rand()
+{
+    srand(time(NULL));
+    int rnd = rand() % 32768;
+    char *nb = calloc(6, sizeof(char));
+    my_itoa(rnd, nb);
+    return nb;
 }
 
 int is_number(char *str)
@@ -97,6 +107,9 @@ int new_var(struct shell *sh, char **arg)
     push_elt_list(sh, "@", var);
     push_elt_list(sh, "*", var);
     push_int_elt_list(sh, "$", sh->pid);
+    push_int_elt_list(sh, "UID", sh->uid);
+    push_elt_list(sh, "OLDPWD", sh->oldpwd);
+    push_elt_list(sh, "IFS", sh->ifs);
     free(nb);
     free(var);
     return 0;
@@ -202,6 +215,8 @@ int push_int_elt_list(struct shell *sh, char *name, int val)
 char *find_elt_list(struct shell *sh, char *name)
 {
     int param = is_param("*@#?$", name);
+    if (!strcmp("RANDOM", name))
+        return generate_rand();
     struct var *tmp = NULL;
     if (param)
         tmp = sh->var_stack->var_list;
