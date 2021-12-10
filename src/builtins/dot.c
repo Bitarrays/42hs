@@ -16,15 +16,93 @@
 
 extern struct shell *shell;
 
+// static char **split_path(char *path)
+// {
+//     char *rest = path;
+//     char *token;
+//     char **paths = NULL;
+//     int paths_nb = 0;
+//     while ((token = strtok_r(rest, ":", &rest)) != NULL)
+//     {
+//         paths = realloc(paths, sizeof(char *) * (paths_nb + 2));
+//         paths[paths_nb++] = token;
+//     }
+//     paths[paths_nb] = NULL;
+//     return paths;
+// }
+
+// static char *find_in_path(const char *input)
+// {
+//     char *path=getenv("PATH");
+//     if (!path)
+//     {
+//         fprintf(stderr, "42sh: .: %s: not found\n", input);
+//         shell->return_code = 2;
+//         return NULL;
+//     }
+//     char **path_single = split_path(path);
+//     if (!path_single)
+//     {
+//         fprintf(stderr, "42sh: .: %s: not found\n", input);
+//         shell->return_code = 2;
+//         return NULL;
+//     }
+//     int i = 0;
+//     bool found = false;
+//     char *final_path = NULL;
+//     while (path_single[i] && !found)
+//     {
+//         char *full_path = calloc(strlen(path_single[i]) + strlen(input) + 2, sizeof(char));
+//         strcpy(full_path, path_single[i]);
+//         strcat(full_path, "/");
+//         strcat(full_path, input);
+//         if (access(full_path, F_OK) == 0)
+//         {
+//             found = true;
+//             final_path = full_path;
+//             continue;
+//         }
+//         free(full_path);
+//         i++;
+//     }
+//     free(path_single);
+//     struct stat sb;
+//     if (!final_path)
+//     {
+//         fprintf(stderr, "42sh: .: %s: not found\n", input);
+//         shell->return_code = 127;
+//     }
+//     else if (!(stat(final_path, &sb) == 0 && sb.st_mode & S_IXUSR))
+//     {
+//         fprintf(stderr, "42sh: .: %s: Permission denied\n", input);
+//         shell->return_code = 126;
+//         free(final_path);
+//         final_path = NULL;
+//     }
+//     return final_path;
+// }
+
+static char get_first_char(const char *arg)
+{
+    int pos = 0;
+    while (arg[pos] != 0 && arg[pos] == '.')
+        pos++;
+    return arg[pos];
+}
+
 char *get_file_content(const char *path)
 {
+    if (get_first_char(path) != '/')
+        path = find_in_path(path);
+    if (!path)
+        return NULL;
     char *buffer = 0;
     long length;
     FILE *f = fopen(path, "r");
     if (!f)
     {
         shell->return_code = 127;
-        fprintf(stderr, "42sh: %s: not found\n", path);
+        fprintf(stderr, "42sh: .: Can't open %s\n", path);
         return NULL;
     }
     struct stat sb;
