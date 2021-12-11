@@ -350,6 +350,7 @@ void lexer_build(struct lexer *lexer)
     for (int i = 0; words[i]; i++)
     {
         word_lexer(lexer, words[i], &in_cmd, &word_type);
+        create_and_append_token(lexer, TOKEN_SPACE, NULL);
     }
     if (word_type != TOKEN_WORD)
     {
@@ -359,6 +360,7 @@ void lexer_build(struct lexer *lexer)
         shell->exit = true;
     }
     create_and_append_token(lexer, TOKEN_EOF, NULL);
+    process_spaces(lexer);
     if (shell->verbose)
         lexer_print(lexer);
     free(words);
