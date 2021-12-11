@@ -305,10 +305,11 @@ enum parser_status parse_shell_command(struct ast **ast, struct lexer *lexer)
         lexer_go_back(lexer, save_tok);
     }
 
-    // Try (
+    // Try ( or $(
     tok = lexer_peek(lexer);
-    if (tok->type == TOKEN_PARENTHESIS_OPEN)
+    if (tok->type == TOKEN_PARENTHESIS_OPEN || tok->type == TOKEN_SUBSTITUTION_OPEN)
     {
+        struct lexer_token *tok_parenthesis = tok;
         lexer_pop(lexer); // token (
 
         // Try compound_list
@@ -317,7 +318,6 @@ enum parser_status parse_shell_command(struct ast **ast, struct lexer *lexer)
             parse_compound_list(&ast_list, lexer);
         if (status_compound_list == PARSER_OK)
         {
-            // TODO: create correct AST node
             tok = lexer_peek(lexer);
             if (tok->type == TOKEN_PARENTHESIS_CLOSE)
             {
@@ -325,8 +325,7 @@ enum parser_status parse_shell_command(struct ast **ast, struct lexer *lexer)
                     (*ast)->left_child = ast_list;
                 else
                 {
-                    *ast = ast_new(AST_FUNC);
-                    (*ast)->var_name = NULL;
+                    *ast = ast_new(tok_parenthesis->type == TOKEN_SUBSTITUTION_OPEN ? AST_CMD_SUBSTITUTION : AST_SUBSHELL);
                     (*ast)->left_child = ast_list;
                 }
 
