@@ -114,6 +114,18 @@ void pretty_print(struct ast *ast)
             pretty_print(ast->left_child);
             printf("}");
         }
+        else if (ast->type == AST_CMD_SUBSTITUTION)
+        {
+            printf("$(");
+            pretty_print(ast->left_child);
+            printf(")");
+        }
+        else if (ast->type == AST_SUBSHELL)
+        {
+            printf("(");
+            pretty_print(ast->left_child);
+            printf(")");
+        }
         else if (ast->type == AST_EOF)
             printf("EOF\n");
     }
