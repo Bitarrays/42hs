@@ -88,6 +88,8 @@ int get_input(int argc, char **argv)
     size_t input_len = 0;
     if (argc < 2)
     {
+        shell->args = calloc(1, sizeof(char *));
+        new_var(shell, shell->args);
         int c;
         if (!isatty(STDIN_FILENO))
         {
@@ -106,7 +108,11 @@ int get_input(int argc, char **argv)
     {
         int i = 1;
         if (!strcmp(argv[i], "-c"))
+        {
+            shell->args = calloc(1, sizeof(char *));
+            new_var(shell, shell->args);
             input = strdup(argv[++i]);
+        }
         else
         {
             input = get_file_content(argv[i]);
