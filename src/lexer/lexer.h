@@ -36,6 +36,8 @@ enum token_type
     TOKEN_BRACE_OPEN,
     TOKEN_BRACE_CLOSE,
     TOKEN_DOLLAR,
+    TOKEN_CASE,
+    TOKEN_ESAC,
     TOKEN_WORD,
     TOKEN_WORD_DOUBLE_QUOTE,
     TOKEN_WORD_SINGLE_QUOTE,
@@ -74,6 +76,7 @@ struct lexer
     bool in_for;
     bool in_variable;
     bool found_for;
+    bool found_case;
 };
 
 /**

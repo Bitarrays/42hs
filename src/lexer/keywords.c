@@ -6,7 +6,8 @@ bool is_keyword(char *word)
         !strcmp(word, "if") || !strcmp(word, "else") || !strcmp(word, "elif")
         || !strcmp(word, "fi") || !strcmp(word, "then") || !strcmp(word, "!")
         || !strcmp(word, "do") || !strcmp(word, "done") || !strcmp(word, "for")
-        || !strcmp(word, "while") || !strcmp(word, "until"));
+        || !strcmp(word, "while") || !strcmp(word, "until")
+        || !strcmp(word, "case") || !strcmp(word, "esac"));
 }
 
 enum token_type get_keyword(char *word)
@@ -33,5 +34,9 @@ enum token_type get_keyword(char *word)
         return TOKEN_WHILE;
     if (!strcmp(word, "until"))
         return TOKEN_UNTIL;
+    if (!strcmp(word, "case"))
+        return TOKEN_CASE;
+    if (!strcmp(word, "esac"))
+        return TOKEN_ESAC;
     return TOKEN_ERROR;
 }

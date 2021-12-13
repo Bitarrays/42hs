@@ -29,6 +29,8 @@ static char *get_token_string(enum token_type type)
                              "BRACE_OPEN",
                              "BRACE_CLOSE",
                              "DOLLAR",
+                             "CASE",
+                             "ESAC",
                              "WORD",
                              "WORD_DOUBLE_QUOTE",
                              "WORD_SINGLE_QUOTE",
