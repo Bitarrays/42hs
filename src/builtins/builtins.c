@@ -19,6 +19,8 @@ int find_command(char **args, int fd_write)
         return export(args);
     if (!strcmp(args[0], "unset"))
         return unset(args);
+    if (!strcmp(args[0], "."))
+        return dot(args);
     else
         return 1;
 }

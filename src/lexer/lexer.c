@@ -241,7 +241,7 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
             }
             else
             {
-                if (word)
+                if (word && (input[j] != '$' || input[j + 1] == '('))
                 {
                     create_word_and_append(word, word_pos, in_cmd, lexer,
                                            word_type);
@@ -258,7 +258,7 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
                     }
                     else
                     {
-                        word = realloc(word, 3 * sizeof(char));
+                        word = realloc(word, (word_pos + 3) * sizeof(char));
                         word[word_pos++] = input[j];
                         if (input[j + 1] == '{' || input[j + 1] == '$')
                         {
@@ -350,6 +350,7 @@ void lexer_build(struct lexer *lexer)
     for (int i = 0; words[i]; i++)
     {
         word_lexer(lexer, words[i], &in_cmd, &word_type);
+        create_and_append_token(lexer, TOKEN_SPACE, NULL);
     }
     if (word_type != TOKEN_WORD)
     {
@@ -359,6 +360,7 @@ void lexer_build(struct lexer *lexer)
         shell->exit = true;
     }
     create_and_append_token(lexer, TOKEN_EOF, NULL);
+    process_spaces(lexer);
     if (shell->verbose)
         lexer_print(lexer);
     free(words);

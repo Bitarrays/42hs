@@ -81,4 +81,12 @@ int my_break(char **args);
  */
 int unset(char **args);
 
+/**
+ * @brief The dot builtin
+ *
+ * @param argv the list of arguments.
+ * @return int
+ */
+int dot(char **argv);
+
 #endif
