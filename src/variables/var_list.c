@@ -100,7 +100,8 @@ int new_var(struct shell *sh, char **arg)
             size += strlen(arg[i]) + 1;
             var = realloc(var, size * sizeof(char));
             strcat(var, arg[i]);
-            strcat(var, " ");
+            if (arg[i + 1])
+                strcat(var, " ");
         }
         my_itoa(i, nb);
         push_elt_list(sh, nb, arg[i++]);
