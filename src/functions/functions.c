@@ -63,7 +63,7 @@ int del_fun_name(struct shell *sh, char *name)
 
     while (actual)
     {
-        if (actual->name == name)
+        if (!strcmp(actual->name,name))
         {
             if (index == 0)
                 sh->functions = actual->next;

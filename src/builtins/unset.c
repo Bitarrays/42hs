@@ -45,7 +45,10 @@ int unset(char **args)
     }
 
     if (v_option)
+    {
         del_name(shell, args[start_print]);
+        unsetenv(args[start_print]);
+    }
 
     if (f_option)
         del_fun_name(shell, args[start_print]);
