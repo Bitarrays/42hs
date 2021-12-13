@@ -60,6 +60,7 @@ common = [
   'src/builtins/exit.c',
   'src/builtins/export.c',
   'src/functions/functions.c',
+  'src/builtins/unset.c',
 ]
 
 token_printer = executable(

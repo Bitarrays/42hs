@@ -1,4 +1,6 @@
 #include "builtins.h"
+#include "../variables/var_list.h"
+#include "../functions/functions.h"
 
 int unset(char **args)
 {
@@ -33,10 +35,10 @@ int unset(char **args)
         v_option = true;
 
     if (v_option)
-        //TODO: Delete the named variable in args[start_print] if it exists. No possible error.
+        del_name(shell, args[start_print]);
 
     if (f_option)
-        //TODO: Delete the named function in args[start_print] if it exists. No possible error.
+        del_fun_name(shell, args[start_print]);
     
     return 0;
 }

@@ -54,3 +54,32 @@ void free_fun_sub(struct shell *sh)
         free(tmp);
     }
 }
+
+int del_fun_name(struct shell *sh, char *name)
+{
+    struct functions *actual = sh->functions;
+    struct functions *previous = sh->functions;
+    int index = 0;
+
+    while (actual)
+    {
+        if (actual->name == name)
+        {
+            if (index == 0)
+                sh->functions = actual->next;
+            else
+                previous->next = actual->next;
+            
+            free(actual->name);
+            free(actual);
+
+            return 1;
+        }
+
+        index++;
+        previous = actual;
+        actual = actual->next;
+    }
+
+    return 0;
+}
