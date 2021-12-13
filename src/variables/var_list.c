@@ -82,6 +82,12 @@ int is_param(char *str, char *c)
 
 int new_var(struct shell *sh, char **arg)
 {
+    int y = 0;
+    while (arg[y])
+    {
+        printf("%s\n", arg[y]);
+    }
+    printf("%d\n", arg[y] == NULL);
     struct var_stack *s = calloc(1, sizeof(struct var));
     s->var_list = NULL;
     s->next = sh->var_stack;
