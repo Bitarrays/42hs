@@ -361,6 +361,7 @@ void lexer_build(struct lexer *lexer)
     }
     create_and_append_token(lexer, TOKEN_EOF, NULL);
     process_spaces(lexer);
+    process_export(lexer);
     if (shell->verbose)
         lexer_print(lexer);
     free(words);

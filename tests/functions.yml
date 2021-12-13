@@ -1,0 +1,11 @@
+- name: Basic
+  file: ./tests/functions/basic.sh
+
+- name: Arguments
+  file: tests/functions/arguments.sh
+
+- name: Funtion in function
+  file: tests/functions/function_in_function.sh
+
+- name: Arguments hard
+  file: tests/functions/arguments_hard.sh

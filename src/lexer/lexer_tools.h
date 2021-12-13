@@ -15,4 +15,6 @@ bool is_keyword(char *word);
 
 bool is_int(char *word);
 
+void process_export(struct lexer *lexer);
+
 #endif // !LEXER_TOOLS_H
