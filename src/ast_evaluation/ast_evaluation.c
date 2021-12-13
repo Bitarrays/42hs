@@ -324,7 +324,11 @@ int evaluate_ast(struct ast *ast)
         if (is_builtin(*(val)))
             res = find_command(val, 1);
         else if ((block = find_elt_fun(shell, *(ast->value))) != NULL)
+        {
+            new_var(shell, ast->value);
             res = evaluate_ast(block);
+            del_stack(shell);
+        }
         else
             res = call_exec(val);
         char *tmp = val[0];

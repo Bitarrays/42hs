@@ -58,6 +58,8 @@ char *generate_rand()
 
 int is_number(char *str)
 {
+    if (str[0] == '0')
+        return 0;
     int i = 0;
     while (str[i] != '\0')
     {
@@ -86,7 +88,7 @@ int new_var(struct shell *sh, char **arg)
     s->var_list = NULL;
     s->next = sh->var_stack;
     sh->var_stack = s;
-    int i = 0;
+    int i = 1;
     char *nb = calloc(21, sizeof(char));
     int size = 1;
     char *var = calloc(size, sizeof(char));
@@ -103,6 +105,7 @@ int new_var(struct shell *sh, char **arg)
         my_itoa(i, nb);
         push_elt_list(sh, nb, arg[i++]);
     }
+    push_elt_list(sh, "0", sh->args[0]);
     push_int_elt_list(sh, "#", i - 1);
     push_int_elt_list(sh, "?", 0);
     push_elt_list(sh, "@", var);
