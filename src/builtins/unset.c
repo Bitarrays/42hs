@@ -34,6 +34,16 @@ int unset(char **args)
     if (!v_option && !f_option)
         v_option = true;
 
+    for (int i = 0; args[start_print][i] != '\0'; i++)
+    {
+        if ((args[start_print][i] > 'a' && args[start_print][i] < 'z')
+            || (args[start_print][i] > '0' && args[start_print][i] < '9') || args[start_print][i] == '_')
+            continue;
+
+        fprintf(stderr, "42sh: unset: %s: bad variable name\n", args[start_print]);
+        return 1;
+    }
+
     if (v_option)
         del_name(shell, args[start_print]);
 
