@@ -36,7 +36,7 @@ int unset(char **args)
 
     for (int i = 0; args[start_print][i] != '\0'; i++)
     {
-        if ((args[start_print][i] >= 'a' && args[start_print][i] <= 'z')
+        if ((args[start_print][i] >= 'a' && args[start_print][i] <= 'z') || (args[start_print][i] >= 'A' && args[start_print][i] <= 'Z')
             || (args[start_print][i] >= '0' && args[start_print][i] <= '9') || args[start_print][i] == '_')
             continue;
 
