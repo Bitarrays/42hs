@@ -32,13 +32,18 @@ int evaluate_ast(struct ast *ast)
     {
         char **var;
         push_loop(shell, ast);
-        if (!ast->value[1] || !ast->value[2])
+        if ((!ast->value[1] || !ast->value[2]))
         {
-            enum quotes *enclosure = calloc(shell->nb_args, sizeof(enum quotes));
-            char **tmp = calloc(2, sizeof(char *));
-            tmp[0] = find_elt_list(shell, "@");
-            var = split_arg(tmp, enclosure);
-            free(enclosure);
+            if (shell->nb_args > 0)
+            {
+                enum quotes *enclosure = calloc(shell->nb_args, sizeof(enum quotes));
+                char **tmp = calloc(2, sizeof(char *));
+                tmp[0] = find_elt_list(shell, "@");
+                var = split_arg(tmp, enclosure);
+                free(enclosure);
+            }
+            else
+                var = NULL;
             // wait impletation of env var
             // enum quotes enclosure[1] = {Q_NONE};
             // var = split_arg(shell->args, enclosure); // add var in array
