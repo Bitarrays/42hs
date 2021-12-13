@@ -293,3 +293,35 @@ int del_name(struct shell *sh, char *name)
 
     return 0;
 }
+
+struct var *var_list_cpy(struct shell *sh)
+{
+    struct var *new = NULL;
+    struct var *list = sh->var_list;
+    while (list)
+    {
+        struct var *tmp = new;
+        new = calloc(1, sizeof(struct var));
+        if (!new)
+            return NULL;
+        char *new_content = calloc(strlen(list->value) + 1, sizeof(char));
+        if (!new_content)
+        {
+            free(new);
+            return NULL;
+        }
+        strcpy(new_content, list->value);
+        new->name = calloc(strlen(list->name) + 1, sizeof(char));
+        if (!new->name)
+        {
+            free(new);
+            free(new_content);
+            return NULL;
+        }
+        strcpy(new->name, list->name);
+        new->value = new_content;
+        new->next = tmp;
+        list = list->next;
+    }
+    return new;
+}

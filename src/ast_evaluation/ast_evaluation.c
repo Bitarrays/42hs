@@ -327,6 +327,17 @@ int evaluate_ast(struct ast *ast)
         res = ast_evaluation(ast->right_child);
         return res;*/
     }
+    else if (ast->type == AST_CMD_SUBSTITUTION || ast->type == AST_SUBSHELL)
+    {
+        struct var *cpy = var_list_cpy(shell);
+        int res = evaluate_ast(ast->left_child);
+        free_list_sub(shell->var_list);
+        shell->ctn = 0;
+        shell->brk = 0;
+        shell->exit = 0;
+        shell->var_list = cpy;
+        return res;
+    }
     else if (ast->type == AST_COMMAND)
     {
         char **val = expand(ast->value, ast->enclosure);
@@ -342,6 +353,9 @@ int evaluate_ast(struct ast *ast)
             new_var(shell, ast->value);
             res = evaluate_ast(block);
             del_stack(shell);
+            shell->ctn = 0;
+            shell->brk = 0;
+            shell->exit = 0;
         }
         else
             res = call_exec(val);
