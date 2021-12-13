@@ -1,4 +1,5 @@
 #include "builtins.h"
+#include "var_list.h"
 
 int cd(char **args)
 {
@@ -29,6 +30,7 @@ int cd(char **args)
     }
 
     shell->oldpwd = strcpy(shell->oldpwd, shell->pwd);
+    push_elt_list(shell, "OLDPWD", shell->pwd);
 
     getcwd(shell->pwd, 2048);
 

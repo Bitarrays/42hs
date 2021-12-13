@@ -32,10 +32,10 @@
   input: r=aaa; t='-$r-'; s="-$r'-"; elt=rr$r$t$s'oo$r 'oo" tt"pp" "; cat=ee${elt}ee; for i in "gg" "$cat"; do echo "$i"; done
 
 - name: for adv 4
-  input: r=aaa; t='-$r-'; s="-$r-"; elt=rr$r$t$s'oo$r 'oo" tt"pp" "; cat=ee${elt}ee; for i in "gg ""$cat"; do echo "$i"; done
+  input: r=aaa; t='-$r-'; s="-$r-"; elt=rr$r$t$s'oo$r 'oo" tt"pp" "; cat=ee${elt}ee; for i in "gg $cat"; do echo "$i"; done
 
 - name: for adv 5
-  input: r=aaa; t='-$r-'; s="-$r-'"; elt=rr$r$t$s'oo$r 'oo" tt"pp" "; cat=ee${elt}ee; for i in "gg ""$cat"; do echo "$i"; done
+  input: r=aaa; t='-$r-'; s="-$r-'"; elt=rr$r$t$s'oo$r 'oo" tt"pp" "; cat=ee${elt}ee; for i in "gg $cat"; do echo "$i"; done
 
 - name: for space in list
   input: for i in "ee oo"; do echo $i; done
@@ -47,7 +47,7 @@
 #   input: \$a=11; b=22; echo $\$a $b
 
 - name: mix non quote and quote
-  input: A=hello; echo $A'$A'\'$A\'
+  input: A=hello; echo $A '$A' \'$A\'
 
 - name: test special
   input: echo $?

@@ -22,8 +22,6 @@ struct var_stack
 struct loop_stack
 {
     struct ast *loop;
-    char **var;
-    int index;
     struct loop_stack *next;
 };
 
@@ -51,6 +49,8 @@ struct shell
     struct var *var_list;
     struct loop_stack *loop_stack;
     struct functions *functions;
+    int ctn; // continue is a keyword
+    int brk; // break is a keyword
     pid_t pid;
 };
 

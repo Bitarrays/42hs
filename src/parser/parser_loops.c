@@ -146,6 +146,9 @@ enum parser_status parse_for(struct ast **ast, struct lexer *lexer)
         enclosure = realloc(enclosure, len * sizeof(enum quotes));
         enclosure[len - 1] = 0;
 
+        (*ast)->value = values;
+        (*ast)->enclosure = enclosure;
+
         //? already took left part of \ condition
         if (semi_colon)
             return handle_parser_error(PARSER_ERROR, ast);
