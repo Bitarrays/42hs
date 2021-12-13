@@ -66,6 +66,7 @@ int evaluate_ast(struct ast *ast)
                     shell->ctn--;
                     if (shell->ctn > 0 && get_ast_loop(shell))
                     {
+                        free_arg(var);
                         pop_loop(shell);
                         return res;
                     }
@@ -78,13 +79,19 @@ int evaluate_ast(struct ast *ast)
                     shell->brk--;
                     pop_loop(shell);
                     if (shell->brk > 0 && get_ast_loop(shell))
+                    {
+                        free_arg(var);
                         return res;
+                    }
                     else if (shell->brk)
                         shell->brk = 0;
                     break;
                 }
                 if (shell->exit)
+                {
+                    free_arg(var);
                     return shell->return_code;
+                }
             }
         }
         free_arg(var);
