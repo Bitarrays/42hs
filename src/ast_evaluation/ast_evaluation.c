@@ -308,7 +308,10 @@ int evaluate_ast(struct ast *ast)
     else if (ast->type == AST_FUNC)
     {
         if (ast->var_name)
-            push_elt_fun(shell, ast->var_name, ast->left_child);
+        {
+            if (!push_elt_fun(shell, ast->var_name, ast->left_child))
+                ast->left_child = NULL;
+        }
         else
             evaluate_ast(ast->left_child);
         /*new_var(shell, ast->value);

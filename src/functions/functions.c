@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "../42sh.h"
+#include "ast.h"
 
 int push_elt_fun(struct shell *sh, char *name, struct ast *fun)
 {
@@ -51,35 +52,7 @@ void free_fun_sub(struct shell *sh)
         struct functions *tmp = fun;
         fun = fun->next;
         free(tmp->name);
+        ast_free(tmp->function);
         free(tmp);
     }
-}
-
-int del_fun_name(struct shell *sh, char *name)
-{
-    struct functions *actual = sh->functions;
-    struct functions *previous = sh->functions;
-    int index = 0;
-
-    while (actual)
-    {
-        if (!strcmp(actual->name,name))
-        {
-            if (index == 0)
-                sh->functions = actual->next;
-            else
-                previous->next = actual->next;
-            
-            free(actual->name);
-            free(actual);
-
-            return 1;
-        }
-
-        index++;
-        previous = actual;
-        actual = actual->next;
-    }
-
-    return 0;
 }
