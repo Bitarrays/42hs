@@ -3,10 +3,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "functions.h"
 #include "lexer.h"
 #include "shell_input.h"
 #include "var_list.h"
-#include "functions.h"
 
 struct shell *shell;
 

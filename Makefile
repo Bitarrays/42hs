@@ -32,5 +32,5 @@ doc:
 
 clean:
 	@echo "Cleaning up..."
-	@rm -rf builddir 42sh doc
+	@rm -rf builddir 42sh doc vgcore.*
 	@echo "Done."
