@@ -35,6 +35,7 @@ common = [
   'src/lexer/keywords.c',
   'src/lexer/split_input.c',
   'src/lexer/spaces.c',
+  'src/lexer/export.c',
   'src/parser/parser.c',
   'src/parser/parser_high_level.c',
   'src/parser/parser_conditions.c',
