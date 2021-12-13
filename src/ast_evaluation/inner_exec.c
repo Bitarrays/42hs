@@ -6,6 +6,8 @@
 
 void free_arg(char **var)
 {
+    if (!var)
+        return;
     int i = 0;
     while (var[i])
         free(var[i++]);

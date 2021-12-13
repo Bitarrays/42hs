@@ -10,8 +10,8 @@
 - name: For mixed ';' and '\n'
   file: tests/for/mixed.sh
 
-- name: For without in
-  file: tests/for/without_in.sh
+- name: For no args no in
+  file: tests/for/no_args_no_in.sh
 
 - name: Multiple for
   file: tests/for/multiple.sh

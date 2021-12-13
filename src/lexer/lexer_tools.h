@@ -2,6 +2,7 @@
 #define LEXER_TOOLS_H
 
 #include "lexer.h"
+#include "spaces.h"
 
 void create_and_append_token(struct lexer *lexer, enum token_type type,
                              char *value);

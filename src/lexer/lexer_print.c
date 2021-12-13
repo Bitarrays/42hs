@@ -32,7 +32,8 @@ static char *get_token_string(enum token_type type)
                              "WORD",
                              "WORD_DOUBLE_QUOTE",
                              "WORD_SINGLE_QUOTE",
-                             "EOF" };
+                             "EOF",
+                             "SPACE" };
     return token_string[type];
 }
 
