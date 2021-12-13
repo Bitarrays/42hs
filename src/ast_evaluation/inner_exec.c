@@ -76,25 +76,33 @@ int expand_s(char **elt, char *s, enum quotes type)
                 }
                 if (bracket)
                     i++;
-                char *name = calloc(size_var + 1, sizeof(char));
-                strncpy(name, s + start, size_var);
-                name[size_var] = '\0';
-                char *var = find_elt_list(shell, name);
-                if (!var)
-                    var = "";
-                int new_size = strlen(var);
-                size += begin - i + new_size;
-                char *tmp = realloc(new, (size + 1) * sizeof(char));
-                if (!tmp)
-                    return 0;
-                new = tmp;
-                strcpy(new + i_new, var);
-                i_new += new_size;
-                free(name);
-                if (s[i] == '\0')
-                    break;
-                if (s[i] == '$')
-                    continue;
+                if (i - begin != 1)
+                {
+                    char *name = calloc(size_var + 1, sizeof(char));
+                    strncpy(name, s + start, size_var);
+                    name[size_var] = '\0';
+                    char *var = find_elt_list(shell, name);
+                    if (!var)
+                        var = "";
+                    int new_size = strlen(var);
+                    size += begin - i + new_size;
+                    char *tmp = realloc(new, (size + 1) * sizeof(char));
+                    if (!tmp)
+                        return 0;
+                    new = tmp;
+                    strcpy(new + i_new, var);
+                    i_new += new_size;
+                    free(name);
+                    if (s[i] == '\0')
+                        break;
+                    if (s[i] == '$')
+                        continue;
+                }
+                else
+                {
+                    i--;
+                    new[i_new++] = s[i++];
+                }
             }
             else if (s[i] == '\\')
             {
@@ -141,25 +149,33 @@ int expand_s(char **elt, char *s, enum quotes type)
                 }
                 if (bracket)
                     i++;
-                char *name = calloc(size_var + 1, sizeof(char));
-                strncpy(name, s + start, size_var);
-                name[size_var] = '\0';
-                char *var = find_elt_list(shell, name);
-                if (!var)
-                    var = "";
-                int new_size = strlen(var);
-                size += begin - i + new_size;
-                char *tmp = realloc(new, (size + 1) * sizeof(char));
-                if (!tmp)
-                    return 0;
-                new = tmp;
-                strcpy(new + i_new, var);
-                i_new += new_size;
-                free(name);
-                if (s[i] == '\0')
-                    break;
-                if (s[i] == '$')
-                    continue;
+                if (i - begin != 1)
+                {
+                    char *name = calloc(size_var + 1, sizeof(char));
+                    strncpy(name, s + start, size_var);
+                    name[size_var] = '\0';
+                    char *var = find_elt_list(shell, name);
+                    if (!var)
+                        var = "";
+                    int new_size = strlen(var);
+                    size += begin - i + new_size;
+                    char *tmp = realloc(new, (size + 1) * sizeof(char));
+                    if (!tmp)
+                        return 0;
+                    new = tmp;
+                    strcpy(new + i_new, var);
+                    i_new += new_size;
+                    free(name);
+                    if (s[i] == '\0')
+                        break;
+                    if (s[i] == '$')
+                        continue;
+                }
+                else
+                {
+                    i--;
+                    new[i_new++] = s[i++];
+                }
             }
             else if (s[i] == '\\')
             {

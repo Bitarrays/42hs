@@ -57,3 +57,9 @@
 
 - name: test special end 2
   input: echo $?@
+
+- name: only $
+  input: echo \n$
+
+- name: only $ quoted
+  input: echo "\n$"
