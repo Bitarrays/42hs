@@ -74,7 +74,7 @@ static char **copy_args(char **argv)
         args[i] = strdup(argv[i]);
         i++;
     }
-    shell->nb_args = i;
+    shell->nb_args = i - 1;
     if (args)
         args[i] = NULL;
     else
@@ -110,7 +110,7 @@ int get_input(int argc, char **argv)
         else
         {
             input = get_file_content(argv[i]);
-            shell->args = copy_args(argv + 2);
+            shell->args = copy_args(argv + 1);
             new_var(shell, shell->args);
         }
         if (!input)
