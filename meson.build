@@ -4,7 +4,7 @@ project(
   version : '1.0',
   default_options: [
     'c_std=c99',
-    'warning_level=3',
+    'warning_level=2',
     'werror=true',
   ],
 )
@@ -56,6 +56,7 @@ common = [
   'src/builtins/cd.c',
   'src/builtins/continue.c',
   'src/builtins/break.c',
+  'src/builtins/dot.c',
   'src/parser/parse_functions.c',
   'src/loops/loop_stack.c',
   'src/builtins/exit.c',
