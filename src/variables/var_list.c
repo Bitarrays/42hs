@@ -95,14 +95,15 @@ int new_var(struct shell *sh, char **arg)
     {
         if (i != 0)
         {
-            size += strlen(arg[i]);
+            size += strlen(arg[i]) + 1;
             var = realloc(var, size * sizeof(char));
             strcat(var, arg[i]);
+            strcat(var, " ");
         }
         my_itoa(i, nb);
         push_elt_list(sh, nb, arg[i++]);
     }
-    push_int_elt_list(sh, "#", i);
+    push_int_elt_list(sh, "#", i - 1);
     push_int_elt_list(sh, "?", 0);
     push_elt_list(sh, "@", var);
     push_elt_list(sh, "*", var);
