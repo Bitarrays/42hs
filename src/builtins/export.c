@@ -8,7 +8,7 @@ int export(char **args)
         fprintf(stderr,
                 "42sh: export: expected export <name> or export <name>=<value> "
                 "but got export\n");
-        return 1;
+        return 0;
     }
 
     for (int i = 0; args[1][i] != '\0'; i++)
@@ -18,13 +18,22 @@ int export(char **args)
             continue;
 
         fprintf(stderr, "42sh: export %s: bad variable name\n", args[1]);
-        return 1;
+        return 2;
     }
 
     if (args[2] == NULL)
-        setenv(args[1], "", 1);
+    {
+        char *value = find_elt_list(shell, args[1]);
+        if (value != NULL)
+        {
+            setenv(args[1], value, 1);
+        }
+    }
     else
+    {
         setenv(args[1], args[2], 1);
+        push_elt_list(shell, args[1], args[2]);
+    }
 
     return 0;
 }
