@@ -125,6 +125,13 @@ char *get_file_content(const char *path)
     return buffer;
 }
 
+static void restore_shell(struct var *vars, struct var_stack *stack)
+{
+    free_list(shell);
+    shell->var_list = vars;
+    shell->var_stack = stack;
+}
+
 int dot(char **argv)
 {
     struct var *save_var_list = shell->var_list;
@@ -135,27 +142,20 @@ int dot(char **argv)
     new_var(shell, args);
     if (!argv[1])
     {
-        free_list(shell);
         free(args);
-        shell->var_list = save_var_list;
-        shell->var_stack = save_var_stack;
+        restore_shell(save_var_list, save_var_stack);
         return 0;
     }
     char *buf = get_file_content(argv[1]);
     if (!buf)
     {
-        free_list(shell);
         free(args);
-        shell->var_list = save_var_list;
-        shell->var_stack = save_var_stack;
+        restore_shell(save_var_list, save_var_stack);
         return shell->return_code;
     }
-    int res = parse_input(buf);
+    parse_input(buf);
     free(buf);
-    free_list(shell);
     free(args);
-    shell->var_list = save_var_list;
-    shell->var_stack = save_var_stack;
-    return res;
+    restore_shell(save_var_list, save_var_stack);
     return shell->return_code;
 }
