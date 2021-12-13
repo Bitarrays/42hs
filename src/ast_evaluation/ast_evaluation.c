@@ -31,8 +31,6 @@ int evaluate_ast(struct ast *ast)
     else if (ast->type == AST_FOR)
     {
         char **var;
-        char *test[3] = { "oui", "non", NULL };
-        enum quotes enclosure2[2] = { Q_DOUBLE, Q_DOUBLE };
         push_loop(shell, ast);
         if (!ast->value[1] || !ast->value[2])
         {
