@@ -1,6 +1,7 @@
 #include "shell_input.h"
 
 #include "parser.h"
+#include "var_list.h"
 
 static int shell_prompt(void)
 {
@@ -110,6 +111,7 @@ int get_input(int argc, char **argv)
         {
             input = get_file_content(argv[i]);
             shell->args = copy_args(argv + 2);
+            new_var(shell, shell->args);
         }
         if (!input)
             return 1;

@@ -9,6 +9,7 @@ void free_list(struct shell *sh);
 int push_int_elt_list(struct shell *sh, char *name, int val);
 void del_stack(struct shell *sh);
 int new_var(struct shell *sh, char **arg);
+int del_name(struct shell *sh, char *name);
 // int change_elt_list(struct shell *sh, char *name, char *value);
 
 #endif /* !VAR_LIST_H */
