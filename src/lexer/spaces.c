@@ -2,7 +2,8 @@
 
 static bool is_word(enum token_type type)
 {
-    int res = type >= TOKEN_WORD_DOUBLE_QUOTE && type <= TOKEN_WORD_SINGLE_QUOTE;
+    int res =
+        type >= TOKEN_WORD_DOUBLE_QUOTE && type <= TOKEN_WORD_SINGLE_QUOTE;
     return res;
 }
 
@@ -28,10 +29,12 @@ void process_spaces(struct lexer *lexer)
                 next = tmp;
             }
         }
-        else if (is_word(token->type) && is_word(next->type) && next->type == token->type)
+        else if (is_word(token->type) && is_word(next->type)
+                 && next->type == token->type)
         {
             token->next = next->next;
-            token->value = realloc(token->value, strlen(token->value) + strlen(next->value) + 2);
+            token->value = realloc(
+                token->value, strlen(token->value) + strlen(next->value) + 2);
             strcat(token->value, next->value);
             free(next->value);
             free(next);

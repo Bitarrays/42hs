@@ -36,11 +36,13 @@ int evaluate_ast(struct ast *ast)
         {
             if (shell->nb_args > 0)
             {
-                enum quotes *enclosure = calloc(shell->nb_args, sizeof(enum quotes));
+                enum quotes *enclosure =
+                    calloc(shell->nb_args, sizeof(enum quotes));
                 char **tmp = calloc(2, sizeof(char *));
                 tmp[0] = find_elt_list(shell, "@");
                 var = split_arg(tmp, enclosure);
                 free(enclosure);
+                free(tmp);
             }
             else
                 var = NULL;

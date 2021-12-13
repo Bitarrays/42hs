@@ -1,6 +1,6 @@
-#include "builtins.h"
-#include "../variables/var_list.h"
 #include "../functions/functions.h"
+#include "../variables/var_list.h"
+#include "builtins.h"
 
 int unset(char **args)
 {
@@ -14,7 +14,8 @@ int unset(char **args)
             v_option = true;
         else if (!strcmp(args[start_print], "-f"))
             f_option = true;
-        else if (!strcmp(args[start_print], "-fv") || !strcmp(args[start_print], "-vf"))
+        else if (!strcmp(args[start_print], "-fv")
+                 || !strcmp(args[start_print], "-vf"))
         {
             v_option = true;
             f_option = true;
@@ -23,7 +24,8 @@ int unset(char **args)
         {
             if (args[start_print][0] == '-')
             {
-                fprintf(stderr, "42sh: unset: Illegal option %s\n", args[start_print]);
+                fprintf(stderr, "42sh: unset: Illegal option %s\n",
+                        args[start_print]);
                 return 1;
             }
 
@@ -36,11 +38,14 @@ int unset(char **args)
 
     for (int i = 0; args[start_print][i] != '\0'; i++)
     {
-        if ((args[start_print][i] >= 'a' && args[start_print][i] <= 'z') || (args[start_print][i] >= 'A' && args[start_print][i] <= 'Z')
-            || (args[start_print][i] >= '0' && args[start_print][i] <= '9') || args[start_print][i] == '_')
+        if ((args[start_print][i] >= 'a' && args[start_print][i] <= 'z')
+            || (args[start_print][i] >= 'A' && args[start_print][i] <= 'Z')
+            || (args[start_print][i] >= '0' && args[start_print][i] <= '9')
+            || args[start_print][i] == '_')
             continue;
 
-        fprintf(stderr, "42sh: unset: %s: bad variable name\n", args[start_print]);
+        fprintf(stderr, "42sh: unset: %s: bad variable name\n",
+                args[start_print]);
         return 1;
     }
 
@@ -52,6 +57,6 @@ int unset(char **args)
 
     if (f_option)
         del_fun_name(shell, args[start_print]);
-    
+
     return 0;
 }

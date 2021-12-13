@@ -33,7 +33,7 @@ static char **split_path(char *path)
 
 static char *find_in_path(const char *input)
 {
-    char *path_tmp=getenv("PATH");
+    char *path_tmp = getenv("PATH");
     char *path = calloc(strlen(path_tmp) + 1, sizeof(char));
     strcpy(path, path_tmp);
     if (!path)
@@ -56,12 +56,14 @@ static char *find_in_path(const char *input)
     char *final_path = NULL;
     while (path_single[i] && !found)
     {
-        char *full_path = calloc(strlen(path_single[i]) + strlen(input) + 2, sizeof(char));
+        char *full_path =
+            calloc(strlen(path_single[i]) + strlen(input) + 2, sizeof(char));
         strcpy(full_path, path_single[i]);
         strcat(full_path, "/");
         strcat(full_path, input);
         struct stat sb;
-        if (access(full_path, F_OK) == 0 && (stat(path, &sb) == 0 && sb.st_mode & S_IXUSR))
+        if (access(full_path, F_OK) == 0
+            && (stat(path, &sb) == 0 && sb.st_mode & S_IXUSR))
         {
             found = true;
             final_path = full_path;

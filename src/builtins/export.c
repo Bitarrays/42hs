@@ -13,7 +13,8 @@ int export(char **args)
 
     for (int i = 0; args[1][i] != '\0'; i++)
     {
-        if ((args[1][i] >= 'a' && args[1][i] <= 'z') || (args[1][i] >= 'A' && args[1][i] <= 'Z')
+        if ((args[1][i] >= 'a' && args[1][i] <= 'z')
+            || (args[1][i] >= 'A' && args[1][i] <= 'Z')
             || (args[1][i] >= '0' && args[1][i] <= '9') || args[1][i] == '_')
             continue;
 

@@ -43,6 +43,7 @@ struct shell
     char *ifs;
     uid_t uid;
     int return_code;
+    char *random_nb;
     bool verbose;
     bool interupt;
     struct var_stack *var_stack;

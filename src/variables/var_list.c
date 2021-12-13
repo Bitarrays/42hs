@@ -47,13 +47,14 @@ void my_itoa(int nb, char *buff)
     sprintf(buff, "%d", nb);
 }
 
-char *generate_rand()
+char *generate_rand(struct shell *sh)
 {
     srand(time(NULL));
     int rnd = rand() % 32768;
-    char *nb = calloc(6, sizeof(char));
-    my_itoa(rnd, nb);
-    return nb;
+    if (!sh->random_nb)
+        sh->random_nb = calloc(6, sizeof(char));
+    my_itoa(rnd, sh->random_nb);
+    return sh->random_nb;
 }
 
 int is_number(char *str)
@@ -221,7 +222,7 @@ char *find_elt_list(struct shell *sh, char *name)
 {
     int param = is_param("*@#?$", name);
     if (!strcmp("RANDOM", name))
-        return generate_rand();
+        return generate_rand(sh);
     struct var *tmp = NULL;
     if (param)
         tmp = sh->var_stack->var_list;
@@ -271,13 +272,13 @@ int del_name(struct shell *sh, char *name)
 
     while (actual)
     {
-        if (!strcmp(actual->name,name))
+        if (!strcmp(actual->name, name))
         {
             if (index == 0)
                 sh->var_list = actual->next;
             else
                 previous->next = actual->next;
-            
+
             free(actual->name);
             free(actual->value);
             free(actual);

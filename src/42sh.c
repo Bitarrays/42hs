@@ -44,6 +44,7 @@ static void init_shell(int argc, char **argv)
     shell->var_stack = NULL;
     shell->functions = NULL;
     shell->loop_stack = NULL;
+    shell->random_nb = NULL;
     // append param shell->var_stack
 }
 
@@ -57,6 +58,8 @@ void free_shell(void)
     free(shell->oldpwd);
     free(shell->pwd);
     free(shell->ifs);
+    if (shell->random_nb)
+        free(shell->random_nb);
     free(shell);
 }
 
