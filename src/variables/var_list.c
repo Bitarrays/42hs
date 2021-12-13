@@ -257,3 +257,33 @@ void free_list(struct shell *sh)
         del_stack(sh);
     free_list_sub(sh->var_list);
 }
+
+int del_name(struct shell *sh, char *name)
+{
+    struct var *actual = sh->var_list;
+    struct var *previous = sh->var_list;
+    int index = 0;
+
+    while (actual)
+    {
+        if (!strcmp(actual->name,name))
+        {
+            if (index == 0)
+                sh->var_list = actual->next;
+            else
+                previous->next = actual->next;
+            
+            free(actual->name);
+            free(actual->value);
+            free(actual);
+
+            return 1;
+        }
+
+        index++;
+        previous = actual;
+        actual = actual->next;
+    }
+
+    return 0;
+}
