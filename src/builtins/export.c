@@ -13,8 +13,8 @@ int export(char **args)
 
     for (int i = 0; args[1][i] != '\0'; i++)
     {
-        if ((args[1][i] >= 'a' && args[1][i] =< 'z')
-            || (args[1][i] >= '0' && args[1][i] =< '9') || args[1][i] == '_')
+        if ((args[1][i] >= 'a' && args[1][i] <= 'z')
+            || (args[1][i] >= '0' && args[1][i] <= '9') || args[1][i] == '_')
             continue;
 
         fprintf(stderr, "42sh: export %s: bad variable name\n", args[1]);

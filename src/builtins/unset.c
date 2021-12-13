@@ -36,8 +36,8 @@ int unset(char **args)
 
     for (int i = 0; args[start_print][i] != '\0'; i++)
     {
-        if ((args[start_print][i] >= 'a' && args[start_print][i] =< 'z')
-            || (args[start_print][i] >= '0' && args[start_print][i] =< '9') || args[start_print][i] == '_')
+        if ((args[start_print][i] >= 'a' && args[start_print][i] <= 'z')
+            || (args[start_print][i] >= '0' && args[start_print][i] <= '9') || args[start_print][i] == '_')
             continue;
 
         fprintf(stderr, "42sh: unset: %s: bad variable name\n", args[start_print]);
