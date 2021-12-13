@@ -109,6 +109,7 @@ char *get_file_content(const char *path)
     {
         shell->return_code = 126;
         fprintf(stderr, "42sh: %s: Permission denied\n", path);
+        fclose(f);
         return NULL;
     }
 
@@ -127,16 +128,34 @@ char *get_file_content(const char *path)
 int dot(char **argv)
 {
     struct var *save_var_list = shell->var_list;
+    struct var_stack *save_var_stack = shell->var_stack;
     shell->var_list = NULL;
+    shell->var_stack = NULL;
+    char **args = calloc(1, sizeof(char *));
+    new_var(shell, args);
     if (!argv[1])
+    {
+        free_list(shell);
+        free(args);
+        shell->var_list = save_var_list;
+        shell->var_stack = save_var_stack;
         return 0;
+    }
     char *buf = get_file_content(argv[1]);
     if (!buf)
+    {
+        free_list(shell);
+        free(args);
+        shell->var_list = save_var_list;
+        shell->var_stack = save_var_stack;
         return shell->return_code;
+    }
     int res = parse_input(buf);
     free(buf);
     free_list(shell);
+    free(args);
     shell->var_list = save_var_list;
+    shell->var_stack = save_var_stack;
     return res;
     return shell->return_code;
 }
