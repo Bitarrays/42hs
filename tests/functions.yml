@@ -9,3 +9,18 @@
 
 - name: Arguments hard
   file: tests/functions/arguments_hard.sh
+
+- name: Mutilple calls with simple args
+  file: tests/functions/multiple_calls.sh
+
+- name: Recursive calls
+  file: tests/functions/recursive_call.sh
+
+- name: Declaration in if
+  file: tests/functions/declaration_in_if.sh
+
+- name: Use function in other command
+  file: tests/functions/use_fun_in_other_cmd.sh
+
+- name: Variable in function
+  file: tests/functions/variable_in_fun.sh
