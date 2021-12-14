@@ -257,6 +257,7 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
                 {
                     if (input[j + 1] == '(')
                     {
+                        *in_cmd = false;
                         j++;
                         create_and_append_token(lexer, TOKEN_SUBSTITUTION_OPEN,
                                                 NULL);
@@ -273,7 +274,11 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
                     }
                 }
                 else
+                {
+                    if (input[j] == '{' || input[j] == '(')
+                        *in_cmd = false;
                     create_and_append_token(lexer, get_special(input[j]), NULL);
+                }
             }
         }
         else if (*word_type == TOKEN_WORD && is_redir(input[j]))
