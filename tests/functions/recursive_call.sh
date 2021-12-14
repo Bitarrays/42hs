@@ -1,12 +1,11 @@
 test()
 {
-    if echo $@; then
+    if $@; then
         test false
     else
-        test true
+        echo end
     fi
-    echo end
 }
 
-test false
+test true
 echo "did this work ?"
