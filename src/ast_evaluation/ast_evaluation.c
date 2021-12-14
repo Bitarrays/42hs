@@ -248,21 +248,13 @@ int evaluate_ast(struct ast *ast)
             j++;
         }
         redirs[i][j] = tmp->right_child->value[0];
-
-        int k = 0;
-        while (redirs[k] && shell->verbose)
-        {
-            int l = 0;
-            while (redirs[k][l])
-            {
-                printf("%s ", redirs[k][l++]);
-            }
-            k++;
-            printf("\n");
-        }
         // call redir
         exec_redirections(redirs);
         int res = evaluate_ast(ast->left_child);
+        int k = 0;
+        while (redirs[k])
+            free(redirs[k++]);
+        free(redirs);
         if (shell->exit || shell->ctn || shell->brk)
             return shell->return_code;
         return res;
