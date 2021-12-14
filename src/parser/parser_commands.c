@@ -42,6 +42,10 @@ enum parser_status parse_redirection(struct ast **ast, struct lexer *lexer)
         redir_value[0] = type;
     }
     (*ast)->value = redir_value;
+    enum quotes *enclosure = calloc(2, sizeof(enum quotes));
+    enclosure[0] = Q_SINGLE;
+    enclosure[1] = Q_SINGLE;
+    (*ast)->enclosure = enclosure;
 
     lexer_pop(lexer);
     tok = lexer_peek(lexer);
