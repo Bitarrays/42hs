@@ -6,3 +6,6 @@
 
 - name: Function in subshell
   file: ./tests/subshells/fun_in_subshell.sh
+
+- name: Multiple variables
+  file: ./tests/subshells/multiple_variables.sh
