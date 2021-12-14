@@ -326,11 +326,32 @@ int evaluate_ast(struct ast *ast)
         res = ast_evaluation(ast->right_child);
         return res;*/
     }
-    else if (ast->type == AST_CMD_SUBSTITUTION || ast->type == AST_SUBSHELL)
+    else if (ast->type == AST_SUBSHELL)
     {
         struct var *cpy = var_list_cpy(shell);
         struct functions *fn_cpy = fun_list_cpy(shell);
         int res = evaluate_ast(ast->left_child);
+        free_list_sub(shell->var_list);
+        free_fun_sub(shell);
+        shell->ctn = 0;
+        shell->brk = 0;
+        shell->exit = 0;
+        shell->var_list = cpy;
+        shell->functions = fn_cpy;
+        return res;
+    }
+    else if (ast->type == AST_CMD_SUBSTITUTION)
+    {
+        struct var *cpy = var_list_cpy(shell);
+        struct functions *fn_cpy = fun_list_cpy(shell);
+        int save = dup(STDOUT_FILENO);
+        char *path = get_next_free_file();
+        int fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+        dup2(fd, STDOUT_FILENO);
+        close(fd);
+        int res = evaluate_ast(ast->left_child);
+        dup2(save, STDOUT_FILENO);
+        free(path);
         free_list_sub(shell->var_list);
         free_fun_sub(shell);
         shell->ctn = 0;

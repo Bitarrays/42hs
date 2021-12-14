@@ -1,8 +1,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "ast_evaluation_tools.h"
+
+char *get_next_free_file(void)
+{
+    int i = 0;
+    char *file_name = calloc(25, sizeof(char));
+    sprintf(file_name, "/tmp/42sh_%d", i);
+    while (access(file_name, F_OK) == 0)
+    {
+        i++;
+        free(file_name);
+        file_name = calloc(25, sizeof(char));
+        sprintf(file_name, "/tmp/42sh_%d", i);
+    }
+    return file_name;
+}
 
 void free_arg(char **var)
 {
