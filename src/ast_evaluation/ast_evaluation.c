@@ -289,6 +289,13 @@ int evaluate_ast(struct ast *ast)
             redirs[i++] = ast->left_child->value;
             ast = ast->right_child;
         }
+        /*                   int y = 0;
+            while (ast->left_child->value[y])
+           {
+                printf("1\n");
+                printf("%s\n", ast->right_child->value[y]);
+                printf("%d\n", ast->right_child->enclosure[y++]);
+            }*/
         redirs[i] = ast->right_child->value;
         enclosure[i] = ast->right_child->enclosure;
         int res = exec_pipe(redirs, enclosure, nb);
@@ -322,12 +329,15 @@ int evaluate_ast(struct ast *ast)
     else if (ast->type == AST_CMD_SUBSTITUTION || ast->type == AST_SUBSHELL)
     {
         struct var *cpy = var_list_cpy(shell);
+        struct functions *fn_cpy = fun_list_cpy(shell);
         int res = evaluate_ast(ast->left_child);
         free_list_sub(shell->var_list);
+        free_fun_sub(shell);
         shell->ctn = 0;
         shell->brk = 0;
         shell->exit = 0;
         shell->var_list = cpy;
+        shell->functions = fn_cpy;
         return res;
     }
     else if (ast->type == AST_COMMAND)

@@ -9,8 +9,8 @@ project(
   ],
 )
 
-# add_project_arguments('-fsanitize=address', language : 'c')
-# add_project_link_arguments('-fsanitize=address', language : 'c')
+ add_project_arguments('-fsanitize=address', language : 'c')
+ add_project_link_arguments('-fsanitize=address', language : 'c')
 
 cflags = ['-D_GNU_SOURCE', '-D_POSIX_C_SOURCE=200809L']
 add_project_arguments(cflags, language: 'c')

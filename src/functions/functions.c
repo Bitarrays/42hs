@@ -83,3 +83,27 @@ int del_fun_name(struct shell *sh, char *name)
 
     return 0;
 }
+
+struct functions *fun_list_cpy(struct shell *sh)
+{
+    struct functions *new = NULL;
+    struct functions *fun = sh->functions;
+    while (fun)
+    {
+        struct functions *tmp = new;
+        new = calloc(1, sizeof(struct functions));
+        if (!new)
+            return NULL;
+        new->name = calloc(strlen(fun->name) + 1, sizeof(char));
+        if (!new->name)
+        {
+            free(new);
+            return NULL;
+        }
+        strcpy(new->name, fun->name);
+        new->function = fun->function;
+        new->next = tmp;
+        fun = fun->next;
+    }
+    return new;
+}
