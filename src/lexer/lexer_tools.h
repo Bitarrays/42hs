@@ -17,7 +17,8 @@ bool is_int(char *word);
 
 void process_export(struct lexer *lexer);
 
-void process_alias(struct lexer_token *prev, struct lexer_token *head, struct lexer *lexer);
+void process_alias(struct lexer_token *prev, struct lexer_token *head,
+                   struct lexer *lexer);
 
 struct lexer_alias *get_alias(char *name);
 

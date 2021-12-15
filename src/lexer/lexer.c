@@ -121,15 +121,17 @@ static void create_word_and_append(char *word, int word_pos, bool *in_cmd,
         return;
     }
     struct lexer_token *token = calloc(1, sizeof(struct lexer_token));
-    token->type = is_keyword(word) && (!(*in_cmd) || !strcmp(word, "esac"))
+    token->type = is_keyword(word) && (!(*in_cmd) || lexer->found_case)
         ? get_keyword(word)
         : *word_type;
-    if (token->type >= TOKEN_WORD)
+    if (token->type >= TOKEN_WORD && !lexer->found_case)
         *in_cmd = true;
     if (token->type == TOKEN_FOR)
         lexer->found_for = true;
     if (token->type == TOKEN_CASE)
         lexer->found_case = true;
+    if (token->type == TOKEN_ESAC)
+        lexer->found_case = false;
     token->value = word;
     word = NULL;
     word_pos = 0;
@@ -200,7 +202,7 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
     int j = 0;
     char *word = NULL;
     int word_pos = 0;
-    if (*word_type == TOKEN_WORD && !strcmp(input, "in")
+    if (*word_type == TOKEN_WORD && (!strcmp(input, "in") || !strcmp(input, "in\n"))
         && ((!lexer->in_for && lexer->found_for) || lexer->found_case))
     {
         create_and_append_token(lexer, TOKEN_IN, NULL);
@@ -263,7 +265,6 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
                 lexer->alias = NULL;
                 lexer->in_for = false;
                 lexer->found_for = false;
-                lexer->found_case = false;
             }
             *in_cmd = false;
         }
