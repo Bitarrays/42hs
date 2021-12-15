@@ -283,7 +283,9 @@ enum parser_status parse_case_item(struct ast **ast, struct lexer *lexer)
         lexer_go_back(lexer, save_tok);
     }
     else
+    {
         (*ast)->left_child = ast_compound_list;
+    }
 
     return PARSER_OK;
 }
