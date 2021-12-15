@@ -1,0 +1,2 @@
+- name: exit in case
+  input: a=33; case 22 in ($a) echo oui;; (22) echo non; exit;; esac; echo oui

@@ -28,6 +28,32 @@ int evaluate_ast(struct ast *ast)
             return evaluate_ast(ast->right_child);
         }
     }
+    if (ast->type == AST_CASE)
+    {
+        char **val = expand(ast->value, ast->enclosure);
+        char *arg = merge_arg(val);
+        ast = ast->left_child;
+        int res = 0;
+        while (ast && ast->type == AST_CASE_SWITCH)
+        {
+            char *tmp = merge_arg(ast->value);
+            if (!strcmp(tmp, arg))
+            {
+                free(tmp);
+                res = evaluate_ast(ast->left_child);
+                if (shell->exit || shell->ctn || shell->brk)
+                {
+                    free(arg);
+                    return shell->return_code;
+                }
+                break;
+            }
+            free(tmp);
+            ast = ast->right_child;
+        }
+        free(arg);
+        return res;
+    }
     else if (ast->type == AST_FOR)
     {
         char **var;
