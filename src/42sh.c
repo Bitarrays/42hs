@@ -3,14 +3,17 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "functions.h"
 #include "lexer.h"
 #include "shell_input.h"
+#include "var_list.h"
 
 struct shell *shell;
 
 static void init_shell(int argc, char **argv)
 {
     shell = calloc(1, sizeof(struct shell));
+    shell->pid = getppid();
     shell->pretty_print = argc > 1 ? !strcmp(argv[1], "--pretty-print") : false;
     if (shell->pretty_print)
     {
@@ -39,13 +42,26 @@ static void init_shell(int argc, char **argv)
     strcpy(shell->ifs, " \t\n");
     shell->uid = getuid();
     shell->var_list = NULL;
+    shell->var_stack = NULL;
+    shell->functions = NULL;
+    shell->loop_stack = NULL;
+    shell->random_nb = NULL;
+    // append param shell->var_stack
 }
 
 void free_shell(void)
 {
+    int i = 0;
+    while (shell->args && shell->args[i])
+        free(shell->args[i++]);
+    free(shell->args);
+    free_list(shell);
+    free_fun_sub(shell);
     free(shell->oldpwd);
     free(shell->pwd);
     free(shell->ifs);
+    if (shell->random_nb)
+        free(shell->random_nb);
     free(shell);
 }
 

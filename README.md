@@ -20,8 +20,11 @@ A test is formatted like this in a yaml file:
 
 ```yml
 - name: a name
-  input: an input (for example -> echo "Foo!")
+  input: an input in a single line (for example -> echo "Foo!")
+  file: a path to a file, relative from the root of the git
 ```
+
+You can choose either input or file for a test. In the case you set a value for each of them, only input will be taken into account.
 
 ## Options
 

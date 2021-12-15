@@ -23,10 +23,19 @@ static char *get_token_string(enum token_type type)
                              "PIPE",
                              "NOT",
                              "ASSIGNMENT_WORD",
+                             "PARENTHESIS_OPEN",
+                             "SUBSTITUTION",
+                             "PARENTHESIS_CLOSE",
+                             "BRACE_OPEN",
+                             "BRACE_CLOSE",
+                             "DOLLAR",
+                             "CASE",
+                             "ESAC",
                              "WORD",
-                             "WORD_SINGLE_QUOTE",
                              "WORD_DOUBLE_QUOTE",
-                             "EOF" };
+                             "WORD_SINGLE_QUOTE",
+                             "EOF",
+                             "SPACE" };
     return token_string[type];
 }
 

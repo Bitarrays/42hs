@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "../parser/ast.h"
+#include "ast.h"
 #include "ast_evaluation_tools.h"
 
 void pretty_print(struct ast *ast)
@@ -28,7 +28,9 @@ void pretty_print(struct ast *ast)
             {
                 printf("for { ");
                 for (int i = 0; ast->value[i]; i++)
+                {
                     printf("%s ", ast->value[i]);
+                }
                 printf("}; do { ");
                 pretty_print(ast->left_child);
                 printf("}");
@@ -103,6 +105,26 @@ void pretty_print(struct ast *ast)
             printf("%s=", ast->var_name);
             for (size_t i = 0; ast->value && ast->value[i] != NULL; i++)
                 printf("%s ", ast->value[i]);
+        }
+        else if (ast->type == AST_FUNC)
+        {
+            if (ast->var_name)
+                printf("%s() ", ast->var_name);
+            printf("{ ");
+            pretty_print(ast->left_child);
+            printf("}");
+        }
+        else if (ast->type == AST_CMD_SUBSTITUTION)
+        {
+            printf("$(");
+            pretty_print(ast->left_child);
+            printf(")");
+        }
+        else if (ast->type == AST_SUBSHELL)
+        {
+            printf("(");
+            pretty_print(ast->left_child);
+            printf(")");
         }
         else if (ast->type == AST_EOF)
             printf("EOF\n");

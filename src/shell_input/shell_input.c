@@ -1,12 +1,12 @@
 #include "shell_input.h"
 
 #include "parser.h"
+#include "var_list.h"
 
 static int shell_prompt(void)
 {
-    int c = '\n';
     char *input = NULL;
-    int input_len = 0;
+    size_t input_len = 0;
     while (!shell->exit)
     {
         if (shell->return_code)
@@ -19,17 +19,12 @@ static int shell_prompt(void)
                     "\033[0;37m");
         fflush(stderr);
         int line = 0;
-        while (read(STDIN_FILENO, &c, 1) > 0)
+        if (getline(&input, &input_len, stdin) < 1)
         {
-            if (c == EOF)
-                return shell->return_code;
-            if (c == '\n')
-            {
-                line = 1;
-                break;
-            }
-            input = realloc(input, (input_len + 2) * sizeof(char));
-            input[input_len++] = c;
+            free(input);
+            input = NULL;
+            input_len = 0;
+            break;
         }
         if (!input)
         {
@@ -37,8 +32,7 @@ static int shell_prompt(void)
                 fprintf(stderr, "\n");
             continue;
         }
-        input[input_len] = 0;
-        if (!strcmp(input, "exit"))
+        if (!strcmp(input, "exit\n"))
         {
             shell->exit = 1;
             free(input);
@@ -70,12 +64,33 @@ static char *get_file_content(char *filename)
     return content;
 }
 
+static char **copy_args(char **argv)
+{
+    int i = 0;
+    char **args = NULL;
+    while (argv[i])
+    {
+        args = realloc(args, (i + 2) * sizeof(char *));
+        args[i] = strdup(argv[i]);
+        i++;
+    }
+    shell->nb_args = i - 1;
+    if (args)
+        args[i] = NULL;
+    else
+        args = calloc(1, sizeof(char *));
+    return args;
+}
+
 int get_input(int argc, char **argv)
 {
     char *input = NULL;
     size_t input_len = 0;
     if (argc < 2)
     {
+        shell->args = calloc(2, sizeof(char *));
+        shell->args[0] = strdup(argv[0]);
+        new_var(shell, shell->args);
         int c;
         if (!isatty(STDIN_FILENO))
         {
@@ -94,9 +109,18 @@ int get_input(int argc, char **argv)
     {
         int i = 1;
         if (!strcmp(argv[i], "-c"))
+        {
+            shell->args = calloc(2, sizeof(char *));
+            shell->args[0] = strdup(argv[0]);
+            new_var(shell, shell->args);
             input = strdup(argv[++i]);
+        }
         else
+        {
             input = get_file_content(argv[i]);
+            shell->args = copy_args(argv + 1);
+            new_var(shell, shell->args);
+        }
         if (!input)
             return 1;
         input_len = strlen(input);

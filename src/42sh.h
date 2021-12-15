@@ -13,6 +13,25 @@ struct var
     struct var *next;
 };
 
+struct var_stack
+{
+    struct var *var_list;
+    struct var_stack *next;
+};
+
+struct loop_stack
+{
+    struct ast *loop;
+    struct loop_stack *next;
+};
+
+struct functions
+{
+    char *name;
+    struct ast *function;
+    struct functions *next;
+};
+
 struct shell
 {
     bool pretty_print;
@@ -24,9 +43,16 @@ struct shell
     char *ifs;
     uid_t uid;
     int return_code;
+    char *random_nb;
     bool verbose;
     bool interupt;
+    struct var_stack *var_stack;
     struct var *var_list;
+    struct loop_stack *loop_stack;
+    struct functions *functions;
+    int ctn; // continue is a keyword
+    int brk; // break is a keyword
+    pid_t pid;
 };
 
 /**

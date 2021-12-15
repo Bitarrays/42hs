@@ -1,9 +1,9 @@
 #ifndef AST_EVALUATION_TOOLS_H
 #define AST_EVALUATION_TOOLS_H
 
-#include "../42sh.h"
-#include "../parser/ast.h"
-#include "../variable/var_list.h"
+#include "42sh.h"
+#include "ast.h"
+#include "var_list.h"
 
 // include builtin
 extern struct shell *shell;
@@ -11,7 +11,12 @@ extern struct shell *shell;
 int is_builtin(char *);
 int call_exec(char **cmd);
 int is_in(char **condition);
-char **expand(struct ast *ast);
+char **expand(char **arg, enum quotes *enclosure);
 char **split_arg(char **arg, enum quotes *enclosure);
+char *merge_arg(char **arg);
+int atoi_begining(char *s);
+int exec_pipe(char ***args, enum quotes **enclosure, int pipe_nb);
+void free_arg(char **var);
+char *get_next_free_file(void);
 
 #endif /* !AST_EVALUATION_TOOLS_H */

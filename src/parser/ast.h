@@ -19,7 +19,8 @@ enum ast_type
     AST_FUNC,
     AST_EOF,
     AST_ASSIGNMENT,
-    AST_CASE_SWITCH
+    AST_CMD_SUBSTITUTION,
+    AST_SUBSHELL
 };
 
 enum quotes

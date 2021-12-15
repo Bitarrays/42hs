@@ -1,5 +1,17 @@
 #include "redir.h"
 
+static bool is_int(char *str)
+{
+    int i = 0;
+    while (str[i])
+    {
+        if (str[i] < '0' || str[i] > '9')
+            return false;
+        i++;
+    }
+    return true;
+}
+
 static int get_open_flags(char **redir)
 {
     char *type = redir[0][0] == '>' ? redir[0] : redir[1];
@@ -127,7 +139,7 @@ static void setup_dup_redir(char **redir)
     }
 }
 
-int exec_redirections(char ***redirs)
+void exec_redirections(char ***redirs)
 {
     int redirs_pos = 0;
     while (redirs[redirs_pos])
