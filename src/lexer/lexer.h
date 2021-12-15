@@ -42,7 +42,8 @@ enum token_type
     TOKEN_WORD_DOUBLE_QUOTE,
     TOKEN_WORD_SINGLE_QUOTE,
     TOKEN_EOF,
-    TOKEN_SPACE
+    TOKEN_SPACE,
+    TOKEN_ALIAS
 };
 
 struct lexer_token
@@ -50,6 +51,13 @@ struct lexer_token
     enum token_type type;
     char *value;
     struct lexer_token *next;
+};
+
+struct lexer_alias
+{
+    char *name;
+    struct lexer_token *value;
+    struct lexer_alias *next;
 };
 
 /**
@@ -77,6 +85,9 @@ struct lexer
     bool in_variable;
     bool found_for;
     bool found_case;
+    struct lexer_token *alias;
+    struct lexer_token *alias_prev;
+    struct lexer_alias *alias_list;
 };
 
 /**

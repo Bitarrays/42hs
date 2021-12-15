@@ -62,6 +62,21 @@ void free_shell(void)
     free(shell->ifs);
     if (shell->random_nb)
         free(shell->random_nb);
+    struct lexer_alias *alias = shell->alias_list;
+    while (alias)
+    {
+        struct lexer_alias *next = alias->next;
+        free(alias->name);
+        struct lexer_token *token = alias->value;
+        while (token)
+        {
+            struct lexer_token *next = token->next;
+            lexer_token_free(token);
+            token = next;
+        }
+        free(alias);
+        alias = next;
+    }
     free(shell);
 }
 

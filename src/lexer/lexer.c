@@ -58,6 +58,22 @@ void lexer_free(struct lexer *lexer)
         lexer_token_free(token);
         token = next;
     }
+    struct lexer_alias *alias = lexer->alias_list;
+    while (alias)
+    {
+        struct lexer_alias *next = alias->next;
+        free(alias->name);
+        struct lexer_token *token = alias->value;
+        while (token)
+        {
+            struct lexer_token *next = token->next;
+            lexer_token_free(token);
+            token = next;
+        }
+        free(alias);
+        alias = next;
+    }
+    lexer->alias_list = NULL;
     lexer->head = NULL;
     lexer->tail = NULL;
     free(lexer);
@@ -98,6 +114,12 @@ static void create_word_and_append(char *word, int word_pos, bool *in_cmd,
     if (!word)
         return;
     word[word_pos] = 0;
+    struct lexer_alias *alias = get_alias(word);
+    if (alias && !lexer->alias)
+    {
+        lexer_append_alias(lexer, alias);
+        return;
+    }
     struct lexer_token *token = calloc(1, sizeof(struct lexer_token));
     token->type = is_keyword(word) && (!(*in_cmd) || !strcmp(word, "esac"))
         ? get_keyword(word)
@@ -187,6 +209,15 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
         free(input);
         return;
     }
+    if (*word_type == TOKEN_WORD && !strcmp(input, "alias"))
+    {
+        lexer->alias_prev = lexer->tail;
+        create_and_append_token(lexer, TOKEN_ALIAS, NULL);
+        lexer->alias = lexer->tail;
+        free(input);
+        *word_type = TOKEN_WORD;
+        return;
+    }
     while (input[j])
     {
         if (input[j] == '\\')
@@ -215,6 +246,21 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
                 NULL);
             if (is_separator(input[j]))
             {
+                if (lexer->alias != NULL)
+                    process_alias(lexer->alias_prev, lexer->alias, lexer);
+                if (input[j] == '\n')
+                {
+                    struct lexer_alias *alias = lexer->alias_list;
+                    while (alias)
+                    {
+                        struct lexer_alias *next = alias->next;
+                        alias->next = shell->alias_list;
+                        shell->alias_list = alias;
+                        alias = next;
+                    }
+                    lexer->alias_list = NULL;
+                }
+                lexer->alias = NULL;
                 lexer->in_for = false;
                 lexer->found_for = false;
                 lexer->found_case = false;
@@ -324,6 +370,11 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
                                        word_type);
                 word = NULL;
                 word_pos = 0;
+            }
+            if (lexer->alias)
+            {
+                j++;
+                continue;
             }
             if (*word_type == TOKEN_WORD)
                 *word_type = get_quote(input[j]);
