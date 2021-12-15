@@ -53,6 +53,7 @@ struct shell
     int ctn; // continue is a keyword
     int brk; // break is a keyword
     pid_t pid;
+    struct lexer_alias *alias_list;
 };
 
 /**
