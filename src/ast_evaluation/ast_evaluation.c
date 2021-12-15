@@ -32,6 +32,10 @@ int evaluate_ast(struct ast *ast)
     {
         char **val = expand(ast->value, ast->enclosure);
         char *arg = merge_arg(val);
+        int i = 0;
+        while (val[i])
+            free(val[i++]);
+        free(val);
         ast = ast->left_child;
         int res = 0;
         while (ast && ast->type == AST_CASE_SWITCH)
