@@ -41,7 +41,7 @@ int evaluate_ast(struct ast *ast)
         while (ast && ast->type == AST_CASE_SWITCH)
         {
             char *tmp = merge_arg(ast->value);
-            if (!strcmp(tmp, arg))
+            if (!strcmp(tmp, arg) || !strcmp(tmp, "*"))
             {
                 free(tmp);
                 res = evaluate_ast(ast->left_child);
@@ -374,7 +374,7 @@ int evaluate_ast(struct ast *ast)
     }
     else if (ast->type == AST_CMD_SUBSTITUTION)
     {
-        struct var *cpy = var_list_cpy(shell);
+        /*struct var *cpy = var_list_cpy(shell);
         struct functions *fn_cpy = fun_list_cpy(shell);
         int save = dup(STDOUT_FILENO);
         char *path = get_next_free_file();
@@ -383,6 +383,7 @@ int evaluate_ast(struct ast *ast)
         close(fd);
         int res = evaluate_ast(ast->left_child);
         dup2(save, STDOUT_FILENO);
+        char *cmd_val = get_file_in_var(path);
         free(path);
         free_list_sub(shell->var_list);
         free_fun_sub(shell);
@@ -391,15 +392,15 @@ int evaluate_ast(struct ast *ast)
         shell->exit = 0;
         shell->var_list = cpy;
         shell->functions = fn_cpy;
-        /*
-        char *cmd_val =
-        struct ast *cmd = ast_new(enum ast_type type);
-        cmd->value = cmd_val;
+        struct ast *cmd = ast_new(AST_COMMAND);
+        cmd->value = calloc(2, sizeof(char *));
+        cmd->enclosure = calloc(2, sizeof(enum quotes));
+        cmd->value[0] = cmd_val;
+        cmd->enclosure[0] = Q_NONE;
         res = evaluate_ast(cmd);
-        */
         if (shell->exit || shell->ctn || shell->brk)
             return shell->return_code;
-        return res;
+        return res;*/
     }
     else if (ast->type == AST_COMMAND)
     {

@@ -20,6 +20,21 @@ char *get_next_free_file(void)
     return file_name;
 }
 
+char *get_file_in_var(char *path)
+{
+    FILE *file = fopen(path, "r");
+    if (!file)
+        return NULL;
+    fseek(file, 0, SEEK_END);
+    long size = ftell(file);
+    fseek(file, 0, SEEK_SET);
+    char *content = malloc(sizeof(char) * (size + 1));
+    fread(content, sizeof(char), size, file);
+    content[size] = '\0';
+    fclose(file);
+    return content;
+}
+
 void free_arg(char **var)
 {
     if (!var)
