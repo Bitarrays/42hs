@@ -110,3 +110,182 @@ enum parser_status parse_else_clause(struct ast **ast, struct lexer *lexer)
 
     return PARSER_OK;
 }
+
+enum parser_status parse_rule_case(struct ast **ast, struct lexer *lexer)
+{
+    struct lexer_token *tok = lexer_peek(lexer);
+
+    // Try Case
+    if (tok->type != TOKEN_CASE)
+       return handle_parser_error(PARSER_ERROR, ast);
+    lexer_pop(lexer); // token Case
+
+    // Try WORD
+    tok = lexer_peek(lexer);
+    if (tok->type != TOKEN_WORD)
+       return handle_parser_error(PARSER_ERROR, ast);
+    char **val = calloc(1, sizeof(char *));
+    val[0] = tok->value;
+    lexer_pop(lexer); // token WORD
+
+    // Try ('\n')*
+    while ((tok = lexer_peek(lexer))->type == TOKEN_NEWLINE)
+        lexer_pop(lexer); // token \n
+
+    // Try in
+    tok = lexer_peek(lexer);
+    if (tok->type != TOKEN_IN)
+       return handle_parser_error(PARSER_ERROR, ast);
+    lexer_pop(lexer); // token in
+
+    // Try ('\n')*
+    while ((tok = lexer_peek(lexer))->type == TOKEN_NEWLINE)
+        lexer_pop(lexer); // token \n
+    
+    *ast = ast_new(AST_CASE);
+    (*ast)->value = val;
+
+    // Check First(case_clause) = First(case_item) = {(, WORD}
+    tok = lexer_peek(lexer);
+    if (tok->type == TOKEN_PARENTHESIS_OPEN || tok->type == TOKEN_WORD)
+    {
+        // Check case_clause
+        struct ast *ast_content_block = NULL;
+        enum parser_status status_case_clause = parse_case_clause(&ast_content_block, lexer);
+        (*ast)->left_child = ast_content_block;
+        if (status_case_clause == PARSER_ERROR)
+            return handle_parser_error(status_case_clause, ast);
+    }
+
+    // Try Esac
+    tok = lexer_peek(lexer);
+    if (tok->type != TOKEN_ESAC)
+       return handle_parser_error(PARSER_ERROR, ast);
+    lexer_pop(lexer); // token Esac
+
+    return PARSER_OK;
+}
+
+enum parser_status parse_case_clause(struct ast **ast, struct lexer *lexer)
+{
+    struct lexer_token *tok = lexer_peek(lexer);
+
+    // Try case_item
+    enum parser_status status_case_item = parse_case_item(ast, lexer);
+    if (status_case_item == PARSER_ERROR)
+            return handle_parser_error(status_case_item, ast);
+        
+    // Try (';;' ('\n')* case_item)*
+    struct ast *cur_item = *ast;
+    struct lexer_token *save_tok = lexer_peek(lexer);
+    while (true)
+    {
+        tok = lexer_peek(lexer);
+        save_tok = tok;
+
+        // Try ;
+        if (tok->type != TOKEN_SEMICOLON)
+            break;
+        lexer_pop(lexer); // token ;
+        
+        // Try ;
+        if (tok->type != TOKEN_SEMICOLON)
+        {
+            lexer_go_back(lexer, save_tok);
+            break;
+        }
+        lexer_pop(lexer); // token ;
+
+        // Try ('\n')*
+        while ((tok = lexer_peek(lexer))->type == TOKEN_NEWLINE)
+            lexer_pop(lexer); // token \n
+
+        // Try case_item
+        enum parser_status status_case_item = parse_case_item(&(cur_item->right_child), lexer);
+        if (status_case_item == PARSER_ERROR)
+            return handle_parser_error(status_case_item, ast);
+        cur_item = cur_item->right_child;
+    }
+
+    tok = lexer_peek(lexer);
+    // Try ;;
+    if (tok->type == TOKEN_SEMICOLON)
+    {
+        lexer_pop(lexer); // token ;
+        tok = lexer_peek(lexer);
+        if (tok->type != TOKEN_SEMICOLON)
+            return handle_parser_error(PARSER_ERROR, ast);
+        lexer_pop(lexer); // token ;
+    }
+
+    // Try ('\n')*
+    while ((tok = lexer_peek(lexer))->type == TOKEN_NEWLINE)
+        lexer_pop(lexer); // token \n
+
+    return PARSER_OK;
+}
+
+enum parser_status parse_case_item(struct ast **ast, struct lexer *lexer)
+{
+    struct lexer_token *tok = lexer_peek(lexer);
+
+    // Try [(]
+    if (tok->type == TOKEN_PARENTHESIS_OPEN)
+        lexer_pop(lexer); // token (
+
+    // Try WORD
+    tok = lexer_peek(lexer);
+    if (tok->type != TOKEN_WORD)
+        return handle_parser_error(PARSER_ERROR, ast);
+
+    *ast = ast_new(AST_CASE_SWITCH);
+    (*ast)->value = calloc(2, sizeof(char *));
+    (*ast)->value[0] = tok->value;
+    size_t val_len = 1;
+    lexer_pop(lexer); // token WORD
+
+    // Try (| WORD)*
+    while (true)
+    {
+        // Try |
+        tok = lexer_peek(lexer);
+        if (tok->type != TOKEN_PIPE)
+            break;
+        lexer_pop(lexer); // token |
+
+        // Try WORD
+        tok = lexer_peek(lexer);
+        if (tok->type != TOKEN_WORD)
+            return handle_parser_error(PARSER_ERROR, ast);
+
+        val_len++;
+        (*ast)->value = realloc((*ast)->value, (val_len + 1) * sizeof(char *));
+        (*ast)->value[val_len - 1] = tok->value;
+        lexer_pop(lexer); // token WORD
+    }
+
+    // Try )
+    if (tok->type != TOKEN_PARENTHESIS_CLOSE)
+        return handle_parser_error(PARSER_ERROR, ast);
+    lexer_pop(lexer); // token )
+
+    // Try ('\n')*
+    while ((tok = lexer_peek(lexer))->type == TOKEN_NEWLINE)
+        lexer_pop(lexer); // token \n
+
+    // Try [compound_list]
+    struct lexer_token *save_tok = lexer_peek(lexer);
+    struct ast *ast_compound_list = NULL;
+    enum parser_status status_compound_list = parse_compound_list(&ast_compound_list, lexer);
+    if (status_compound_list == PARSER_ERROR)
+    {
+        ast_free(ast_compound_list);
+        lexer_go_back(lexer, save_tok);
+    }
+    else
+    {
+        (*ast)->left_child = ast_compound_list;
+    }
+
+    return PARSER_OK;
+}
