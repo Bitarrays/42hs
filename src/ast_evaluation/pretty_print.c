@@ -126,6 +126,22 @@ void pretty_print(struct ast *ast)
             pretty_print(ast->left_child);
             printf(")");
         }
+        else if (ast->type == AST_CASE)
+        {
+            printf("case %s in ", ast->value[0]);
+            pretty_print(ast->left_child);
+            printf("esac");
+        }
+        else if (ast->type == AST_CASE_SWITCH)
+        {
+            printf("%s", ast->value[0]);
+            for (int i = 1; ast->value[i]; i++)
+                printf("|%s", ast->value[i]);
+            printf(") ");
+            pretty_print(ast->left_child);
+            printf(";; ");
+            pretty_print(ast->right_child);
+        }
         else if (ast->type == AST_EOF)
             printf("EOF\n");
     }
