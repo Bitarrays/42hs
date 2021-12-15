@@ -20,7 +20,8 @@ enum ast_type
     AST_EOF,
     AST_ASSIGNMENT,
     AST_CMD_SUBSTITUTION,
-    AST_SUBSHELL
+    AST_SUBSHELL,
+    AST_CASE_SWITCH
 };
 
 enum quotes

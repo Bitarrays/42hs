@@ -147,7 +147,7 @@ enum parser_status parse_rule_case(struct ast **ast, struct lexer *lexer)
 
     // Check First(case_clause) = First(case_item) = {(, WORD}
     tok = lexer_peek(lexer);
-    if (tok->type == TOKEN_LEFT_PARENTHESESIS || tok->type == TOKEN_WORD)
+    if (tok->type == TOKEN_PARENTHESIS_OPEN || tok->type == TOKEN_WORD)
     {
         // Check case_clause
         struct ast *ast_content_block = NULL;
@@ -230,7 +230,7 @@ enum parser_status parse_case_item(struct ast **ast, struct lexer *lexer)
     struct lexer_token *tok = lexer_peek(lexer);
 
     // Try [(]
-    if (tok->type == TOKEN_LEFT_PARENTHESESIS)
+    if (tok->type == TOKEN_PARENTHESIS_OPEN)
         lexer_pop(lexer); // token (
 
     // Try WORD
@@ -265,7 +265,7 @@ enum parser_status parse_case_item(struct ast **ast, struct lexer *lexer)
     }
 
     // Try )
-    if (tok->type != TOKEN_RIGHT_PARENTHESESIS)
+    if (tok->type != TOKEN_PARENTHESIS_CLOSE)
         return handle_parser_error(PARSER_ERROR, ast);
     lexer_pop(lexer); // token )
 
