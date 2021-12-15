@@ -15,7 +15,8 @@ void ast_free(struct ast *ast)
         return;
 
     if (ast->type == AST_COMMAND || ast->type == AST_FOR
-        || ast->type == AST_ASSIGNMENT || ast->type == AST_CASE || ast->type == AST_CASE_SWITCH)
+        || ast->type == AST_ASSIGNMENT || ast->type == AST_CASE
+        || ast->type == AST_CASE_SWITCH)
     {
         free(ast->value);
         free(ast->enclosure);

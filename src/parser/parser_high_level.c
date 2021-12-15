@@ -129,11 +129,11 @@ enum parser_status parse_pipeline(struct ast **ast, struct lexer *lexer)
 
     if (ast == NULL)
         ast = &last_command;
-    else if ((first && !not) || *ast == NULL)
+    else if ((first && !not ) || *ast == NULL)
     {
         *ast = last_command;
     }
-    else if (not && first)
+    else if (not &&first)
         (*ast)->left_child = last_command;
 
     return PARSER_OK;

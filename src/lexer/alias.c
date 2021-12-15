@@ -1,12 +1,13 @@
-#include "lexer_tools.h"
 #include "42sh.h"
+#include "lexer_tools.h"
 
 extern struct shell *shell;
 
 struct lexer_alias *get_alias(char *name)
 {
     struct lexer_alias *head = shell->alias_list;
-    while (head) {
+    while (head)
+    {
         if (head->name && !strcmp(head->name, name))
             return head;
         head = head->next;
@@ -59,7 +60,8 @@ static char *get_alias_value(struct lexer_token *head)
     while (head)
     {
         size_t len = res ? strlen(res) : 0;
-        char *to_append = head->value ? head->value : get_token_string(head->type);
+        char *to_append =
+            head->value ? head->value : get_token_string(head->type);
         res = realloc(res, sizeof(char) * (len + strlen(to_append) + 1));
         res[len] = '\0';
         strcat(res, to_append);
@@ -107,7 +109,8 @@ struct lexer_token *copy_lexer_alias(struct lexer_token *head)
     return new_head;
 }
 
-static void process_single_alias(struct lexer *lexer, char *name, struct lexer_token *value)
+static void process_single_alias(struct lexer *lexer, char *name,
+                                 struct lexer_token *value)
 {
     if (value)
     {
@@ -136,9 +139,14 @@ static void process_single_alias(struct lexer *lexer, char *name, struct lexer_t
     }
 }
 
-void process_alias(struct lexer_token *prev, struct lexer_token *head, struct lexer *lexer)
+void process_alias(struct lexer_token *prev, struct lexer_token *head,
+                   struct lexer *lexer)
 {
-    if (!head || (head->type != TOKEN_ALIAS && head->type != TOKEN_SPACE && head->type != TOKEN_ASSIGNMENT_WORD && head->type != TOKEN_WORD && head->type != TOKEN_WORD_SINGLE_QUOTE && head->type != TOKEN_WORD_DOUBLE_QUOTE))
+    if (!head
+        || (head->type != TOKEN_ALIAS && head->type != TOKEN_SPACE
+            && head->type != TOKEN_ASSIGNMENT_WORD && head->type != TOKEN_WORD
+            && head->type != TOKEN_WORD_SINGLE_QUOTE
+            && head->type != TOKEN_WORD_DOUBLE_QUOTE))
     {
         if (head && head->type == TOKEN_SEMICOLON)
         {
@@ -176,7 +184,8 @@ void process_alias(struct lexer_token *prev, struct lexer_token *head, struct le
         }
         end = value->next;
         struct lexer_token *previous = value;
-        while (end->type != TOKEN_SPACE && end->type != TOKEN_NEWLINE && end->type != TOKEN_EOF && end->type != TOKEN_SEMICOLON)
+        while (end->type != TOKEN_SPACE && end->type != TOKEN_NEWLINE
+               && end->type != TOKEN_EOF && end->type != TOKEN_SEMICOLON)
         {
             previous = end;
             end = end->next;

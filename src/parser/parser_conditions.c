@@ -117,13 +117,14 @@ enum parser_status parse_rule_case(struct ast **ast, struct lexer *lexer)
 
     // Try Case
     if (tok->type != TOKEN_CASE)
-       return handle_parser_error(PARSER_ERROR, ast);
+        return handle_parser_error(PARSER_ERROR, ast);
     lexer_pop(lexer); // token Case
 
     // Try WORD
     tok = lexer_peek(lexer);
-    if (tok->type != TOKEN_WORD && tok->type != TOKEN_WORD_DOUBLE_QUOTE && tok->type != TOKEN_WORD_SINGLE_QUOTE)
-       return handle_parser_error(PARSER_ERROR, ast);
+    if (tok->type != TOKEN_WORD && tok->type != TOKEN_WORD_DOUBLE_QUOTE
+        && tok->type != TOKEN_WORD_SINGLE_QUOTE)
+        return handle_parser_error(PARSER_ERROR, ast);
     char **val = calloc(2, sizeof(char *));
     enum quotes *enclosure = calloc(1, sizeof(enum quotes));
     enclosure[0] = tok->type - TOKEN_WORD;
@@ -141,7 +142,7 @@ enum parser_status parse_rule_case(struct ast **ast, struct lexer *lexer)
     // Try in
     tok = lexer_peek(lexer);
     if (tok->type != TOKEN_IN)
-       return handle_parser_error(PARSER_ERROR, ast);
+        return handle_parser_error(PARSER_ERROR, ast);
     lexer_pop(lexer); // token in
 
     // Try ('\n')*
@@ -150,11 +151,14 @@ enum parser_status parse_rule_case(struct ast **ast, struct lexer *lexer)
 
     // Check First(case_clause) = First(case_item) = {(, WORD}
     tok = lexer_peek(lexer);
-    if (tok->type == TOKEN_PARENTHESIS_OPEN || tok->type == TOKEN_WORD || tok->type == TOKEN_WORD_SINGLE_QUOTE || tok->type == TOKEN_WORD_DOUBLE_QUOTE)
+    if (tok->type == TOKEN_PARENTHESIS_OPEN || tok->type == TOKEN_WORD
+        || tok->type == TOKEN_WORD_SINGLE_QUOTE
+        || tok->type == TOKEN_WORD_DOUBLE_QUOTE)
     {
         // Check case_clause
         struct ast *ast_content_block = NULL;
-        enum parser_status status_case_clause = parse_case_clause(&ast_content_block, lexer);
+        enum parser_status status_case_clause =
+            parse_case_clause(&ast_content_block, lexer);
         (*ast)->left_child = ast_content_block;
         if (status_case_clause == PARSER_ERROR)
             return handle_parser_error(status_case_clause, ast);
@@ -163,7 +167,7 @@ enum parser_status parse_rule_case(struct ast **ast, struct lexer *lexer)
     // Try Esac
     tok = lexer_peek(lexer);
     if (tok->type != TOKEN_ESAC)
-       return handle_parser_error(PARSER_ERROR, ast);
+        return handle_parser_error(PARSER_ERROR, ast);
     lexer_pop(lexer); // token Esac
 
     return PARSER_OK;
@@ -176,8 +180,8 @@ enum parser_status parse_case_clause(struct ast **ast, struct lexer *lexer)
     // Try case_item
     enum parser_status status_case_item = parse_case_item(ast, lexer);
     if (status_case_item == PARSER_ERROR)
-            return handle_parser_error(status_case_item, ast);
-        
+        return handle_parser_error(status_case_item, ast);
+
     // Try (';;' ('\n')* case_item)*
     struct ast *cur_item = *ast;
     struct lexer_token *save_tok = lexer_peek(lexer);
@@ -190,7 +194,7 @@ enum parser_status parse_case_clause(struct ast **ast, struct lexer *lexer)
         if (tok->type != TOKEN_SEMICOLON)
             break;
         lexer_pop(lexer); // token ;
-        
+
         // Try ;
         tok = lexer_peek(lexer);
         if (tok->type == TOKEN_SEMICOLON)
@@ -201,7 +205,8 @@ enum parser_status parse_case_clause(struct ast **ast, struct lexer *lexer)
             lexer_pop(lexer); // token \n
 
         // Try case_item
-        enum parser_status status_case_item = parse_case_item(&(cur_item->right_child), lexer);
+        enum parser_status status_case_item =
+            parse_case_item(&(cur_item->right_child), lexer);
         if (status_case_item == PARSER_ERROR)
         {
             lexer_go_back(lexer, save_tok);
@@ -237,7 +242,8 @@ enum parser_status parse_case_item(struct ast **ast, struct lexer *lexer)
 
     // Try WORD
     tok = lexer_peek(lexer);
-    if (tok->type != TOKEN_WORD && tok->type != TOKEN_WORD_SINGLE_QUOTE && tok->type != TOKEN_WORD_DOUBLE_QUOTE)
+    if (tok->type != TOKEN_WORD && tok->type != TOKEN_WORD_SINGLE_QUOTE
+        && tok->type != TOKEN_WORD_DOUBLE_QUOTE)
         return handle_parser_error(PARSER_ERROR, ast);
 
     *ast = ast_new(AST_CASE_SWITCH);
@@ -259,13 +265,15 @@ enum parser_status parse_case_item(struct ast **ast, struct lexer *lexer)
 
         // Try WORD
         tok = lexer_peek(lexer);
-        if (tok->type != TOKEN_WORD && tok->type != TOKEN_WORD_SINGLE_QUOTE && tok->type != TOKEN_WORD_DOUBLE_QUOTE)
+        if (tok->type != TOKEN_WORD && tok->type != TOKEN_WORD_SINGLE_QUOTE
+            && tok->type != TOKEN_WORD_DOUBLE_QUOTE)
             return handle_parser_error(PARSER_ERROR, ast);
 
         val_len++;
         (*ast)->value = realloc((*ast)->value, (val_len + 1) * sizeof(char *));
         (*ast)->value[val_len - 1] = tok->value;
-        (*ast)->enclosure = realloc((*ast)->enclosure, val_len * sizeof(char *));
+        (*ast)->enclosure =
+            realloc((*ast)->enclosure, val_len * sizeof(char *));
         (*ast)->enclosure[val_len - 1] = tok->type - TOKEN_WORD;
         lexer_pop(lexer); // token WORD
     }
@@ -282,7 +290,8 @@ enum parser_status parse_case_item(struct ast **ast, struct lexer *lexer)
     // Try [compound_list]
     struct lexer_token *save_tok = lexer_peek(lexer);
     struct ast *ast_compound_list = ast_new(AST_LIST);
-    enum parser_status status_compound_list = parse_compound_list(&ast_compound_list, lexer);
+    enum parser_status status_compound_list =
+        parse_compound_list(&ast_compound_list, lexer);
     if (status_compound_list == PARSER_ERROR)
     {
         ast_free(ast_compound_list);

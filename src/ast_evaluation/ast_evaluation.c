@@ -388,7 +388,7 @@ int evaluate_ast(struct ast *ast)
         shell->var_list = cpy;
         shell->functions = fn_cpy;
         /*
-        char *cmd_val = 
+        char *cmd_val =
         struct ast *cmd = ast_new(enum ast_type type);
         cmd->value = cmd_val;
         res = evaluate_ast(cmd);
