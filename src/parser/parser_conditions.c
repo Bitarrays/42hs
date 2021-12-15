@@ -130,6 +130,10 @@ enum parser_status parse_rule_case(struct ast **ast, struct lexer *lexer)
     val[0] = tok->value;
     lexer_pop(lexer); // token WORD
 
+    *ast = ast_new(AST_CASE);
+    (*ast)->value = val;
+    (*ast)->enclosure = enclosure;
+
     // Try ('\n')*
     while ((tok = lexer_peek(lexer))->type == TOKEN_NEWLINE)
         lexer_pop(lexer); // token \n
@@ -143,10 +147,6 @@ enum parser_status parse_rule_case(struct ast **ast, struct lexer *lexer)
     // Try ('\n')*
     while ((tok = lexer_peek(lexer))->type == TOKEN_NEWLINE)
         lexer_pop(lexer); // token \n
-    
-    *ast = ast_new(AST_CASE);
-    (*ast)->value = val;
-    (*ast)->enclosure = enclosure;
 
     // Check First(case_clause) = First(case_item) = {(, WORD}
     tok = lexer_peek(lexer);
