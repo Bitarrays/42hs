@@ -138,10 +138,24 @@ static void process_single_alias(struct lexer *lexer, char *name, struct lexer_t
 
 void process_alias(struct lexer_token *prev, struct lexer_token *head, struct lexer *lexer)
 {
-    if (!head || (head->type != TOKEN_ALIAS && head->type != TOKEN_SPACE))
+    if (!head || (head->type != TOKEN_ALIAS && head->type != TOKEN_SPACE && head->type != TOKEN_ASSIGNMENT_WORD && head->type != TOKEN_WORD && head->type != TOKEN_WORD_SINGLE_QUOTE && head->type != TOKEN_WORD_DOUBLE_QUOTE))
+    {
+        if (head && head->type == TOKEN_SEMICOLON)
+        {
+            if (prev)
+                prev->next = head->next;
+            else
+                lexer->tokens = head->next;
+            lexer_token_free(head);
+        }
         return;
-    struct lexer_token *name = head->next;
-    lexer_token_free(head);
+    }
+    struct lexer_token *name = head;
+    if (head->type == TOKEN_ALIAS)
+    {
+        name = head->next;
+        lexer_token_free(head);
+    }
     while (name->type == TOKEN_SPACE)
     {
         struct lexer_token *next = name->next;
@@ -182,5 +196,7 @@ void process_alias(struct lexer_token *prev, struct lexer_token *head, struct le
     }
     process_single_alias(lexer, name->value, value);
     lexer_token_free(name);
-    process_alias(end, end->next, lexer);
+    if (end->type == TOKEN_SEMICOLON)
+        end->type = TOKEN_SPACE;
+    process_alias(end, end ? end->next : NULL, lexer);
 }
