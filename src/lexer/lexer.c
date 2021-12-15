@@ -200,7 +200,7 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
     int j = 0;
     char *word = NULL;
     int word_pos = 0;
-    if (*word_type == TOKEN_WORD && !strcmp(input, "in")
+    if (*word_type == TOKEN_WORD && (!strcmp(input, "in") || !strcmp(input, "in\n"))
         && ((!lexer->in_for && lexer->found_for) || lexer->found_case))
     {
         create_and_append_token(lexer, TOKEN_IN, NULL);
