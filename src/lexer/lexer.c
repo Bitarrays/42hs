@@ -130,8 +130,17 @@ static void create_word_and_append(char *word, int word_pos, bool *in_cmd,
         *word_type = TOKEN_WORD;
         return;
     }
+    if (*word_type == TOKEN_WORD && (!strcmp(word, "in"))
+        && ((!lexer->in_for && lexer->found_for) || lexer->found_case))
+    {
+        create_and_append_token(lexer, TOKEN_IN, NULL);
+        if (lexer->found_for)
+            lexer->in_for = true;
+        free(word);
+        return;
+    }
     struct lexer_token *token = calloc(1, sizeof(struct lexer_token));
-    token->type = is_keyword(word) && (!(*in_cmd) || lexer->found_case)
+    token->type = is_keyword(word) && (!(*in_cmd) || lexer->found_case || (lexer->found_for && !strcmp(word, "do")))
         ? get_keyword(word)
         : *word_type;
     if (token->type >= TOKEN_WORD && !lexer->found_case)
