@@ -43,7 +43,8 @@ enum token_type
     TOKEN_WORD_SINGLE_QUOTE,
     TOKEN_EOF,
     TOKEN_SPACE,
-    TOKEN_ALIAS
+    TOKEN_ALIAS,
+    TOKEN_UNALIAS
 };
 
 struct lexer_token

@@ -209,3 +209,47 @@ void process_alias(struct lexer_token *prev, struct lexer_token *head,
         end->type = TOKEN_SPACE;
     process_alias(end, end ? end->next : NULL, lexer);
 }
+
+void process_unalias(struct lexer_token *prev, struct lexer_token *head,
+                   struct lexer *lexer)
+{
+    shell->return_code = 0;
+    while (head && head->type != TOKEN_SEMICOLON && head->type != TOKEN_NEWLINE && head->type != TOKEN_EOF)
+    {
+        if (head->type < TOKEN_WORD || head->type > TOKEN_WORD_DOUBLE_QUOTE)
+        {
+            struct lexer_token *next = head->next;
+            lexer_token_free(head);
+            head = next;
+            continue;
+        }
+        bool to_free = false;
+        if (!head->value)
+        {
+            head->value = get_token_string(head->type);
+            to_free = true;
+        }
+        struct lexer_alias *alias = get_alias(head->value);
+        if (alias)
+        {
+            free(alias->name);
+            alias->name = calloc(1, sizeof(char));
+        }
+        else
+        {
+            shell->return_code = 1;
+            fprintf(stderr, "42sh: alias: %s: not found\n", head->value);
+        }
+        if (to_free)
+            free(head->value);
+        struct lexer_token *next = head->next;
+        lexer_token_free(head);
+        head = next;
+    }
+    if (head && head->type == TOKEN_SEMICOLON)
+        head->type = TOKEN_SPACE;
+    if (prev)
+        prev->next = head;
+    else
+        lexer->tokens = head;
+}
