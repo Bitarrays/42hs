@@ -24,3 +24,12 @@
 
 - name: if_in_case
   input: "case test in bruh) echo error;; test) if true; then echo ok; fi;; a) echo a; esac"
+
+- name: case_in_function
+  file: tests/case/case_in_function.sh
+
+- name: if_in_case_in_if
+  file: tests/case/if_in_case_in_if.sh
+
+- name: multiple_condition_case
+  file: tests/case/multiple_condition_case.sh
