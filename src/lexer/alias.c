@@ -148,7 +148,7 @@ void process_alias(struct lexer_token *prev, struct lexer_token *head,
             && head->type != TOKEN_WORD_SINGLE_QUOTE
             && head->type != TOKEN_WORD_DOUBLE_QUOTE))
     {
-        if (head && head->type == TOKEN_SEMICOLON)
+        if (head && (head->type == TOKEN_SEMICOLON || head->type == TOKEN_NEWLINE))
         {
             if (prev)
                 prev->next = head->next;

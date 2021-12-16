@@ -10,7 +10,7 @@ static bool is_word(enum token_type type)
 void process_spaces(struct lexer *lexer)
 {
     struct lexer_token *token = lexer->tokens;
-    while (token && token->type == TOKEN_SPACE)
+    while (token && (token->type == TOKEN_SPACE || token->type == TOKEN_NEWLINE))
     {
         struct lexer_token *next = token->next;
         lexer_token_free(token);
