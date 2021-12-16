@@ -38,21 +38,26 @@ int evaluate_ast(struct ast *ast)
         free(val);
         ast = ast->left_child;
         int res = 0;
-        while (ast && ast->type == AST_CASE_SWITCH)
+        int found = 0;
+        while (ast && ast->type == AST_CASE_SWITCH && !found)
         {
-            char *tmp = merge_arg(ast->value);
-            if (!strcmp(tmp, arg) || !strcmp(tmp, "*"))
+            int j = 0;
+            while (ast->value[j])
             {
-                free(tmp);
-                res = evaluate_ast(ast->left_child);
-                if (shell->exit || shell->ctn || shell->brk)
+                char *tmp = ast->value[j];
+                if (!strcmp(tmp, arg) || !strcmp(tmp, "*"))
                 {
-                    free(arg);
-                    return shell->return_code;
+                    res = evaluate_ast(ast->left_child);
+                    if (shell->exit || shell->ctn || shell->brk)
+                    {
+                        free(arg);
+                        return shell->return_code;
+                    }
+                    found = 1;
+                    break;
                 }
-                break;
+                j++;
             }
-            free(tmp);
             ast = ast->right_child;
         }
         free(arg);
