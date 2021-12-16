@@ -140,7 +140,7 @@ int dot(char **argv)
     struct var_stack *save_var_stack = shell->var_stack;
     shell->var_list = NULL;
     shell->var_stack = NULL;
-    char **args = calloc(1, sizeof(char *));
+    char **args = calloc(2, sizeof(char *));
     new_var(shell, args);
     if (!argv[1])
     {
