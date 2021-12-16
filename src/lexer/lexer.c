@@ -221,15 +221,6 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
     int j = 0;
     char *word = NULL;
     int word_pos = 0;
-    if (*word_type == TOKEN_WORD && (!strcmp(input, "in"))
-        && ((!lexer->in_for && lexer->found_for) || lexer->found_case))
-    {
-        create_and_append_token(lexer, TOKEN_IN, NULL);
-        if (lexer->found_for)
-            lexer->in_for = true;
-        free(input);
-        return;
-    }
     while (input[j])
     {
         if (input[j] == '\\')
