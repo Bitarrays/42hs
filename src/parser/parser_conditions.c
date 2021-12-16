@@ -272,6 +272,7 @@ enum parser_status parse_case_item(struct ast **ast, struct lexer *lexer)
         val_len++;
         (*ast)->value = realloc((*ast)->value, (val_len + 1) * sizeof(char *));
         (*ast)->value[val_len - 1] = tok->value;
+        (*ast)->value[val_len] = NULL;
         (*ast)->enclosure =
             realloc((*ast)->enclosure, val_len * sizeof(char *));
         (*ast)->enclosure[val_len - 1] = tok->type - TOKEN_WORD;
