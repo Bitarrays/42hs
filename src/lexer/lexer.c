@@ -95,7 +95,7 @@ static enum token_type get_separator(char c)
 
 static bool is_quote(char c)
 {
-    return (c == '\'' || c == '\"');
+    return (c == '\'' || c == '\"' || c == '`');
 }
 
 static enum token_type get_quote(char c)
@@ -104,6 +104,8 @@ static enum token_type get_quote(char c)
         return TOKEN_WORD_SINGLE_QUOTE;
     if (c == '\"')
         return TOKEN_WORD_DOUBLE_QUOTE;
+    if (c == '`')
+        return TOKEN_BACKTICK;
     return TOKEN_ERROR;
 }
 
@@ -384,14 +386,14 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
                 j++;
                 continue;
             }
-            if (*word_type == TOKEN_WORD)
+            if (*word_type == TOKEN_WORD && input[j] != '`')
                 *word_type = get_quote(input[j]);
+            else if (*word_type == TOKEN_WORD && input[j] == '`')
+            {
+                create_and_append_token(lexer, TOKEN_BACKTICK, NULL);
+            }
             else if (get_quote(input[j]) == *word_type)
             {
-                create_word_and_append(word, word_pos, in_cmd, lexer,
-                                       word_type);
-                word = NULL;
-                word_pos = 0;
                 *word_type = TOKEN_WORD;
             }
         }

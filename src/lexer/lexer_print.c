@@ -25,6 +25,7 @@ static char *get_token_string(enum token_type type)
                              "ASSIGNMENT_WORD",
                              "PARENTHESIS_OPEN",
                              "SUBSTITUTION",
+                             "BACKTICK",
                              "PARENTHESIS_CLOSE",
                              "BRACE_OPEN",
                              "BRACE_CLOSE",

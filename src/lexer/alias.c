@@ -40,6 +40,7 @@ static char *get_token_string(enum token_type type)
                              "ASSIGNMENT_WORD",
                              "(",
                              "$(",
+                             "`",
                              ")",
                              "{",
                              "}",
