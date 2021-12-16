@@ -118,6 +118,16 @@ static void create_word_and_append(char *word, int word_pos, bool *in_cmd,
     if (alias && !lexer->alias)
     {
         lexer_append_alias(lexer, alias);
+        free(word);
+        return;
+    }
+    if (*word_type == TOKEN_WORD && !strcmp(word, "alias"))
+    {
+        lexer->alias_prev = lexer->tail;
+        create_and_append_token(lexer, TOKEN_ALIAS, NULL);
+        lexer->alias = lexer->tail;
+        free(word);
+        *word_type = TOKEN_WORD;
         return;
     }
     struct lexer_token *token = calloc(1, sizeof(struct lexer_token));
@@ -202,22 +212,13 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
     int j = 0;
     char *word = NULL;
     int word_pos = 0;
-    if (*word_type == TOKEN_WORD && (!strcmp(input, "in") || !strcmp(input, "in\n"))
+    if (*word_type == TOKEN_WORD && (!strcmp(input, "in"))
         && ((!lexer->in_for && lexer->found_for) || lexer->found_case))
     {
         create_and_append_token(lexer, TOKEN_IN, NULL);
         if (lexer->found_for)
             lexer->in_for = true;
         free(input);
-        return;
-    }
-    if (*word_type == TOKEN_WORD && !strcmp(input, "alias"))
-    {
-        lexer->alias_prev = lexer->tail;
-        create_and_append_token(lexer, TOKEN_ALIAS, NULL);
-        lexer->alias = lexer->tail;
-        free(input);
-        *word_type = TOKEN_WORD;
         return;
     }
     while (input[j])
