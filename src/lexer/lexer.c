@@ -252,12 +252,25 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
                 NULL);
             if (is_separator(input[j]))
             {
-                if (lexer->alias != NULL)
+                if (lexer->alias != NULL && lexer->alias->next != lexer->tail)
                 {
                     if (lexer->alias->type == TOKEN_ALIAS)
                         process_alias(lexer->alias_prev, lexer->alias, lexer);
                     else
                         process_unalias(lexer->alias_prev, lexer->alias, lexer);
+                }
+                else if (lexer->alias)
+                {
+                    if (lexer->alias_prev)
+                    {
+                        lexer_token_free(lexer->alias_prev->next);
+                        lexer->alias_prev->next = lexer->tail;
+                    }
+                    else
+                    {
+                        lexer_token_free(lexer->alias);
+                        lexer->tokens = lexer->tail;
+                    }
                 }
                 if (input[j] == '\n')
                 {
