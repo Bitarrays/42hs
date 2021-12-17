@@ -27,3 +27,9 @@
 
 - name: most used
   input: cat /root/.bash_history | cut -d' ' -f1 | sort | uniq -c | tr -s ' ' | cut -c 2- | sort -nr | head
+
+- name: no builtins
+  input: ls | grep -E "*.c"
+
+- name: mutltiple no builtins
+  input: ls | grep "s" | grep "bui"
