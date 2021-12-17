@@ -123,11 +123,12 @@ static void create_word_and_append(char *word, int word_pos, bool *in_cmd,
         free(word);
         return;
     }
-    if (*word_type == TOKEN_WORD && (!strcmp(word, "alias") ||
-                                     !strcmp(word, "unalias")))
+    if (*word_type == TOKEN_WORD
+        && (!strcmp(word, "alias") || !strcmp(word, "unalias")))
     {
         lexer->alias_prev = lexer->tail;
-        create_and_append_token(lexer, !strcmp(word, "alias") ? TOKEN_ALIAS : TOKEN_UNALIAS, NULL);
+        create_and_append_token(
+            lexer, !strcmp(word, "alias") ? TOKEN_ALIAS : TOKEN_UNALIAS, NULL);
         lexer->alias = lexer->tail;
         free(word);
         *word_type = TOKEN_WORD;
@@ -143,7 +144,9 @@ static void create_word_and_append(char *word, int word_pos, bool *in_cmd,
         return;
     }
     struct lexer_token *token = calloc(1, sizeof(struct lexer_token));
-    token->type = is_keyword(word) && !lexer->alias && (!(*in_cmd) || lexer->found_case || (lexer->found_for && !strcmp(word, "do")))
+    token->type = is_keyword(word) && !lexer->alias
+            && (!(*in_cmd) || lexer->found_case
+                || (lexer->found_for && !strcmp(word, "do")))
         ? get_keyword(word)
         : *word_type;
     if (token->type >= TOKEN_WORD && !lexer->found_case)
@@ -252,12 +255,25 @@ static void word_lexer(struct lexer *lexer, char *input, bool *in_cmd,
                 NULL);
             if (is_separator(input[j]))
             {
-                if (lexer->alias != NULL)
+                if (lexer->alias != NULL && lexer->alias->next != lexer->tail)
                 {
                     if (lexer->alias->type == TOKEN_ALIAS)
                         process_alias(lexer->alias_prev, lexer->alias, lexer);
                     else
                         process_unalias(lexer->alias_prev, lexer->alias, lexer);
+                }
+                else if (lexer->alias)
+                {
+                    if (lexer->alias_prev)
+                    {
+                        lexer_token_free(lexer->alias_prev->next);
+                        lexer->alias_prev->next = lexer->tail;
+                    }
+                    else
+                    {
+                        lexer_token_free(lexer->alias);
+                        lexer->tokens = lexer->tail;
+                    }
                 }
                 if (input[j] == '\n')
                 {

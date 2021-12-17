@@ -143,13 +143,15 @@ static void process_single_alias(struct lexer *lexer, char *name,
 void process_alias(struct lexer_token *prev, struct lexer_token *head,
                    struct lexer *lexer)
 {
+    shell->return_code = 0;
     if (!head
         || (head->type != TOKEN_ALIAS && head->type != TOKEN_SPACE
             && head->type != TOKEN_ASSIGNMENT_WORD && head->type != TOKEN_WORD
             && head->type != TOKEN_WORD_SINGLE_QUOTE
             && head->type != TOKEN_WORD_DOUBLE_QUOTE))
     {
-        if (head && (head->type == TOKEN_SEMICOLON || head->type == TOKEN_NEWLINE))
+        if (head
+            && (head->type == TOKEN_SEMICOLON || head->type == TOKEN_NEWLINE))
         {
             if (prev)
                 prev->next = head->next;
@@ -160,7 +162,7 @@ void process_alias(struct lexer_token *prev, struct lexer_token *head,
         return;
     }
     struct lexer_token *name = head;
-    if (head->type == TOKEN_ALIAS)
+    if (head->type == TOKEN_ALIAS && head->next)
     {
         name = head->next;
         lexer_token_free(head);
@@ -172,8 +174,16 @@ void process_alias(struct lexer_token *prev, struct lexer_token *head,
         name = next;
     }
     head = name;
+    if (!name || !name->value)
+    {
+        if (prev)
+            prev->next = NULL;
+        else
+            lexer->tokens = NULL;
+        return;
+    }
     struct lexer_token *value = NULL;
-    struct lexer_token *end = head->next;
+    struct lexer_token *end = head->next ? head->next : head;
     if (name->type == TOKEN_ASSIGNMENT_WORD)
     {
         value = head->next;
@@ -206,16 +216,17 @@ void process_alias(struct lexer_token *prev, struct lexer_token *head,
     }
     process_single_alias(lexer, name->value, value);
     lexer_token_free(name);
-    if (end->type == TOKEN_SEMICOLON)
+    if (end && end->type == TOKEN_SEMICOLON)
         end->type = TOKEN_SPACE;
     process_alias(end, end ? end->next : NULL, lexer);
 }
 
 void process_unalias(struct lexer_token *prev, struct lexer_token *head,
-                   struct lexer *lexer)
+                     struct lexer *lexer)
 {
     shell->return_code = 0;
-    while (head && head->type != TOKEN_SEMICOLON && head->type != TOKEN_NEWLINE && head->type != TOKEN_EOF)
+    while (head && head->type != TOKEN_SEMICOLON && head->type != TOKEN_NEWLINE
+           && head->type != TOKEN_EOF)
     {
         if (head->type < TOKEN_WORD || head->type > TOKEN_WORD_DOUBLE_QUOTE)
         {
