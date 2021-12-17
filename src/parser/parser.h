@@ -36,7 +36,7 @@ void pretty_print(struct ast *ast);
  ** @param lexer the lexer to read tokens from
  ** @return enum parser_status - current parser status
  **/
-int parse_input(char *input);
+int parse_input(char *input, struct ast **res);
 
 /**
  ** @brief Check if compound_list grammar rule is respected

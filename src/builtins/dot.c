@@ -155,7 +155,7 @@ int dot(char **argv)
         restore_shell(save_var_list, save_var_stack);
         return shell->return_code;
     }
-    parse_input(buf);
+    parse_input(buf, NULL);
     free(buf);
     free(args);
     restore_shell(save_var_list, save_var_stack);

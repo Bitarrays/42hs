@@ -38,7 +38,7 @@ static int shell_prompt(void)
             free(input);
             continue;
         }
-        parse_input(input);
+        parse_input(input, NULL);
         free(input);
         input = NULL;
         input_len = 0;
@@ -128,7 +128,7 @@ int get_input(int argc, char **argv)
     if (input)
     {
         input[input_len] = '\0';
-        parse_input(input);
+        parse_input(input, NULL);
         free(input);
     }
     return shell->return_code;

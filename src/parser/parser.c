@@ -63,7 +63,7 @@ static enum parser_status add_eof_node(struct ast **ast)
     return PARSER_OK;
 }
 
-int parse_input(char *input)
+int parse_input(char *input, struct ast **res)
 {
     struct lexer *lex = lexer_create(input);
     lexer_build(lex);
@@ -97,8 +97,15 @@ int parse_input(char *input)
 
             if (shell->pretty_print)
                 pretty_print(ast);
-            int res_eval = evaluate_ast(ast);
-            shell->return_code = res_eval;
+            if (!res)
+            {
+                int res_eval = evaluate_ast(ast);
+                shell->return_code = res_eval;
+            }
+            else
+            {
+                *res = ast;
+            }
 
             ast_free(ast);
             lexer_free(lex);
