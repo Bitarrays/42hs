@@ -5,6 +5,7 @@
 
 #include "builtins.h"
 #include "redir.h"
+#include "parser.h"
 
 int evaluate_ast(struct ast *ast)
 {
@@ -379,7 +380,7 @@ int evaluate_ast(struct ast *ast)
     }
     else if (ast->type == AST_CMD_SUBSTITUTION)
     {
-        /*struct var *cpy = var_list_cpy(shell);
+        struct var *cpy = var_list_cpy(shell);
         struct functions *fn_cpy = fun_list_cpy(shell);
         int save = dup(STDOUT_FILENO);
         char *path = get_next_free_file();
@@ -397,15 +398,17 @@ int evaluate_ast(struct ast *ast)
         shell->exit = 0;
         shell->var_list = cpy;
         shell->functions = fn_cpy;
-        struct ast *cmd = ast_new(AST_COMMAND);
+        /*struct ast *cmd = ast_new(AST_COMMAND);
         cmd->value = calloc(2, sizeof(char *));
         cmd->enclosure = calloc(2, sizeof(enum quotes));
         cmd->value[0] = cmd_val;
-        cmd->enclosure[0] = Q_NONE;
-        res = evaluate_ast(cmd);
+        cmd->enclosure[0] = Q_NONE;*/
+        struct ast *tmp_ast = NULL;
+        parse_input(cmd_val, &tmp_ast);
+        res = evaluate_ast(tmp_ast);
         if (shell->exit || shell->ctn || shell->brk)
             return shell->return_code;
-        return res;*/
+        return res;
     }
     else if (ast->type == AST_COMMAND)
     {
@@ -456,7 +459,7 @@ int evaluate_ast(struct ast *ast)
     }
     else
     {
-        printf("Not implemented yet\n");
+        printf("%d, Not implemented yet\n", ast->type);
     }
 
     return 0;
