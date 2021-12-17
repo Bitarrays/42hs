@@ -403,7 +403,9 @@ int evaluate_ast(struct ast *ast)
         cmd->enclosure = calloc(2, sizeof(enum quotes));
         cmd->value[0] = cmd_val;
         cmd->enclosure[0] = Q_NONE;*/
-        parse_input(NULL);
+        parse_input(cmd_val, NULL);
+        res = shell->return_code;
+        push_int_elt_list(shell, "?", res);
         if (shell->exit || shell->ctn || shell->brk)
             return shell->return_code;
         return res;
