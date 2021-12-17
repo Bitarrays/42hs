@@ -405,6 +405,7 @@ int evaluate_ast(struct ast *ast)
         cmd->enclosure[0] = Q_NONE;*/
         parse_input(cmd_val, NULL);
         res = shell->return_code;
+        free(cmd_val);
         push_int_elt_list(shell, "?", res);
         if (shell->exit || shell->ctn || shell->brk)
             return shell->return_code;
