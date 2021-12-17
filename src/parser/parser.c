@@ -102,13 +102,12 @@ int parse_input(char *input, struct ast **res)
                 int res_eval = evaluate_ast(ast);
                 shell->return_code = res_eval;
                 ast_free(ast);
+                lexer_free(lex);
             }
             else
             {
                 *res = ast;
             }
-
-            lexer_free(lex);
             return 0;
         }
     }
