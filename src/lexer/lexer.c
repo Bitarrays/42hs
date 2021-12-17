@@ -123,11 +123,12 @@ static void create_word_and_append(char *word, int word_pos, bool *in_cmd,
         free(word);
         return;
     }
-    if (*word_type == TOKEN_WORD && (!strcmp(word, "alias") ||
-                                     !strcmp(word, "unalias")))
+    if (*word_type == TOKEN_WORD
+        && (!strcmp(word, "alias") || !strcmp(word, "unalias")))
     {
         lexer->alias_prev = lexer->tail;
-        create_and_append_token(lexer, !strcmp(word, "alias") ? TOKEN_ALIAS : TOKEN_UNALIAS, NULL);
+        create_and_append_token(
+            lexer, !strcmp(word, "alias") ? TOKEN_ALIAS : TOKEN_UNALIAS, NULL);
         lexer->alias = lexer->tail;
         free(word);
         *word_type = TOKEN_WORD;
@@ -143,7 +144,9 @@ static void create_word_and_append(char *word, int word_pos, bool *in_cmd,
         return;
     }
     struct lexer_token *token = calloc(1, sizeof(struct lexer_token));
-    token->type = is_keyword(word) && !lexer->alias && (!(*in_cmd) || lexer->found_case || (lexer->found_for && !strcmp(word, "do")))
+    token->type = is_keyword(word) && !lexer->alias
+            && (!(*in_cmd) || lexer->found_case
+                || (lexer->found_for && !strcmp(word, "do")))
         ? get_keyword(word)
         : *word_type;
     if (token->type >= TOKEN_WORD && !lexer->found_case)

@@ -324,14 +324,18 @@ enum parser_status parse_shell_command(struct ast **ast, struct lexer *lexer)
         if (status_compound_list == PARSER_OK)
         {
             tok = lexer_peek(lexer);
-            if ((tok_parenthesis->type != TOKEN_BACKTICK && tok->type == TOKEN_PARENTHESIS_CLOSE) || (tok_parenthesis->type == TOKEN_BACKTICK && tok->type == TOKEN_BACKTICK))
+            if ((tok_parenthesis->type != TOKEN_BACKTICK
+                 && tok->type == TOKEN_PARENTHESIS_CLOSE)
+                || (tok_parenthesis->type == TOKEN_BACKTICK
+                    && tok->type == TOKEN_BACKTICK))
             {
                 if (ast != NULL && *ast != NULL)
                     (*ast)->left_child = ast_list;
                 else
                 {
                     *ast =
-                        ast_new(tok_parenthesis->type == TOKEN_SUBSTITUTION_OPEN || tok->type == TOKEN_BACKTICK
+                        ast_new(tok_parenthesis->type == TOKEN_SUBSTITUTION_OPEN
+                                        || tok->type == TOKEN_BACKTICK
                                     ? AST_CMD_SUBSTITUTION
                                     : AST_SUBSHELL);
                     (*ast)->left_child = ast_list;
