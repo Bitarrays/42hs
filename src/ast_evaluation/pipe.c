@@ -24,7 +24,14 @@ int exec_with_fork(char **cmd, int i, int pipe_nb, int ***fds)
             dup2((*fds)[i][1], 1);
             close((*fds)[i][0]);
             close((*fds)[i][1]);
-            execvp(cmd[0], cmd);
+            if (is_builtin(cmd[0]))
+            {
+                find_command(cmd, 1);
+                kill(getpid(), SIGKILL);
+                return shell->return_code;
+            }
+            else
+                execvp(cmd[0], cmd);
             fprintf(stderr, "42sh: command not found: %s\n", cmd[0]);
             kill(getpid(), SIGKILL);
             return 127;
@@ -34,7 +41,14 @@ int exec_with_fork(char **cmd, int i, int pipe_nb, int ***fds)
             dup2((*fds)[i - 1][0], 0);
             close((*fds)[i - 1][0]);
             close((*fds)[i - 1][1]);
-            execvp(cmd[0], cmd);
+            if (is_builtin(cmd[0]))
+            {
+                find_command(cmd, 1);
+                kill(getpid(), SIGKILL);
+                return shell->return_code;
+            }
+            else
+                execvp(cmd[0], cmd);
             fprintf(stderr, "42sh: command not found: %s\n", cmd[0]);
             kill(getpid(), SIGKILL);
             return 127;
@@ -47,7 +61,14 @@ int exec_with_fork(char **cmd, int i, int pipe_nb, int ***fds)
             close((*fds)[i - 1][1]);
             close((*fds)[i][0]);
             close((*fds)[i][1]);
-            execvp(cmd[0], cmd);
+            if (is_builtin(cmd[0]))
+            {
+                find_command(cmd, 1);
+                kill(getpid(), SIGKILL);
+                return shell->return_code;
+            }
+            else
+                execvp(cmd[0], cmd);
             fprintf(stderr, "42sh: command not found: %s\n", cmd[0]);
             kill(getpid(), SIGKILL);
             return 127;
@@ -128,10 +149,10 @@ int exec_pipe(char ***args, enum quotes **enclosure, int pipe_nb)
             }
         }
         char **val = expand(args[i], enclosure[i]);
-        if (is_builtin(val[0]))
-            res = exec_without_fork(val, i, pipe_nb, &fds);
-        else
-            res = exec_with_fork(val, i, pipe_nb, &fds);
+        // if (is_builtin(val[0]))
+        //     res = exec_without_fork(val, i, pipe_nb, &fds);
+        // else
+        res = exec_with_fork(val, i, pipe_nb, &fds);
         char *tmp = val[0];
         int pos = 0;
         while (tmp)
