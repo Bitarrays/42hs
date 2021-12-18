@@ -310,18 +310,6 @@ int evaluate_ast(struct ast *ast)
             tmp = tmp->right_child;
             nb++;
         }
-        struct ast **redirs = calloc(nb + 2, sizeof(struct ast *));
-        if (!redirs)
-            return 1;
-        redirs[0] = ast->left_child;
-        int i = 1;
-        while (ast->right_child->type == AST_PIPE)
-        {
-            redirs[i++] = ast->left_child;
-            ast = ast->right_child;
-        }
-        redirs[i] = ast->right_child;
-        /*
         char ***redirs = calloc(nb + 2, sizeof(char **));
         if (!redirs)
             return 1;
@@ -337,16 +325,16 @@ int evaluate_ast(struct ast *ast)
             redirs[i++] = ast->left_child->value;
             ast = ast->right_child;
         }
-        redirs[i] = ast->right_child->value;
-        enclosure[i] = ast->right_child->enclosure;*/
         /*                   int y = 0;
-        while (ast->left_child->value[y])
-        {
-            printf("1\n");
-            printf("%s\n", ast->right_child->value[y]);
-            printf("%d\n", ast->right_child->enclosure[y++]);
-        }*/
-        int res = exec_pipe(redirs, nb);
+            while (ast->left_child->value[y])
+           {
+                printf("1\n");
+                printf("%s\n", ast->right_child->value[y]);
+                printf("%d\n", ast->right_child->enclosure[y++]);
+            }*/
+        redirs[i] = ast->right_child->value;
+        enclosure[i] = ast->right_child->enclosure;
+        int res = exec_pipe(redirs, enclosure, nb);
         push_int_elt_list(shell, "?", res);
         return res;
     }

@@ -8,10 +8,9 @@
 #include <unistd.h>
 
 #include "ast_evaluation_tools.h"
-#include "ast_evaluation.h"
 #include "builtins.h"
 
-int exec_with_fork(struct ast *cmd, int i, int pipe_nb, int ***fds)
+int exec_with_fork(char **cmd, int i, int pipe_nb, int ***fds)
 {
     int pid = fork();
     if (pid == -1)
@@ -25,22 +24,34 @@ int exec_with_fork(struct ast *cmd, int i, int pipe_nb, int ***fds)
             dup2((*fds)[i][1], 1);
             close((*fds)[i][0]);
             close((*fds)[i][1]);
-            int res = evaluate_ast(cmd);
-            printf("%d\n", res);
-            shell->return_code = res;
+            if (is_builtin(cmd[0]))
+            {
+                find_command(cmd, 1);
+                kill(getpid(), SIGKILL);
+                return shell->return_code;
+            }
+            else
+                execvp(cmd[0], cmd);
+            fprintf(stderr, "42sh: command not found: %s\n", cmd[0]);
             kill(getpid(), SIGKILL);
-            return res;
+            return 127;
         }
         else if (i == pipe_nb)
         {
             dup2((*fds)[i - 1][0], 0);
             close((*fds)[i - 1][0]);
             close((*fds)[i - 1][1]);
-            int res = evaluate_ast(cmd);
-            printf("%d\n", res);
-            shell->return_code = res;
+            if (is_builtin(cmd[0]))
+            {
+                find_command(cmd, 1);
+                kill(getpid(), SIGKILL);
+                return shell->return_code;
+            }
+            else
+                execvp(cmd[0], cmd);
+            fprintf(stderr, "42sh: command not found: %s\n", cmd[0]);
             kill(getpid(), SIGKILL);
-            return res;
+            return 127;
         }
         else
         {
@@ -50,11 +61,17 @@ int exec_with_fork(struct ast *cmd, int i, int pipe_nb, int ***fds)
             close((*fds)[i - 1][1]);
             close((*fds)[i][0]);
             close((*fds)[i][1]);
-            int res = evaluate_ast(cmd);
-            printf("%d\n", res);
-            shell->return_code = res;
+            if (is_builtin(cmd[0]))
+            {
+                find_command(cmd, 1);
+                kill(getpid(), SIGKILL);
+                return shell->return_code;
+            }
+            else
+                execvp(cmd[0], cmd);
+            fprintf(stderr, "42sh: command not found: %s\n", cmd[0]);
             kill(getpid(), SIGKILL);
-            return res;
+            return 127;
         }
     }
     else
@@ -114,7 +131,7 @@ int exec_without_fork(char **cmd, int i, int pipe_nb, int ***fds)
     return 0;
 }
 
-int exec_pipe(struct ast **args, int pipe_nb)
+int exec_pipe(char ***args, enum quotes **enclosure, int pipe_nb)
 {
     int res = 0;
     int **fds = calloc(pipe_nb, sizeof(int *));
@@ -131,15 +148,24 @@ int exec_pipe(struct ast **args, int pipe_nb)
                 fprintf(stderr, "42sh: bad pipe\n");
             }
         }
+        char **val = expand(args[i], enclosure[i]);
         // if (is_builtin(val[0]))
         //     res = exec_without_fork(val, i, pipe_nb, &fds);
         // else
-        exec_with_fork(args[i], i, pipe_nb, &fds);
-        res = atoi(find_elt_list(shell, "?"));
+        res = exec_with_fork(val, i, pipe_nb, &fds);
+        char *tmp = val[0];
+        int pos = 0;
+        while (tmp)
+        {
+            free(tmp);
+            tmp = val[++pos];
+        }
+        free(val);
     }
     for (int i = 0; i < pipe_nb; i++)
         free(fds[i]);
     free(fds);
     free(args);
+    free(enclosure);
     return res;
 }

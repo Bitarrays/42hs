@@ -15,7 +15,7 @@ char **expand(char **arg, enum quotes *enclosure);
 char **split_arg(char **arg, enum quotes *enclosure);
 char *merge_arg(char **arg);
 int atoi_begining(char *s);
-int exec_pipe(struct ast **args, int pipe_nb);
+int exec_pipe(char ***args, enum quotes **enclosure, int pipe_nb);
 void free_arg(char **var);
 char *get_next_free_file(void);
 char *get_file_in_var(char *path);
