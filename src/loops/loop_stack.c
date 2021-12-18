@@ -34,3 +34,11 @@ void pop_loop(struct shell *sh)
         free(tmp);
     }
 }
+
+void free_loop(struct shell *sh)
+{
+    while (sh->loop_stack)
+    {
+        pop_loop(sh);
+    }
+}

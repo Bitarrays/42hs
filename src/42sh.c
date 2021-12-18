@@ -7,6 +7,7 @@
 #include "lexer.h"
 #include "shell_input.h"
 #include "var_list.h"
+#include "loop_stack.h"
 
 struct shell *shell;
 
@@ -77,6 +78,7 @@ void free_shell(void)
         free(alias);
         alias = next;
     }
+    free_loop(shell);
     free(shell);
 }
 
