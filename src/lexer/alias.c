@@ -117,7 +117,16 @@ static void process_single_alias(struct lexer *lexer, char *name,
     {
         struct lexer_alias *alias = calloc(1, sizeof(struct lexer_alias));
         alias->name = strdup(name);
-        alias->value = value;
+        if (value->type != TOKEN_NEWLINE && value->type != TOKEN_SEMICOLON
+            && value->type != TOKEN_EOF)
+            alias->value = value;
+        else
+        {
+            struct lexer_token *token = calloc(1, sizeof(struct lexer_token));
+            token->type = TOKEN_WORD;
+            token->value = strdup("");
+            alias->value = token;
+        }
         alias->next = lexer->alias_list;
         lexer->alias_list = alias;
         shell->return_code = 0;
@@ -193,9 +202,11 @@ void process_alias(struct lexer_token *prev, struct lexer_token *head,
             lexer_token_free(value);
             value = next;
         }
-        end = value->next;
+        end = value;
+        if (value->next)
+            end = value->next;
         struct lexer_token *previous = value;
-        while (end->type != TOKEN_SPACE && end->type != TOKEN_NEWLINE
+        while (end && end->type != TOKEN_SPACE && end->type != TOKEN_NEWLINE
                && end->type != TOKEN_EOF && end->type != TOKEN_SEMICOLON)
         {
             previous = end;

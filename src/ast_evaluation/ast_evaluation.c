@@ -4,8 +4,8 @@
 #include <string.h>
 
 #include "builtins.h"
-#include "redir.h"
 #include "parser.h"
+#include "redir.h"
 
 int evaluate_ast(struct ast *ast)
 {

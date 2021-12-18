@@ -26,7 +26,7 @@ int my_exit(char **args)
         else
         {
             fprintf(stderr, "42sh: exit: Illegal number: %s\n", args[1]);
-            return 1;
+            return 2;
         }
     }
 
