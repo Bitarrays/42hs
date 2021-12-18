@@ -95,42 +95,6 @@ int exec_with_fork(char **cmd, int i, int pipe_nb, int ***fds)
     return shell->return_code;
 }
 
-int exec_without_fork(char **cmd, int i, int pipe_nb, int ***fds)
-{
-    if (i == 0)
-    {
-        dup2((*fds)[i][1], 1);
-        find_command(cmd, (*fds)[i][1]);
-        close((*fds)[i][0]);
-        close((*fds)[i][1]);
-    }
-    else if (i == pipe_nb)
-    {
-        dup2((*fds)[i - 1][0], 0);
-        find_command(cmd, 1);
-        close((*fds)[i - 1][0]);
-        close((*fds)[i - 1][1]);
-    }
-    else
-    {
-        dup2((*fds)[i - 1][0], 0);
-        dup2((*fds)[i][1], 1);
-        find_command(cmd, 1);
-        close((*fds)[i - 1][0]);
-        close((*fds)[i - 1][1]);
-        close((*fds)[i][0]);
-        close((*fds)[i][1]);
-    }
-    if (i != 0)
-    {
-        if (i == pipe_nb)
-            shell->return_code = find_command(cmd, 1);
-        close((*fds)[i - 1][0]);
-        close((*fds)[i - 1][1]);
-    }
-    return 0;
-}
-
 int exec_pipe(char ***args, enum quotes **enclosure, int pipe_nb)
 {
     int res = 0;
